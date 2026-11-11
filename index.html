@@ -5,14 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#AA1A24">
-<title>ESIVO - Application officielle</title>
+<title>ESIVO | Application officielle</title>
 
 <style>
 :root {
   --red: #AA1A24;
+  --red-dark: #80131B;
   --white: #FEFFFE;
-  --dark: #202124;
-  --gray: #f3f3f5;
+  --dark: #19191D;
+  --gray: #F4F4F6;
+  --muted: #777780;
+  --yellow: #E5BD37;
 }
 
 * {
@@ -21,189 +24,444 @@
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
   background: var(--gray);
   color: var(--dark);
+  font-family: Arial, Helvetica, sans-serif;
+  padding-bottom: 85px;
 }
 
-header {
+button, select {
+  font: inherit;
+}
+
+.topbar {
   background: var(--red);
   color: white;
-  padding: 22px 20px;
-  border-bottom: 5px solid #e5bd37;
+  padding: 20px 20px 30px;
+  border-bottom: 5px solid var(--yellow);
+  border-radius: 0 0 22px 22px;
+}
+
+.topbar-inner {
+  max-width: 900px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
 }
 
 .logo {
   width: 58px;
   height: 58px;
   object-fit: contain;
-  border: 2px solid white;
-  border-radius: 50%;
   background: white;
+  border-radius: 50%;
+  border: 2px solid white;
   padding: 2px;
 }
 
-header h1 {
+.brand h1 {
   margin: 0;
   font-size: 25px;
+  letter-spacing: 1px;
 }
 
-header p {
+.brand p {
   margin: 5px 0 0;
-  font-size: 12px;
+  font-size: 10px;
+  line-height: 1.4;
   opacity: .9;
+  max-width: 220px;
+}
+
+.header-label {
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border: 1px solid #ffffff70;
+  border-radius: 20px;
+  padding: 9px 12px;
 }
 
 main {
-  padding: 18px;
-  max-width: 700px;
+  max-width: 900px;
   margin: auto;
+  padding: 20px;
 }
 
-h2 {
-  margin-top: 8px;
-  font-size: 23px;
-}
-
-.welcome {
-  background: var(--red);
+.hero {
+  background: linear-gradient(125deg, var(--red), var(--red-dark));
   color: white;
-  padding: 24px;
-  border-radius: 16px;
-  margin-bottom: 22px;
+  padding: 25px 22px;
+  border-radius: 18px;
+  margin-top: -2px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 7px 18px #AA1A2425;
 }
 
-.welcome h2 {
-  font-size: 26px;
-  margin: 0 0 8px;
+.hero:after {
+  content: "ESIVO";
+  position: absolute;
+  right: -12px;
+  bottom: -18px;
+  font-size: 76px;
+  font-weight: 900;
+  opacity: .07;
+  transform: rotate(-12deg);
 }
 
-.welcome p {
-  margin: 0;
-  line-height: 1.5;
-}
-
-.section-title {
-  font-size: 18px;
+.hero-tag {
+  display: inline-block;
+  background: #ffffff20;
+  padding: 7px 10px;
+  border-radius: 20px;
+  font-size: 10px;
   font-weight: bold;
-  margin: 22px 0 12px;
+  letter-spacing: 1px;
 }
 
-.menu {
+.hero h2 {
+  font-size: 27px;
+  line-height: 1.15;
+  margin: 15px 0 9px;
+  max-width: 280px;
+}
+
+.hero p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: .9;
+  max-width: 310px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 27px 0 13px;
+}
+
+.section-heading h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.section-heading span {
+  color: var(--red);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.quick-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
-.menu button {
+.quick-card {
   background: white;
-  border: 1px solid #e5e5e5;
-  border-radius: 13px;
-  padding: 17px 10px;
-  min-height: 90px;
-  font-size: 15px;
+  border: 1px solid #e9e9ec;
+  border-radius: 14px;
+  padding: 17px 14px;
+  text-align: left;
+  min-height: 108px;
+  cursor: pointer;
+  transition: transform .15s;
+}
+
+.quick-card:active {
+  transform: scale(.97);
+}
+
+.quick-card .emoji {
+  font-size: 25px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.quick-card strong {
+  display: block;
+  font-size: 14px;
+}
+
+.quick-card small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.news-card {
+  background: white;
+  padding: 18px;
+  border-radius: 15px;
+  border: 1px solid #e9e9ec;
+}
+
+.news-label {
+  color: var(--red);
+  font-size: 10px;
   font-weight: bold;
-  color: var(--dark);
+  letter-spacing: 1px;
+}
+
+.news-card h3 {
+  margin: 10px 0 7px;
+  font-size: 17px;
+}
+
+.news-card p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+
+.page-title {
+  margin: 5px 0 20px;
+}
+
+.page-title h2 {
+  font-size: 25px;
+  margin: 0 0 7px;
+}
+
+.page-title p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.content-card {
+  background: white;
+  padding: 19px;
+  border-radius: 15px;
+  margin-bottom: 14px;
+  border: 1px solid #e9e9ec;
+}
+
+.content-card h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.content-card p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.team-select {
+  width: 100%;
+  padding: 14px;
+  background: white;
+  border: 1px solid #dedee3;
+  border-radius: 10px;
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.team-result {
+  border-left: 4px solid var(--red);
+  padding: 14px;
+  background: #fafafa;
+  border-radius: 5px;
+  margin-top: 17px;
+}
+
+.team-result strong {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.team-result p {
+  margin: 0;
+}
+
+.back-button {
+  border: 0;
+  color: var(--red);
+  background: #f8e8e9;
+  padding: 11px 14px;
+  border-radius: 9px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e5e5e8;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+}
+
+.bottom-inner {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.bottom-nav button {
+  border: 0;
+  background: transparent;
+  padding: 12px 10px 10px;
+  color: var(--muted);
+  font-size: 10px;
   cursor: pointer;
 }
 
-.menu button:active {
-  background: #fbeaec;
-}
-
-.menu span {
+.bottom-nav button span {
   display: block;
-  font-size: 25px;
-  margin-bottom: 8px;
+  font-size: 20px;
+  margin-bottom: 4px;
 }
 
-.card {
-  background: white;
-  border-radius: 14px;
-  padding: 18px;
-  margin: 14px 0;
-  box-shadow: 0 2px 8px #0000000c;
-}
-
-select {
-  width: 100%;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  background: white;
-  font-size: 16px;
-  margin-top: 8px;
-}
-
-.note {
-  color: #777;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.back {
-  background: var(--red);
-  color: white;
-  border: none;
-  border-radius: 9px;
-  padding: 11px 16px;
-  font-size: 14px;
-  margin-bottom: 12px;
+.bottom-nav button.active {
+  color: var(--red);
+  font-weight: bold;
 }
 
 footer {
   text-align: center;
-  padding: 25px 10px;
-  color: #777;
-  font-size: 12px;
+  color: #999;
+  font-size: 10px;
+  padding: 28px 10px;
+}
+
+@media (min-width: 650px) {
+  .quick-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .hero h2 {
+    font-size: 34px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div class="brand">
-    <img class="logo" src="IMG_0825.jpeg" alt="Logo officiel ESIVO">
-    <div>
-      <h1>ESIVO</h1>
-      <p>Entente Sportive Intercommunale Vallée de l'Orne</p>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <img class="logo" src="IMG_0825.jpeg" alt="Logo officiel ESIVO">
+      <div>
+        <h1>ESIVO</h1>
+        <p>Entente Sportive Intercommunale Vallée de l'Orne</p>
+      </div>
     </div>
+    <div class="header-label">OFFICIEL</div>
   </div>
 </header>
 
 <main id="app">
 
-  <div class="welcome">
+  <section class="hero">
+    <span class="hero-tag">ENSEMBLE, PLUS FORTS</span>
     <h2>Bienvenue à l'ESIVO !</h2>
-    <p>Retrouvez toute l'actualité, les calendriers et les résultats de votre club.</p>
+    <p>Toute la vie de votre club de football réunie au même endroit.</p>
+  </section>
+
+  <div class="section-heading">
+    <h2>Les rubriques</h2>
+    <span>ESIVO FOOTBALL</span>
   </div>
 
-  <div class="section-title">Découvrir le club</div>
+  <div class="quick-grid">
+    <button class="quick-card" onclick="showPage('Calendrier')">
+      <span class="emoji">📅</span>
+      <strong>Calendrier</strong>
+      <small>Les prochaines rencontres</small>
+    </button>
 
-  <div class="menu">
-    <button onclick="showPage('Calendrier')"><span>📅</span>Calendrier</button>
-    <button onclick="showPage('Résultats')"><span>⚽</span>Résultats</button>
-    <button onclick="showPage('Classements')"><span>🏆</span>Classements</button>
-    <button onclick="showPage('Actualités')"><span>📰</span>Actualités</button>
-    <button onclick="showPage('Agenda')"><span>📌</span>Agenda</button>
-    <button onclick="showPage('Contacts')"><span>📞</span>Contacts</button>
-    <button onclick="showPage('Galerie photos')"><span>📸</span>Galerie photos</button>
-    <button onclick="showPage('Notifications')"><span>🔔</span>Notifications</button>
-    <button onclick="showPage('Administration')"><span>⚙️</span>Administration</button>
+    <button class="quick-card" onclick="showPage('Résultats')">
+      <span class="emoji">⚽</span>
+      <strong>Résultats</strong>
+      <small>Les scores du club</small>
+    </button>
+
+    <button class="quick-card" onclick="showPage('Classements')">
+      <span class="emoji">🏆</span>
+      <strong>Classements</strong>
+      <small>Les championnats</small>
+    </button>
+
+    <button class="quick-card" onclick="showPage('Actualités')">
+      <span class="emoji">📰</span>
+      <strong>Actualités</strong>
+      <small>La vie du club</small>
+    </button>
+
+    <button class="quick-card" onclick="showPage('Agenda')">
+      <span class="emoji">📌</span>
+      <strong>Agenda</strong>
+      <small>Les événements à venir</small>
+    </button>
+
+    <button class="quick-card" onclick="showPage('Contacts')">
+      <span class="emoji">📞</span>
+      <strong>Contacts</strong>
+      <small>Nous contacter</small>
+    </button>
+
+    <button class="quick-card" onclick="showPage('Galerie photos')">
+      <span class="emoji">📸</span>
+      <strong>Galerie photos</strong>
+      <small>Les moments du club</small>
+    </button>
+
+    <button class="quick-card" onclick="showPage('Notifications')">
+      <span class="emoji">🔔</span>
+      <strong>Notifications</strong>
+      <small>Les informations importantes</small>
+    </button>
+
+    <button class="quick-card" onclick="showPage('Administration')">
+      <span class="emoji">⚙️</span>
+      <strong>Administration</strong>
+      <small>Espace de gestion</small>
+    </button>
   </div>
 
-  <footer>
-    ESIVO · Application officielle du club
-  </footer>
+  <div class="section-heading">
+    <h2>À la une</h2>
+    <span>ACTUALITÉS</span>
+  </div>
+
+  <div class="news-card">
+    <span class="news-label">BIENVENUE</span>
+    <h3>Bienvenue sur l'application ESIVO</h3>
+    <p>Retrouvez prochainement ici les actualités, les informations et tous les rendez-vous de votre club.</p>
+  </div>
+
+  <footer>ESIVO · Entente Sportive Intercommunale Vallée de l'Orne</footer>
 
 </main>
+
+<nav class="bottom-nav">
+  <div class="bottom-inner">
+    <button class="active" onclick="home()"><span>🏠</span>Accueil</button>
+    <button onclick="showPage('Calendrier')"><span>📅</span>Matchs</button>
+    <button onclick="showPage('Actualités')"><span>📰</span>Actus</button>
+    <button onclick="showPage('Contacts')"><span>📞</span>Contacts</button>
+  </div>
+</nav>
 
 <script>
 const equipes = [
@@ -219,55 +477,54 @@ const equipes = [
   "Seniors Féminines à 8"
 ];
 
+function home() {
+  location.reload();
+}
+
 function showPage(page) {
   const app = document.getElementById("app");
+  const pagesAvecEquipes = ["Calendrier", "Résultats", "Classements"];
 
-  const equipesPage = [
-    "Calendrier",
-    "Résultats",
-    "Classements"
-  ];
-
-  let contenu = `
-    <button class="back" onclick="home()">← Retour à l'accueil</button>
-    <h2>${page}</h2>
+  let html = `
+    <button class="back-button" onclick="home()">← Retour à l'accueil</button>
+    <div class="page-title">
+      <h2>${page}</h2>
+      <p>Retrouvez les informations de l'ESIVO.</p>
+    </div>
   `;
 
-  if (equipesPage.includes(page)) {
-    contenu += `
-      <div class="card">
-        <label for="equipe"><strong>Choisir une équipe</strong></label>
-        <select id="equipe" onchange="selectTeam(this.value)">
+  if (pagesAvecEquipes.includes(page)) {
+    html += `
+      <div class="content-card">
+        <h3>Sélectionner une équipe</h3>
+        <select class="team-select" id="equipe" onchange="selectTeam(this.value)">
           ${equipes.map(e => `<option value="${e}">${e}</option>`).join("")}
         </select>
-      </div>
-      <div class="card" id="teamContent">
-        <h3>${page} - U7</h3>
-        <p class="note">Les informations de cette équipe apparaîtront ici une fois les données intégrées.</p>
+        <div class="team-result" id="teamContent">
+          <strong>${page} · U7</strong>
+          <p>Les informations de cette équipe seront ajoutées ici lors des prochaines étapes.</p>
+        </div>
       </div>
     `;
   } else {
-    contenu += `
-      <div class="card">
+    html += `
+      <div class="content-card">
         <h3>${page}</h3>
-        <p class="note">Cette rubrique sera développée lors des prochaines étapes de construction de l'application ESIVO.</p>
+        <p>Cette rubrique sera développée progressivement pour vous permettre de suivre toute la vie du club.</p>
       </div>
     `;
   }
 
-  app.innerHTML = contenu;
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
 }
 
 function selectTeam(equipe) {
-  const page = document.querySelector("main h2").textContent;
+  const page = document.querySelector(".page-title h2").textContent;
   document.getElementById("teamContent").innerHTML = `
-    <h3>${page} - ${equipe}</h3>
-    <p class="note">Les informations de cette équipe apparaîtront ici une fois les données intégrées.</p>
+    <strong>${page} · ${equipe}</strong>
+    <p>Les informations de cette équipe seront ajoutées ici lors des prochaines étapes.</p>
   `;
-}
-
-function home() {
-  location.reload();
 }
 </script>
 
