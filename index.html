@@ -674,6 +674,7 @@ function home() {
 
 
 
+
 function showPage(page) {
   const app = document.getElementById("app");
   const pagesAvecEquipes = ["Calendrier", "Résultats", "Classements"];
@@ -754,6 +755,51 @@ function showPage(page) {
         }).join("")}
       </div>
     `;
+  } else if (page === "Contacts") {
+    const contacts = [
+      {
+        categorie: "Direction et administration",
+        fonctions: "Président · Correspondant · Secrétaire général · Référent féminin"
+      },
+      {
+        categorie: "Direction et administration",
+        fonctions: "Trésorier"
+      },
+      {
+        categorie: "Direction et administration",
+        fonctions: "Co-président"
+      },
+      {
+        categorie: "Référents du club",
+        fonctions: "Référent foot loisir"
+      },
+      {
+        categorie: "Référents du club",
+        fonctions: "Référent arbitre"
+      },
+      {
+        categorie: "Communication",
+        fonctions: "Responsable pôle communication"
+      },
+      {
+        categorie: "Encadrement sportif",
+        fonctions: "Entraîneur général · Responsable technique école de foot · Responsables techniques U6-U7, U8-U9, U10-U11 et U13"
+      }
+    ];
+
+    html += `
+      <div class="contact-list">
+        <p>Retrouvez les différents responsables de l'ESIVO.</p>
+
+        ${contacts.map(contact => `
+          <div class="content-card">
+            <p>⚽ ${contact.categorie}</p>
+            <h3>${contact.fonctions}</h3>
+            <p>Coordonnées disponibles prochainement.</p>
+          </div>
+        `).join("")}
+      </div>
+    `;
   } else {
     html += `
       <div class="content-card">
@@ -766,6 +812,7 @@ function showPage(page) {
   app.innerHTML = html;
   window.scrollTo(0, 0);
 }
+
 
 
 
