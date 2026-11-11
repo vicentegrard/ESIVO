@@ -800,6 +800,32 @@ function showPage(page) {
         `).join("")}
       </div>
     `;
+  } else if (page === "Galerie photos") {    
+    html += `
+      <div class="gallery-intro">
+        <p>Revivez les moments forts de la vie de l'ESIVO !</p>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="content-card">
+          <div class="gallery-placeholder">⚽</div>
+          <h3>Matchs et compétitions</h3>
+          <p>Retrouvez les photos de nos rencontres.</p>
+        </div>
+
+        <div class="content-card">
+          <div class="gallery-placeholder">🏆</div>
+          <h3>Tournois et événements</h3>
+          <p>Les meilleurs moments de nos événements.</p>
+        </div>
+
+        <div class="content-card">
+          <div class="gallery-placeholder">👥</div>
+          <h3>La vie du club</h3>
+          <p>Les joueurs, éducateurs et bénévoles de l'ESIVO.</p>
+        </div>
+      </div>
+    `;
   } else {
     html += `
       <div class="content-card">
