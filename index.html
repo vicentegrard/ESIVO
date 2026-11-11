@@ -248,13 +248,48 @@ main {
   border: 1px solid #e9e9ec;
 }
 
-  .gallery-photo {
+.gallery-photo {
   width: 100%;
   height: 220px;
   object-fit: cover;
   border-radius: 12px;
   display: block;
   margin-bottom: 14px;
+}
+.gallery-photo {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.gallery-photo:hover {
+  transform: scale(1.02);
+}
+.photo-viewer {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.photo-viewer img {
+  max-width: 95%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 10px;
+}
+  .photo-viewer-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  border: 0;
+  background: transparent;
+  color: white;
+  font-size: 36px;
+  cursor: pointer;
 }
 
 .content-card h3 {
@@ -854,6 +889,10 @@ function showPage(page) {
   <p>Les belles émotions partagées sur le terrain.</p>
 </div>
       </div>
+            <div class="photo-viewer" id="photoViewer">
+  <button class="photo-viewer-close" id="photoViewerClose" type="button" aria-label="Fermer">×</button>
+  <img id="photoViewerImage" src="" alt="Photo agrandie">
+</div>
     `;
       } else if (page === "Notifications") {
     html += `
@@ -930,6 +969,34 @@ function showPage(page) {
   }
 
   app.innerHTML = html;
+    const galleryPhotos = document.querySelectorAll(".gallery-photo");
+  const photoViewer = document.getElementById("photoViewer");
+  const photoViewerImage = document.getElementById("photoViewerImage");
+  const photoViewerClose = document.getElementById("photoViewerClose");
+
+  if (photoViewer && photoViewerImage) {
+    galleryPhotos.forEach(photo => {
+      photo.addEventListener("click", () => {
+        photoViewerImage.src = photo.src;
+        photoViewer.style.display = "flex";
+      });
+    });
+
+    const closePhotoViewer = () => {
+      photoViewer.style.display = "none";
+      photoViewerImage.src = "";
+    };
+
+    photoViewer.addEventListener("click", (event) => {
+      if (event.target === photoViewer) {
+        closePhotoViewer();
+      }
+    });
+
+    if (photoViewerClose) {
+      photoViewerClose.addEventListener("click", closePhotoViewer);
+    }
+  }
   window.scrollTo(0, 0);
 }
 
