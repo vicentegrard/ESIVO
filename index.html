@@ -511,6 +511,38 @@ const matchsDemo = [
     lieu: "Terrain adverse"
   }
 ];
+  
+const resultatsDemo = [
+  {
+    equipe: "U7",
+    date: "2026-11-07",
+    adversaire: "Adversaire de démonstration",
+    butsESIVO: 4,
+    butsAdversaire: 2
+  },
+  {
+    equipe: "U7",
+    date: "2026-10-31",
+    adversaire: "Autre adversaire de démonstration",
+    butsESIVO: 3,
+    butsAdversaire: 3
+  },
+  {
+    equipe: "U11",
+    date: "2026-11-08",
+    adversaire: "Adversaire de démonstration",
+    butsESIVO: 1,
+    butsAdversaire: 2
+  },
+  {
+    equipe: "Seniors A",
+    date: "2026-11-08",
+    adversaire: "Adversaire de démonstration",
+    butsESIVO: 3,
+    butsAdversaire: 0
+  }
+];
+
 
 
 function home() {
@@ -556,6 +588,7 @@ function showPage(page) {
 }
 
 
+
 function selectTeam(equipe) {
   const page = document.querySelector(".page-title h2").textContent;
   const contenu = document.getElementById("teamContent");
@@ -596,6 +629,47 @@ function selectTeam(equipe) {
         }).join("")}
       </div>
     `;
+  } else if (page === "Résultats") {
+    const resultats = resultatsDemo
+      .filter(resultat => resultat.equipe === equipe)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (resultats.length === 0) {
+      contenu.innerHTML = `
+        <strong>${page} · ${equipe}</strong>
+        <p>Aucun résultat de démonstration pour cette équipe.</p>
+      `;
+      return;
+    }
+
+    contenu.innerHTML = `
+      <strong>${page} · ${equipe}</strong>
+      <div class="match-list">
+        ${resultats.map(resultat => {
+          const date = new Date(resultat.date + "T00:00:00")
+            .toLocaleDateString("fr-FR", {
+              day: "numeric",
+              month: "long",
+              year: "numeric"
+            });
+
+          const statut = resultat.butsESIVO > resultat.butsAdversaire
+            ? "Victoire"
+            : resultat.butsESIVO === resultat.butsAdversaire
+              ? "Match nul"
+              : "Défaite";
+
+          return `
+            <div class="content-card">
+              <p>${date}</p>
+              <h3>ESIVO · ${resultat.adversaire}</h3>
+              <h2>${resultat.butsESIVO} - ${resultat.butsAdversaire}</h2>
+              <p>${statut}</p>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
   } else {
     contenu.innerHTML = `
       <strong>${page} · ${equipe}</strong>
@@ -603,6 +677,7 @@ function selectTeam(equipe) {
     `;
   }
 }
+
 
 </script>
 
