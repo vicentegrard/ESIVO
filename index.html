@@ -317,6 +317,19 @@ main {
   background: rgba(255, 255, 255, 0.4);
 }
 
+.photo-viewer-counter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 7px 14px;
+  border-radius: 20px;
+  margin: 0;
+}
+
 .content-card h3 {
   margin: 0 0 12px;
   font-size: 16px;
@@ -918,6 +931,7 @@ function showPage(page) {
   <button class="photo-viewer-close" id="photoViewerClose" type="button" aria-label="Fermer">×</button>
   <button class="photo-viewer-nav photo-viewer-prev" id="photoViewerPrev" type="button" aria-label="Photo précédente">‹</button>
   <img id="photoViewerImage" src="" alt="Photo agrandie">
+  <p class="photo-viewer-counter" id="photoViewerCounter">1 / 5</p>
   <button class="photo-viewer-nav photo-viewer-next" id="photoViewerNext" type="button" aria-label="Photo suivante">›</button>
 </div>
     `;
@@ -1002,30 +1016,35 @@ function showPage(page) {
   const photoViewerClose = document.getElementById("photoViewerClose");
   const photoViewerPrev = document.getElementById("photoViewerPrev");
   const photoViewerNext = document.getElementById("photoViewerNext");
+  const photoViewerCounter = document.getElementById("photoViewerCounter");
   let currentPhotoIndex = 0;
+    const updatePhotoViewer = () => {
+    photoViewerImage.src = galleryPhotos[currentPhotoIndex].src;
+    photoViewerCounter.textContent = `${currentPhotoIndex + 1} / ${galleryPhotos.length}`;
+  };
 
   if (photoViewer && photoViewerImage) {
     galleryPhotos.forEach((photo, index) => {
   photo.addEventListener("click", () => {
     currentPhotoIndex = index;
-    photoViewerImage.src = galleryPhotos[currentPhotoIndex].src;
-    photoViewer.style.display = "flex";
+updatePhotoViewer();
+photoViewer.style.display = "flex";
   });
 });
 
         if (photoViewerPrev) {
-      photoViewerPrev.addEventListener("click", () => {
-        currentPhotoIndex = (currentPhotoIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
-        photoViewerImage.src = galleryPhotos[currentPhotoIndex].src;
-      });
-    }
+  photoViewerPrev.addEventListener("click", () => {
+    currentPhotoIndex = (currentPhotoIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
+    updatePhotoViewer();
+  });
+}
 
-    if (photoViewerNext) {
-      photoViewerNext.addEventListener("click", () => {
-        currentPhotoIndex = (currentPhotoIndex + 1) % galleryPhotos.length;
-        photoViewerImage.src = galleryPhotos[currentPhotoIndex].src;
-      });
-    }
+if (photoViewerNext) {
+  photoViewerNext.addEventListener("click", () => {
+    currentPhotoIndex = (currentPhotoIndex + 1) % galleryPhotos.length;
+    updatePhotoViewer();
+  });
+}
     const closePhotoViewer = () => {
       photoViewer.style.display = "none";
       photoViewerImage.src = "";
