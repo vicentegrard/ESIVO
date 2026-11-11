@@ -476,6 +476,42 @@ const equipes = [
   "Seniors Vétérans",
   "Seniors Féminines à 8"
 ];
+  
+const matchsDemo = [
+  {
+    equipe: "U7",
+    date: "2026-11-14",
+    heure: "10:00",
+    adversaire: "Adversaire de démonstration",
+    domicile: true,
+    lieu: "Terrain ESIVO"
+  },
+  {
+    equipe: "U7",
+    date: "2026-11-21",
+    heure: "10:00",
+    adversaire: "Autre adversaire de démonstration",
+    domicile: false,
+    lieu: "Terrain adverse"
+  },
+  {
+    equipe: "U11",
+    date: "2026-11-15",
+    heure: "11:00",
+    adversaire: "Adversaire de démonstration",
+    domicile: true,
+    lieu: "Terrain ESIVO"
+  },
+  {
+    equipe: "Seniors A",
+    date: "2026-11-15",
+    heure: "15:00",
+    adversaire: "Adversaire de démonstration",
+    domicile: false,
+    lieu: "Terrain adverse"
+  }
+];
+
 
 function home() {
   location.reload();
@@ -519,13 +555,55 @@ function showPage(page) {
   window.scrollTo(0, 0);
 }
 
+
 function selectTeam(equipe) {
   const page = document.querySelector(".page-title h2").textContent;
-  document.getElementById("teamContent").innerHTML = `
-    <strong>${page} · ${equipe}</strong>
-    <p>Les informations de cette équipe seront ajoutées ici lors des prochaines étapes.</p>
-  `;
+  const contenu = document.getElementById("teamContent");
+
+  if (page === "Calendrier") {
+    const matchs = matchsDemo
+      .filter(match => match.equipe === equipe)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    if (matchs.length === 0) {
+      contenu.innerHTML = `
+        <strong>${page} · ${equipe}</strong>
+        <p>Aucun match de démonstration prévu pour cette équipe.</p>
+      `;
+      return;
+    }
+
+    contenu.innerHTML = `
+      <strong>${page} · ${equipe}</strong>
+      <div class="match-list">
+        ${matchs.map(match => {
+          const date = new Date(match.date + "T00:00:00")
+            .toLocaleDateString("fr-FR", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+              year: "numeric"
+            });
+
+          return `
+            <div class="content-card">
+              <p><strong>${date}</strong> · ${match.heure}</p>
+              <h3>ESIVO ${match.domicile ? "⚽" : "🆚"} ${match.adversaire}</h3>
+              <p>${match.domicile ? "🏠 À domicile" : "🚌 À l'extérieur"}</p>
+              <p>📍 ${match.lieu}</p>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  } else {
+    contenu.innerHTML = `
+      <strong>${page} · ${equipe}</strong>
+      <p>Les informations de cette équipe seront ajoutées ici lors des prochaines étapes.</p>
+    `;
+  }
 }
+
 </script>
 
 </body>
