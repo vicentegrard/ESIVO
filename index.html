@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#AA1A24">
+<title>ESIVO - Application officielle</title>
+
+<style>
+:root {
+  --red: #AA1A24;
+  --white: #FEFFFE;
+  --dark: #202124;
+  --gray: #f3f3f5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--gray);
+  color: var(--dark);
+}
+
+header {
+  background: var(--red);
+  color: white;
+  padding: 22px 20px;
+  border-bottom: 5px solid #e5bd37;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 52px;
+  height: 52px;
+  border: 2px solid white;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 25px;
+}
+
+header p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  opacity: .9;
+}
+
+main {
+  padding: 18px;
+  max-width: 700px;
+  margin: auto;
+}
+
+h2 {
+  margin-top: 8px;
+  font-size: 23px;
+}
+
+.welcome {
+  background: var(--red);
+  color: white;
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 22px;
+}
+
+.welcome h2 {
+  font-size: 26px;
+  margin: 0 0 8px;
+}
+
+.welcome p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 22px 0 12px;
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.menu button {
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 13px;
+  padding: 17px 10px;
+  min-height: 90px;
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--dark);
+  cursor: pointer;
+}
+
+.menu button:active {
+  background: #fbeaec;
+}
+
+.menu span {
+  display: block;
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 18px;
+  margin: 14px 0;
+  box-shadow: 0 2px 8px #0000000c;
+}
+
+select {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background: white;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.note {
+  color: #777;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.back {
+  background: var(--red);
+  color: white;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 16px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+footer {
+  text-align: center;
+  padding: 25px 10px;
+  color: #777;
+  font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">ESIVO</div>
+    <div>
+      <h1>ESIVO</h1>
+      <p>Entente Sportive Intercommunale Vallée de l'Orne</p>
+    </div>
+  </div>
+</header>
+
+<main id="app">
+
+  <div class="welcome">
+    <h2>Bienvenue à l'ESIVO !</h2>
+    <p>Retrouvez toute l'actualité, les calendriers et les résultats de votre club.</p>
+  </div>
+
+  <div class="section-title">Découvrir le club</div>
+
+  <div class="menu">
+    <button onclick="showPage('Calendrier')"><span>📅</span>Calendrier</button>
+    <button onclick="showPage('Résultats')"><span>⚽</span>Résultats</button>
+    <button onclick="showPage('Classements')"><span>🏆</span>Classements</button>
+    <button onclick="showPage('Actualités')"><span>📰</span>Actualités</button>
+    <button onclick="showPage('Agenda')"><span>📌</span>Agenda</button>
+    <button onclick="showPage('Contacts')"><span>📞</span>Contacts</button>
+    <button onclick="showPage('Galerie photos')"><span>📸</span>Galerie photos</button>
+    <button onclick="showPage('Notifications')"><span>🔔</span>Notifications</button>
+    <button onclick="showPage('Administration')"><span>⚙️</span>Administration</button>
+  </div>
+
+  <footer>
+    ESIVO · Application officielle du club
+  </footer>
+
+</main>
+
+<script>
+const equipes = [
+  "U7",
+  "U9",
+  "U11",
+  "U13",
+  "U18",
+  "Seniors A",
+  "Seniors B",
+  "Seniors C",
+  "Seniors Vétérans",
+  "Seniors Féminines à 8"
+];
+
+function showPage(page) {
+  const app = document.getElementById("app");
+
+  const equipesPage = [
+    "Calendrier",
+    "Résultats",
+    "Classements"
+  ];
+
+  let contenu = `
+    <button class="back" onclick="home()">← Retour à l'accueil</button>
+    <h2>${page}</h2>
+  `;
+
+  if (equipesPage.includes(page)) {
+    contenu += `
+      <div class="card">
+        <label for="equipe"><strong>Choisir une équipe</strong></label>
+        <select id="equipe" onchange="selectTeam(this.value)">
+          ${equipes.map(e => `<option value="${e}">${e}</option>`).join("")}
+        </select>
+      </div>
+      <div class="card" id="teamContent">
+        <h3>${page} - U7</h3>
+        <p class="note">Les informations de cette équipe apparaîtront ici une fois les données intégrées.</p>
+      </div>
+    `;
+  } else {
+    contenu += `
+      <div class="card">
+        <h3>${page}</h3>
+        <p class="note">Cette rubrique sera développée lors des prochaines étapes de construction de l'application ESIVO.</p>
+      </div>
+    `;
+  }
+
+  app.innerHTML = contenu;
+}
+
+function selectTeam(equipe) {
+  const page = document.querySelector("main h2").textContent;
+  document.getElementById("teamContent").innerHTML = `
+    <h3>${page} - ${equipe}</h3>
+    <p class="note">Les informations de cette équipe apparaîtront ici une fois les données intégrées.</p>
+  `;
+}
+
+function home() {
+  location.reload();
+}
+</script>
+
+</body>
+</html>
