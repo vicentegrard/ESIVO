@@ -826,6 +826,33 @@ function showPage(page) {
         </div>
       </div>
     `;
+      } else if (page === "Notifications") {
+    html += `
+      <div class="notification-list">
+
+        <div class="content-card">
+          <p>🔴 Information importante</p>
+          <h3>Bienvenue sur les notifications ESIVO !</h3>
+          <p>Retrouvez ici les informations importantes et les annonces du club.</p>
+          <small>11 novembre 2026</small>
+        </div>
+
+        <div class="content-card">
+          <p>⚽ Vie sportive</p>
+          <h3>Préparez votre prochain week-end !</h3>
+          <p>Pensez à consulter régulièrement les calendriers de vos équipes.</p>
+          <small>10 novembre 2026</small>
+        </div>
+
+        <div class="content-card">
+          <p>📢 Vie du club</p>
+          <h3>Suivez toute l'actualité de l'ESIVO</h3>
+          <p>Les événements et les informations du club seront publiés ici.</p>
+          <small>8 novembre 2026</small>
+        </div>
+
+      </div>
+    `;
   } else {
     html += `
       <div class="content-card">
