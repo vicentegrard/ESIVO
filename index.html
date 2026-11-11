@@ -542,6 +542,87 @@ const resultatsDemo = [
     butsAdversaire: 0
   }
 ];
+  
+const classementsDemo = [
+  {
+    equipe: "U13",
+    position: 2,
+    joues: 9,
+    victoires: 6,
+    nuls: 2,
+    defaites: 1,
+    butsPour: 25,
+    butsContre: 10,
+    points: 20
+  },
+  {
+    equipe: "U18",
+    position: 5,
+    joues: 8,
+    victoires: 3,
+    nuls: 2,
+    defaites: 3,
+    butsPour: 16,
+    butsContre: 17,
+    points: 11
+  },
+  {
+    equipe: "Seniors A",
+    position: 1,
+    joues: 10,
+    victoires: 8,
+    nuls: 1,
+    defaites: 1,
+    butsPour: 29,
+    butsContre: 9,
+    points: 25
+  },
+  {
+    equipe: "Seniors B",
+    position: 4,
+    joues: 9,
+    victoires: 4,
+    nuls: 2,
+    defaites: 3,
+    butsPour: 18,
+    butsContre: 15,
+    points: 14
+  },
+  {
+    equipe: "Seniors C",
+    position: 6,
+    joues: 8,
+    victoires: 2,
+    nuls: 2,
+    defaites: 4,
+    butsPour: 12,
+    butsContre: 20,
+    points: 8
+  },
+  {
+    equipe: "Seniors Vétérans",
+    position: 3,
+    joues: 7,
+    victoires: 4,
+    nuls: 1,
+    defaites: 2,
+    butsPour: 19,
+    butsContre: 13,
+    points: 13
+  },
+  {
+    equipe: "Seniors Féminines à 8",
+    position: 2,
+    joues: 8,
+    victoires: 5,
+    nuls: 2,
+    defaites: 1,
+    butsPour: 22,
+    butsContre: 9,
+    points: 17
+  }
+];
+
 
 
 
@@ -586,6 +667,7 @@ function showPage(page) {
   app.innerHTML = html;
   window.scrollTo(0, 0);
 }
+
 
 
 
@@ -670,6 +752,49 @@ function selectTeam(equipe) {
         }).join("")}
       </div>
     `;
+  } else if (page === "Classements") {
+    if (["U7", "U9", "U11"].includes(equipe)) {
+      contenu.innerHTML = `
+        <strong>${page} · ${equipe}</strong>
+        <div class="content-card">
+          <h3>⚽ Catégorie ${equipe}</h3>
+          <p>Cette catégorie participe à des plateaux.</p>
+          <p>Aucun classement officiel n'est établi pour cette catégorie.</p>
+        </div>
+      `;
+      return;
+    }
+
+    const classement = classementsDemo.find(
+      element => element.equipe === equipe
+    );
+
+    if (!classement) {
+      contenu.innerHTML = `
+        <strong>${page} · ${equipe}</strong>
+        <p>Aucun classement de démonstration disponible.</p>
+      `;
+      return;
+    }
+
+    contenu.innerHTML = `
+      <strong>${page} · ${equipe}</strong>
+      <div class="content-card">
+        <h3>🏆 Position au classement</h3>
+        <h2>${classement.position}e place</h2>
+        <p>${classement.points} points</p>
+      </div>
+
+      <div class="content-card">
+        <h3>Statistiques de l'équipe</h3>
+        <p>Matchs joués : <strong>${classement.joues}</strong></p>
+        <p>Victoires : <strong>${classement.victoires}</strong></p>
+        <p>Matchs nuls : <strong>${classement.nuls}</strong></p>
+        <p>Défaites : <strong>${classement.defaites}</strong></p>
+        <p>Buts marqués : <strong>${classement.butsPour}</strong></p>
+        <p>Buts encaissés : <strong>${classement.butsContre}</strong></p>
+      </div>
+    `;
   } else {
     contenu.innerHTML = `
       <strong>${page} · ${equipe}</strong>
@@ -677,6 +802,7 @@ function selectTeam(equipe) {
     `;
   }
 }
+
 
 
 </script>
