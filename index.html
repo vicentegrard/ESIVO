@@ -638,6 +638,32 @@ const classementsDemo = [
     image: "IMG_0825.jpeg"
   }
 ];
+  const evenementsDemo = [
+  {
+    date: "2026-11-21",
+    heure: "10:00",
+    titre: "Plateau U7",
+    description: "Une matinée de football et de convivialité pour nos jeunes joueurs.",
+    lieu: "Terrain ESIVO",
+    categorie: "Sport"
+  },
+  {
+    date: "2026-11-28",
+    heure: "14:00",
+    titre: "Tournoi jeunes",
+    description: "Une journée de rencontres et de partage entre les équipes jeunes.",
+    lieu: "Complexe sportif ESIVO",
+    categorie: "Tournoi"
+  },
+  {
+    date: "2026-12-12",
+    heure: "19:00",
+    titre: "Soirée du club",
+    description: "Un moment convivial pour réunir joueurs, familles, éducateurs et bénévoles.",
+    lieu: "Salle des fêtes",
+    categorie: "Vie du club"
+  }
+];
 
 
 
@@ -645,6 +671,7 @@ const classementsDemo = [
 function home() {
   location.reload();
 }
+
 
 
 function showPage(page) {
@@ -699,6 +726,34 @@ function showPage(page) {
         }).join("")}
       </div>
     `;
+  } else if (page === "Agenda") {
+    const evenements = evenementsDemo
+      .slice()
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    html += `
+      <div class="event-list">
+        ${evenements.map(evenement => {
+          const date = new Date(evenement.date + "T00:00:00")
+            .toLocaleDateString("fr-FR", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+              year: "numeric"
+            });
+
+          return `
+            <div class="content-card">
+              <p>📅 ${date} · ${evenement.heure}</p>
+              <p>${evenement.categorie}</p>
+              <h3>${evenement.titre}</h3>
+              <p>${evenement.description}</p>
+              <p>📍 ${evenement.lieu}</p>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
   } else {
     html += `
       <div class="content-card">
@@ -711,6 +766,7 @@ function showPage(page) {
   app.innerHTML = html;
   window.scrollTo(0, 0);
 }
+
 
 
 
