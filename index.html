@@ -397,12 +397,27 @@ main {
 
 .team-select {
   width: 100%;
-  padding: 14px;
-  background: white;
-  border: 1px solid #dedee3;
-  border-radius: 10px;
+  padding: 14px 16px;
+  background: #202029;
+  color: #FEFFFE;
+  border: 1px solid #454550;
+  border-radius: 12px;
   margin-top: 10px;
-  font-size: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.team-select:focus {
+  border-color: #AA1A24;
+  box-shadow: 0 0 0 3px rgba(170,26,36,.15);
+}
+
+.team-select option {
+  background: #202029;
+  color: #FEFFFE;
 }
 
 .team-result {
