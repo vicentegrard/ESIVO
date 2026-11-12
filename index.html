@@ -1946,7 +1946,8 @@ function selectTeam(equipe) {
         }).join("")}
       </div>
     `;
-  } else if (page === "Classements") {
+  
+} else if (page === "Classements") {
     if (["U7", "U9", "U11"].includes(equipe)) {
       contenu.innerHTML = `
         <strong>${page} · ${equipe}</strong>
@@ -1954,6 +1955,97 @@ function selectTeam(equipe) {
           <h3>⚽ Catégorie ${equipe}</h3>
           <p>Cette catégorie participe à des plateaux.</p>
           <p>Aucun classement officiel n'est établi pour cette catégorie.</p>
+        </div>
+      `;
+      return;
+    }
+
+    if (equipe === "U13") {
+      const classementU13 = [
+        {
+          position: 1, equipe: "ES BARBERY", logo: "logos/es-barbery.png",
+          points: 6, joues: 2, victoires: 2, nuls: 0, defaites: 0,
+          forfait: 0, butsPour: 14, butsContre: 2, difference: "+12", serie: "VV"
+        },
+        {
+          position: 2, equipe: "FC VITAL B", logo: "logos/fc-vital-b.png",
+          points: 4, joues: 2, victoires: 1, nuls: 1, defaites: 0,
+          forfait: 0, butsPour: 10, butsContre: 1, difference: "+9", serie: "VN"
+        },
+        {
+          position: 3, equipe: "USM BLAINVILLE B", logo: "logos/usm-blainville-b.png",
+          points: 4, joues: 3, victoires: 1, nuls: 1, defaites: 1,
+          forfait: 0, butsPour: 5, butsContre: 8, difference: "-3", serie: "VND"
+        },
+        {
+          position: 4, equipe: "ESIVO", logo: "logos/esivo.png",
+          points: 3, joues: 3, victoires: 1, nuls: 0, defaites: 2,
+          forfait: 0, butsPour: 6, butsContre: 13, difference: "-7", serie: "DDV"
+        },
+        {
+          position: 5, equipe: "AJS COLL. OUISTREHAM C", logo: "logos/ajs-ouistreham-c.png",
+          points: 0, joues: 2, victoires: 0, nuls: 0, defaites: 2,
+          forfait: 0, butsPour: 3, butsContre: 14, difference: "-11", serie: "DD"
+        }
+      ];
+
+      contenu.innerHTML = `
+        <strong>${page} · ${equipe}</strong>
+        <div class="content-card">
+          <h3>🏆 Départemental 3 U13 à 8 · Groupe D</h3>
+          <p>Classement du championnat 2026–2027</p>
+          <div style="overflow-x:auto; margin-top:18px;">
+            <table style="width:100%; border-collapse:collapse; min-width:850px; font-size:12px;">
+              <thead>
+                <tr style="color:#B8B8C2; border-bottom:1px solid #454550;">
+                  <th style="padding:12px 7px;">Pos.</th>
+                  <th style="padding:12px 7px; text-align:left;">Équipe</th>
+                  <th>Pts</th>
+                  <th>J</th>
+                  <th>V</th>
+                  <th>N</th>
+                  <th>D</th>
+                  <th>Forf.</th>
+                  <th>BP</th>
+                  <th>BC</th>
+                  <th>Diff.</th>
+                  <th>Série</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${classementU13.map(club => `
+                  <tr style="
+                    background:${club.equipe === "ESIVO" ? "rgba(170,26,36,.22)" : "transparent"};
+                    border-bottom:1px solid #393943;
+                    font-weight:${club.equipe === "ESIVO" ? "800" : "500"};
+                    color:${club.equipe === "ESIVO" ? "#FFFFFF" : "#D0D0D8"};
+                  ">
+                    <td style="padding:12px 7px; text-align:center;">${club.position}</td>
+                    <td style="padding:10px 7px; white-space:nowrap;">
+                      <div style="display:flex; align-items:center; gap:9px;">
+                        <img src="${club.logo}" alt="Logo ${club.equipe}"
+                          style="width:30px; height:30px; object-fit:contain;">
+                        <span>${club.equipe}</span>
+                      </div>
+                    </td>
+                    <td style="text-align:center;">${club.points}</td>
+                    <td style="text-align:center;">${club.joues}</td>
+                    <td style="text-align:center;">${club.victoires}</td>
+                    <td style="text-align:center;">${club.nuls}</td>
+                    <td style="text-align:center;">${club.defaites}</td>
+                    <td style="text-align:center;">${club.forfait}</td>
+                    <td style="text-align:center;">${club.butsPour}</td>
+                    <td style="text-align:center;">${club.butsContre}</td>
+                    <td style="text-align:center;">${club.difference}</td>
+                    <td style="text-align:center;">${club.serie}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:14px; color:#B8B8C2; font-size:11px;">
+            BP : buts pour · BC : buts contre · Diff. : différence de buts
+          </p>
         </div>
       `;
       return;
@@ -1989,6 +2081,7 @@ function selectTeam(equipe) {
         <p>Buts encaissés : <strong>${classement.butsContre}</strong></p>
       </div>
     `;
+  }
   } else {
     contenu.innerHTML = `
       <strong>${page} · ${equipe}</strong>
