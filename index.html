@@ -97,14 +97,17 @@ main {
 }
 
 .hero {
-  background: linear-gradient(125deg, var(--red), var(--red-dark));
-  color: white;
-  padding: 25px 22px;
-  border-radius: 18px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(255,255,255,.12), transparent 35%),
+    linear-gradient(135deg, #AA1A24 0%, #80131B 55%, #4B1017 100%);
+  color: var(--white);
+  padding: 30px 24px;
+  border-radius: 22px;
   margin-top: -2px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 7px 18px #AA1A2425;
+  box-shadow: 0 12px 30px rgba(170, 26, 36, .25);
+  border: 1px solid rgba(255,255,255,.12);
 }
 
 .hero:after {
@@ -129,18 +132,23 @@ main {
 }
 
 .hero h2 {
-  font-size: 27px;
-  line-height: 1.15;
-  margin: 15px 0 9px;
-  max-width: 280px;
+  font-size: 30px;
+  line-height: 1.12;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  margin: 17px 0 11px;
+  max-width: 320px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .15);
 }
 
 .hero p {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.6;
-  opacity: .9;
-  max-width: 310px;
+  font-size: 14px;
+  line-height: 1.7;
+  font-weight: 400;
+  color: rgba(255, 255, 255, .88);
+  max-width: 330px;
+  letter-spacing: .1px;
 }
 
 .section-heading {
@@ -163,8 +171,9 @@ main {
 
 .quick-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 20px;
 }
 
 .quick-card {
@@ -407,11 +416,14 @@ main {
   bottom: 0;
   left: 0;
   right: 0;
-  background: white;
-  border-top: 1px solid #e5e5e8;
+  background: rgba(25, 25, 31, .97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid #35353F;
   display: flex;
   justify-content: center;
   z-index: 10;
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, .25);
 }
 
 .bottom-inner {
@@ -419,26 +431,49 @@ main {
   max-width: 600px;
   display: flex;
   justify-content: space-around;
+  align-items: center;
+  padding: 7px 5px 5px;
 }
 
 .bottom-nav button {
+  flex: 1;
   border: 0;
   background: transparent;
-  padding: 14px 10px 12px;
-  color: var(--muted);
-  font-size: 10px;
+  padding: 12px 8px 10px;
+  color: #92929D;
+  font-size: 11px;
+  font-weight: 500;
   cursor: pointer;
+  transition: color .2s ease, transform .2s ease;
 }
 
 .bottom-nav button span {
   display: block;
-  font-size: 20px;
-  margin-bottom: 4px;
+  font-size: 21px;
+  margin-bottom: 5px;
+  transition: transform .2s ease;
 }
 
 .bottom-nav button.active {
-  color: var(--red);
+  color: var(--white);
   font-weight: bold;
+  position: relative;
+}
+
+.bottom-nav button.active::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 25%;
+  width: 50%;
+  height: 3px;
+  background: var(--red);
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 0 10px rgba(170, 26, 36, .6);
+}
+
+.bottom-nav button:active span {
+  transform: scale(.9);
 }
 
 footer {
@@ -466,6 +501,46 @@ footer {
   .quick-card {
     padding: 16px 12px;
   }
+}
+/* =====================================
+   ESIVO — IDENTITÉ DARK PREMIUM
+===================================== */
+
+:root {
+  --red: #AA1A24;
+  --red-dark: #80131B;
+  --white: #FEFFFE;
+  --dark: #111116;
+  --gray: #19191F;
+  --muted: #A3A3AD;
+  --yellow: #E5BD37;
+}
+
+body {
+  background: var(--dark);
+  color: var(--white);
+  font-family: Arial, Helvetica, sans-serif;
+  padding-bottom: 85px;
+}
+  /* CARTES — STYLE DARK PREMIUM */
+
+.quick-card {
+  background: linear-gradient(145deg, #24242C, #1B1B22);
+  border: 1px solid #35353F;
+  border-radius: 18px;
+  padding: 20px 16px;
+  text-align: left;
+  min-height: 108px;
+  cursor: pointer;
+  color: var(--white);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .18);
+}
+
+.quick-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--red);
+  box-shadow: 0 8px 24px rgba(170, 26, 36, .18);
 }
 </style>
 </head>
