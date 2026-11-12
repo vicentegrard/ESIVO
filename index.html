@@ -542,6 +542,304 @@ body {
   border-color: var(--red);
   box-shadow: 0 8px 24px rgba(170, 26, 36, .18);
 }
+
+/* ==========================================
+   ESIVO — NOUVEL ACCUEIL DARK PREMIUM
+========================================== */
+
+#app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 22px 18px 110px;
+}
+
+/* HERO */
+
+.hero-dashboard {
+  min-height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 26px;
+  background:
+    radial-gradient(circle at 85% 50%, rgba(255,255,255,.13), transparent 35%),
+    linear-gradient(125deg, #AA1A24, #681019 75%, #360C12);
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 15px 35px rgba(170,26,36,.22);
+}
+
+.hero-dashboard .hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 75%;
+}
+
+.hero-dashboard .hero-tag {
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 800;
+  color: rgba(255,255,255,.8);
+}
+
+.hero-dashboard h2 {
+  font-size: clamp(27px, 5vw, 42px);
+  line-height: 1.1;
+  margin: 16px 0 10px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.hero-dashboard p {
+  color: rgba(255,255,255,.85);
+  font-size: 14px;
+  margin: 0;
+}
+
+.hero-decoration {
+  font-size: clamp(65px, 12vw, 115px);
+  opacity: .18;
+  transform: rotate(-18deg);
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  translate: 0 -50%;
+}
+
+/* TITRES DE SECTIONS */
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 34px 0 17px;
+}
+
+.section-heading h2 {
+  color: #FEFFFE;
+  font-size: 21px;
+  font-weight: 800;
+  margin: 5px 0 0;
+  letter-spacing: -.4px;
+}
+
+.section-eyebrow {
+  color: #B8B8C2;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.7px;
+}
+
+.section-icon {
+  font-size: 23px;
+  background: #292930;
+  border: 1px solid #3B3B45;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+/* PANNEAUX DU WEEK-END */
+
+.weekend-section {
+  margin-top: 30px;
+}
+
+.dashboard-panel {
+  background: linear-gradient(145deg, #24242D, #1A1A21);
+  border: 1px solid #363640;
+  border-radius: 19px;
+  padding: 19px;
+  margin-bottom: 15px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.15);
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.panel-heading h3 {
+  color: #FEFFFE;
+  font-size: 16px;
+  margin: 0;
+  font-weight: 800;
+}
+
+.live-indicator,
+.result-indicator {
+  font-size: 9px;
+  letter-spacing: 1px;
+  font-weight: 800;
+  color: #E7B8BC;
+  background: rgba(170,26,36,.18);
+  border: 1px solid rgba(170,26,36,.35);
+  padding: 6px 9px;
+  border-radius: 20px;
+}
+
+.result-indicator {
+  color: #D5D5DD;
+  background: #303039;
+  border-color: #41414B;
+}
+
+.weekend-list {
+  display: grid;
+  gap: 10px;
+}
+
+.empty-state {
+  color: #A3A3AD;
+  font-size: 13px;
+  line-height: 1.6;
+  background: #202027;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 0;
+}
+
+/* PRONOSTICS */
+
+.pronostics-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin: 25px 0 35px;
+  padding: 23px;
+  background: linear-gradient(120deg, #29242A, #1D1C24);
+  border: 1px solid #55404A;
+  border-left: 4px solid #AA1A24;
+  border-radius: 19px;
+  cursor: pointer;
+  transition: transform .2s ease, border-color .2s ease;
+}
+
+.pronostics-banner:hover {
+  transform: translateY(-3px);
+  border-color: #AA1A24;
+}
+
+.pronostics-banner h2 {
+  color: #FEFFFE;
+  font-size: 21px;
+  margin: 7px 0;
+}
+
+.pronostics-banner p {
+  color: #B8B8C2;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.pronostics-icon {
+  font-size: 42px;
+  flex-shrink: 0;
+}
+
+/* RUBRIQUES */
+
+.rubriques-section {
+  margin-top: 35px;
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+  margin-top: 18px;
+}
+
+.quick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7px;
+  min-height: 125px;
+  padding: 17px;
+  background: linear-gradient(145deg, #262630, #1C1C23);
+  border: 1px solid #383843;
+  border-radius: 17px;
+  color: #FEFFFE;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .2s ease, border-color .2s ease;
+}
+
+.quick-card:hover {
+  transform: translateY(-3px);
+  border-color: #AA1A24;
+}
+
+.quick-card .emoji {
+  font-size: 23px;
+}
+
+.quick-card strong {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.quick-card small {
+  color: #A5A5AF;
+  font-size: 11px;
+}
+
+/* PIED DE PAGE */
+
+.dashboard-footer {
+  text-align: center;
+  color: #777781;
+  font-size: 10px;
+  padding: 35px 10px 10px;
+  line-height: 1.6;
+}
+
+/* ADAPTATION AUX ÉCRANS */
+
+@media (min-width: 700px) {
+  .quick-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .weekend-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .weekend-section > .section-heading {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  #app {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .hero-dashboard {
+    padding: 25px 19px;
+    min-height: 175px;
+  }
+
+  .dashboard-panel {
+    padding: 16px;
+  }
+
+  .pronostics-banner {
+    padding: 19px;
+  }
+}
+
 </style>
 </head>
 
@@ -562,28 +860,74 @@ body {
 
 <main id="app">
 
-  <section class="hero">
-    <span class="hero-tag">ENSEMBLE, PLUS FORTS</span>
-    <h2>Bienvenue à l'ESIVO !</h2>
-    <p>Toute la vie de votre club de football réunie au même endroit.</p>
-  </section>
+  
+<section class="hero hero-dashboard">
+  <div class="hero-content">
+    <span class="hero-tag">ENTENTE SPORTIVE INTERCOMMUNALE</span>
+    <h2>Bienvenue à l'ESIVO</h2>
+    <p>Un club, des équipes, une même passion.</p>
+  </div>
+  <div class="hero-decoration">⚽</div>
+</section>
 
+<section class="weekend-section">
   <div class="section-heading">
-    <h2>Les rubriques</h2>
-    <span>ESIVO FOOTBALL</span>
+    <div>
+      <span class="section-eyebrow">LE PROGRAMME DU CLUB</span>
+      <h2>Le week-end ESIVO</h2>
+    </div>
+    <span class="section-icon">📅</span>
+  </div>
+
+  <div class="dashboard-panel">
+    <div class="panel-heading">
+      <h3>Prochaines rencontres</h3>
+      <span class="live-indicator">À VENIR</span>
+    </div>
+    <div id="weekendMatches" class="weekend-list">
+      <p class="empty-state">Chargement des rencontres...</p>
+    </div>
+  </div>
+
+  <div class="dashboard-panel">
+    <div class="panel-heading">
+      <h3>Derniers résultats</h3>
+      <span class="result-indicator">RÉSULTATS</span>
+    </div>
+    <div id="weekendResults" class="weekend-list">
+      <p class="empty-state">Chargement des résultats...</p>
+    </div>
+  </div>
+</section>
+
+<section class="pronostics-banner" onclick="showPage('Pronostics')">
+  <div>
+    <span class="section-eyebrow">LE JEU DU CLUB</span>
+    <h2>Les pronostics</h2>
+    <p>Pronostique les scores et cumule des points virtuels !</p>
+  </div>
+  <span class="pronostics-icon">🎯</span>
+</section>
+
+<section class="rubriques-section">
+  <div class="section-heading">
+    <div>
+      <span class="section-eyebrow">TOUTE LA VIE DU CLUB</span>
+      <h2>Explorer l'ESIVO</h2>
+    </div>
   </div>
 
   <div class="quick-grid">
     <button class="quick-card" onclick="showPage('Calendrier')">
       <span class="emoji">📅</span>
       <strong>Calendrier</strong>
-      <small>Les prochaines rencontres</small>
+      <small>Les rencontres</small>
     </button>
 
     <button class="quick-card" onclick="showPage('Résultats')">
       <span class="emoji">⚽</span>
       <strong>Résultats</strong>
-      <small>Les scores du club</small>
+      <small>Les scores</small>
     </button>
 
     <button class="quick-card" onclick="showPage('Classements')">
@@ -592,22 +936,10 @@ body {
       <small>Les championnats</small>
     </button>
 
-    <button class="quick-card" onclick="showPage('Actualités')">
-      <span class="emoji">📰</span>
-      <strong>Actualités</strong>
-      <small>La vie du club</small>
-    </button>
-
     <button class="quick-card" onclick="showPage('Agenda')">
       <span class="emoji">📌</span>
       <strong>Agenda</strong>
-      <small>Les événements à venir</small>
-    </button>
-
-    <button class="quick-card" onclick="showPage('Contacts')">
-      <span class="emoji">📞</span>
-      <strong>Contacts</strong>
-      <small>Nous contacter</small>
+      <small>Les événements</small>
     </button>
 
     <button class="quick-card" onclick="showPage('Galerie photos')">
@@ -616,10 +948,16 @@ body {
       <small>Les moments du club</small>
     </button>
 
+    <button class="quick-card" onclick="showPage('Contacts')">
+      <span class="emoji">📞</span>
+      <strong>Contacts</strong>
+      <small>Les responsables</small>
+    </button>
+
     <button class="quick-card" onclick="showPage('Notifications')">
       <span class="emoji">🔔</span>
       <strong>Notifications</strong>
-      <small>Les informations importantes</small>
+      <small>Les informations</small>
     </button>
 
     <button class="quick-card" onclick="showPage('Administration')">
@@ -628,21 +966,14 @@ body {
       <small>Espace de gestion</small>
     </button>
   </div>
+</section>
 
-  <div class="section-heading">
-    <h2>À la une</h2>
-    <span>ACTUALITÉS</span>
-  </div>
-
-  <div class="news-card">
-    <span class="news-label">BIENVENUE</span>
-    <h3>Bienvenue sur l'application ESIVO</h3>
-    <p>Retrouvez prochainement ici les actualités, les informations et tous les rendez-vous de votre club.</p>
-  </div>
-
-  <footer>ESIVO · Entente Sportive Intercommunale Vallée de l'Orne</footer>
+<footer class="dashboard-footer">
+  ESIVO · Entente Sportive Intercommunale Vallée de l'Orne
+</footer>
 
 </main>
+
 
 <nav class="bottom-nav">
   <div class="bottom-inner">
