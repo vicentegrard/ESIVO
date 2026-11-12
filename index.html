@@ -259,11 +259,25 @@ main {
 }
 
 .content-card {
-  background: white;
-  padding: 19px;
-  border-radius: 15px;
-  margin-bottom: 14px;
-  border: 1px solid #e9e9ec;
+  background: linear-gradient(145deg, #262630, #1C1C24);
+  padding: 22px;
+  border-radius: 19px;
+  margin-bottom: 17px;
+  border: 1px solid #393943;
+  box-shadow: 0 9px 25px rgba(0,0,0,.18);
+  transition: border-color .2s ease, transform .2s ease;
+}
+
+.content-card:hover {
+  border-color: #AA1A24;
+  transform: translateY(-2px);
+}
+
+.content-card h3 {
+  color: #FEFFFE;
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0 0 17px;
 }
 
 
