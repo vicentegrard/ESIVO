@@ -2038,6 +2038,148 @@ function selectTeam(equipe) {
       return;
     }
 
+    
+    if (equipe === "U18") {
+      const classementU18 = [
+        {
+          position: 1, equipe: "HÉROUVILLE C", logo: "logos/herouville-c.png",
+          points: 15, joues: 5, victoires: 5, nuls: 0, defaites: 0,
+          forfait: 0, butsPour: 24, butsContre: 3, difference: "+21"
+        },
+        {
+          position: 2, equipe: "ST CYR FERVAQUES", logo: "logos/st-cyr-fervaques.png",
+          points: 12, joues: 5, victoires: 4, nuls: 0, defaites: 1,
+          forfait: 0, butsPour: 25, butsContre: 7, difference: "+18"
+        },
+        {
+          position: 3, equipe: "TROARN", logo: "logos/troarn.png",
+          points: 9, joues: 4, victoires: 3, nuls: 0, defaites: 1,
+          forfait: 0, butsPour: 19, butsContre: 3, difference: "+16"
+        },
+        {
+          position: 4, equipe: "FALAISE C", logo: "logos/falaise-c.png",
+          points: 9, joues: 5, victoires: 3, nuls: 0, defaites: 2,
+          forfait: 0, butsPour: 17, butsContre: 19, difference: "-2"
+        },
+        {
+          position: 5, equipe: "AJS COLL. OUISTREHAM B", logo: "logos/ajs-ouistreham-c.png",
+          points: 7, joues: 5, victoires: 2, nuls: 1, defaites: 2,
+          forfait: 0, butsPour: 16, butsContre: 20, difference: "-4"
+        },
+        {
+          position: 6, equipe: "POTIGNY", logo: "logos/potigny.png",
+          points: 6, joues: 5, victoires: 2, nuls: 0, defaites: 3,
+          forfait: 0, butsPour: 15, butsContre: 22, difference: "-7"
+        },
+        {
+          position: 7, equipe: "ASTDV B", logo: "logos/astdv-b.png",
+          points: 6, joues: 5, victoires: 2, nuls: 0, defaites: 3,
+          forfait: 0, butsPour: 10, butsContre: 20, difference: "-10"
+        },
+        {
+          position: 8, equipe: "CASTELET-ST SYLVAIN", logo: "logos/castelet-st-sylvain.png",
+          points: 4, joues: 5, victoires: 1, nuls: 1, defaites: 3,
+          forfait: 0, butsPour: 11, butsContre: 17, difference: "-6"
+        },
+        {
+          position: 9, equipe: "ESIVO", logo: "logos/esivo.png",
+          points: 3, joues: 5, victoires: 1, nuls: 0, defaites: 4,
+          forfait: 0, butsPour: 7, butsContre: 22, difference: "-15"
+        },
+        {
+          position: 10, equipe: "MOYAUX B", logo: "logos/moyaux-b.png",
+          points: -1, joues: 4, victoires: 0, nuls: 0, defaites: 3,
+          forfait: 1, butsPour: 7, butsContre: 18, difference: "-11"
+        }
+      ];
+
+      contenu.innerHTML = `
+        <strong>${page} · ${equipe}</strong>
+        <div class="content-card">
+          <h3>🏆 Départemental 3 U18 Win Sport School · Groupe B</h3>
+          <p>Classement du championnat 2026–2027</p>
+
+          <div class="classement-tableau">
+            <div style="overflow-x:auto; margin-top:18px;">
+              <table style="width:100%; border-collapse:collapse; min-width:780px; font-size:12px;">
+                <thead>
+                  <tr style="color:#B8B8C2; border-bottom:1px solid #454550;">
+                    <th style="padding:12px 7px;">Pos.</th>
+                    <th style="padding:12px 7px; text-align:left;">Équipe</th>
+                    <th>Pts</th>
+                    <th>J</th>
+                    <th>V</th>
+                    <th>N</th>
+                    <th>D</th>
+                    <th>Forf.</th>
+                    <th>BP</th>
+                    <th>BC</th>
+                    <th>Diff.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${classementU18.map(club => `
+                    <tr style="
+                      background:${club.equipe === "ESIVO" ? "rgba(170,26,36,.22)" : "transparent"};
+                      border-bottom:1px solid #393943;
+                      font-weight:${club.equipe === "ESIVO" ? "800" : "500"};
+                      color:${club.equipe === "ESIVO" ? "#FFFFFF" : "#D0D0D8"};
+                    ">
+                      <td style="padding:12px 7px; text-align:center;">${club.position}</td>
+                      <td style="padding:10px 7px; white-space:nowrap;">
+                        <div style="display:flex; align-items:center; gap:9px;">
+                          <img src="${club.logo}" alt="Logo ${club.equipe}"
+                            style="width:30px; height:30px; object-fit:contain;">
+                          <span>${club.equipe}</span>
+                        </div>
+                      </td>
+                      <td style="text-align:center; font-weight:900; color:#FFFFFF; font-size:14px;">${club.points}</td>
+                      <td style="text-align:center;">${club.joues}</td>
+                      <td style="text-align:center;">${club.victoires}</td>
+                      <td style="text-align:center;">${club.nuls}</td>
+                      <td style="text-align:center;">${club.defaites}</td>
+                      <td style="text-align:center;">${club.forfait}</td>
+                      <td style="text-align:center;">${club.butsPour}</td>
+                      <td style="text-align:center;">${club.butsContre}</td>
+                      <td style="text-align:center;">${club.difference}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="classement-cartes">
+            ${classementU18.map(club => `
+              <div class="club-mobile ${club.equipe === "ESIVO" ? "club-esivo" : ""}">
+                <div class="club-mobile-entete">
+                  <span class="club-mobile-position">${club.position}</span>
+                  <img src="${club.logo}" alt="Logo ${club.equipe}">
+                  <strong>${club.equipe}</strong>
+                  <span class="club-mobile-points">${club.points} pts</span>
+                </div>
+                <div class="club-mobile-stats">
+                  <span>Joués : ${club.joues}</span>
+                  <span>V : ${club.victoires}</span>
+                  <span>N : ${club.nuls}</span>
+                  <span>D : ${club.defaites}</span>
+                  <span>Forf. : ${club.forfait}</span>
+                  <span>BP : ${club.butsPour}</span>
+                  <span>BC : ${club.butsContre}</span>
+                  <span>Diff. : ${club.difference}</span>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+          <p style="margin-top:14px; color:#B8B8C2; font-size:11px;">
+            J : matchs joués · Forf. : forfaits · BP : buts pour · BC : buts contre · Diff. : différence de buts
+          </p>
+        </div>
+      `;
+      return;
+    }
+
     if (equipe === "U13") {
       const classementU13 = [
         {
