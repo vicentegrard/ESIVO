@@ -897,32 +897,40 @@ body {
 }
 /* CARTES DES RENCONTRES */
 
+/* CARTES MATCHS ET RÉSULTATS — VERSION PREMIUM */
+
 .weekend-match,
 .weekend-result {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 15px;
-  padding: 16px;
-  background: linear-gradient(145deg, #2B2B35, #202029);
+  padding: 19px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(170,26,36,.09), transparent 45%),
+    linear-gradient(145deg, #292932, #1C1C24);
   border: 1px solid #3B3B46;
-  border-radius: 15px;
-  transition: transform .2s ease, border-color .2s ease;
+  border-radius: 17px;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .weekend-match:hover,
 .weekend-result:hover {
-  transform: translateY(-2px);
-  border-color: #AA1A24;
+  transform: translateY(-3px);
+  border-color: rgba(170,26,36,.75);
+  box-shadow: 0 10px 25px rgba(0,0,0,.2);
 }
 
 .match-team {
   display: inline-block;
-  color: #D9A0A5;
+  color: #E6A5AB;
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
 }
 
 .weekend-match strong,
@@ -930,25 +938,29 @@ body {
   display: block;
   color: #FEFFFE;
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 850;
+  line-height: 1.35;
 }
 
 .match-opponent {
   display: block;
-  color: #A9A9B3;
+  color: #B2B2BD;
   font-size: 12px;
-  margin-top: 5px;
+  margin-top: 6px;
+  line-height: 1.5;
 }
 
 .match-info,
 .result-score {
   flex-shrink: 0;
   text-align: right;
+  min-width: 75px;
 }
 
 .match-info strong {
   color: #FEFFFE;
-  font-size: 17px;
+  font-size: 18px;
+  font-weight: 900;
 }
 
 .match-info span,
@@ -957,24 +969,26 @@ body {
   display: block;
   color: #A9A9B3;
   font-size: 10px;
-  margin-top: 5px;
+  margin-top: 6px;
+  line-height: 1.4;
 }
 
 .result-score > strong {
-  font-size: 23px;
-  letter-spacing: 1px;
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
 }
 
 .result-score span {
   display: inline-block;
-  margin-top: 5px;
+  margin-top: 7px;
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 1px;
 }
 
 .match-win {
-  border-left: 3px solid #45B879;
+  border-left: 4px solid #45B879;
 }
 
 .match-win .result-score span {
@@ -982,7 +996,7 @@ body {
 }
 
 .match-draw {
-  border-left: 3px solid #D9A441;
+  border-left: 4px solid #D9A441;
 }
 
 .match-draw .result-score span {
@@ -990,7 +1004,7 @@ body {
 }
 
 .match-loss {
-  border-left: 3px solid #D65B65;
+  border-left: 4px solid #D65B65;
 }
 
 .match-loss .result-score span {
@@ -1000,7 +1014,7 @@ body {
 @media (max-width: 400px) {
   .weekend-match,
   .weekend-result {
-    padding: 13px;
+    padding: 14px;
     gap: 8px;
   }
 
@@ -1009,8 +1023,13 @@ body {
     font-size: 13px;
   }
 
+  .match-info,
+  .result-score {
+    min-width: 65px;
+  }
+
   .result-score > strong {
-    font-size: 19px;
+    font-size: 21px;
   }
 }
   
