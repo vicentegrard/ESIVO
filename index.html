@@ -1193,6 +1193,129 @@ function home() {
   location.reload();
 }
 
+function afficherRencontresWeekend() {
+  const conteneur = document.getElementById("weekendMatches");
+  if (!conteneur) return;
+
+  const aujourdHui = new Date();
+  const jour = aujourdHui.getDay();
+
+  const samedi = new Date(aujourdHui);
+  samedi.setDate(aujourdHui.getDate() + (jour === 0 ? -1 : 6 - jour));
+  samedi.setHours(0, 0, 0, 0);
+
+  const dimanche = new Date(samedi);
+  dimanche.setDate(samedi.getDate() + 1);
+  dimanche.setHours(23, 59, 59, 999);
+
+  const rencontres = matchsDemo
+    .filter(match => {
+      const dateMatch = new Date(match.date + "T12:00:00");
+      return dateMatch >= samedi && dateMatch <= dimanche;
+    })
+    .sort((a, b) =>
+      (a.date + a.heure).localeCompare(b.date + b.heure)
+    );
+
+  if (rencontres.length === 0) {
+    conteneur.innerHTML =
+      '<p class="empty-state">Aucune rencontre programmée pour ce week-end.</p>';
+    return;
+  }
+
+  conteneur.innerHTML = rencontres.map(match => {
+    const date = new Date(match.date + "T12:00:00")
+      .toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      });
+
+    return `
+      <div class="weekend-match">
+        <div>
+          <span class="match-team">${match.equipe}</span>
+          <strong>${match.domicile ? "ESIVO" : match.adversaire}</strong>
+          <span class="match-opponent">
+            ${match.domicile ? "vs " + match.adversaire : "chez l'adversaire"}
+          </span>
+        </div>
+        <div class="match-info">
+          <strong>${match.heure}</strong>
+          <span>${date}</span>
+          <small>${match.lieu}</small>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function afficherResultatsWeekend() {
+  const conteneur = document.getElementById("weekendResults");
+  if (!conteneur) return;
+
+  const aujourdHui = new Date();
+  const jour = aujourdHui.getDay();
+
+  const samedi = new Date(aujourdHui);
+  samedi.setDate(aujourdHui.getDate() - (jour === 0 ? 1 : jour + 1));
+  samedi.setHours(0, 0, 0, 0);
+
+  const dimanche = new Date(samedi);
+  dimanche.setDate(samedi.getDate() + 1);
+  dimanche.setHours(23, 59, 59, 999);
+
+  const resultats = resultatsDemo
+    .filter(resultat => {
+      const dateResultat = new Date(resultat.date + "T12:00:00");
+      return dateResultat >= samedi && dateResultat <= dimanche;
+    })
+    .sort((a, b) =>
+      (a.date).localeCompare(b.date)
+    );
+
+  if (resultats.length === 0) {
+    conteneur.innerHTML =
+      '<p class="empty-state">Aucun résultat enregistré pour le dernier week-end.</p>';
+    return;
+  }
+
+  conteneur.innerHTML = resultats.map(resultat => {
+    const date = new Date(resultat.date + "T12:00:00")
+      .toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      });
+
+    let statut = "match-draw";
+    let libelle = "MATCH NUL";
+
+    if (resultat.butsESIVO > resultat.butsAdversaire) {
+      statut = "match-win";
+      libelle = "VICTOIRE";
+    } else if (resultat.butsESIVO < resultat.butsAdversaire) {
+      statut = "match-loss";
+      libelle = "DÉFAITE";
+    }
+
+    return `
+      <div class="weekend-result ${statut}">
+        <div class="result-team">
+          <span class="match-team">${resultat.equipe}</span>
+          <strong>ESIVO</strong>
+          <span class="match-opponent">${resultat.adversaire}</span>
+        </div>
+        <div class="result-score">
+          <strong>${resultat.butsESIVO} - ${resultat.butsAdversaire}</strong>
+          <span>${libelle}</span>
+          <small>${date}</small>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
 
 
 
@@ -1681,7 +1804,8 @@ function selectTeam(equipe) {
   }
 }
 
-
+afficherRencontresWeekend();
+afficherResultatsWeekend();
 
 </script>
 
