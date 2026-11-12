@@ -1033,6 +1033,84 @@ body {
   }
 }
   
+/* Classement U13 : affichage mobile */
+.classement-cartes {
+  display: none;
+}
+
+.classement-tableau {
+  display: block;
+}
+
+@media (max-width: 650px) {
+  .classement-tableau {
+    display: none;
+  }
+
+  .classement-cartes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .club-mobile {
+    background: linear-gradient(145deg, #262630, #1C1C24);
+    border: 1px solid #393943;
+    border-radius: 14px;
+    padding: 13px;
+  }
+
+  .club-mobile.club-esivo {
+    border: 2px solid #AA1A24;
+    background: linear-gradient(145deg, #351D23, #211A20);
+  }
+
+  .club-mobile-entete {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .club-mobile-entete img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .club-mobile-entete strong {
+    color: #FEFFFE;
+    font-size: 12px;
+    flex: 1;
+  }
+
+  .club-mobile-position {
+    color: #B8B8C2;
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  .club-mobile-points {
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  .club-mobile-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px 5px;
+    margin-top: 13px;
+    padding-top: 11px;
+    border-top: 1px solid #393943;
+    color: #C7C7D0;
+    font-size: 11px;
+    text-align: center;
+  }
+}
+
 </style>
 </head>
 
@@ -1994,6 +2072,7 @@ function selectTeam(equipe) {
         <div class="content-card">
           <h3>🏆 Départemental 3 U13 à 8 · Groupe D</h3>
           <p>Classement du championnat 2026–2027</p>
+          <div class="classement-tableau">
           <div style="overflow-x:auto; margin-top:18px;">
             <table style="width:100%; border-collapse:collapse; min-width:850px; font-size:12px;">
               <thead>
@@ -2043,6 +2122,31 @@ function selectTeam(equipe) {
               </tbody>
             </table>
           </div>
+          </div>
+          
+          <div class="classement-cartes">
+            ${classementU13.map(club => `
+              <div class="club-mobile ${club.equipe === "ESIVO" ? "club-esivo" : ""}">
+                <div class="club-mobile-entete">
+                  <span class="club-mobile-position">${club.position}</span>
+                  <img src="${club.logo}" alt="Logo ${club.equipe}">
+                  <strong>${club.equipe}</strong>
+                  <span class="club-mobile-points">${club.points} pts</span>
+                </div>
+                <div class="club-mobile-stats">
+                  <span>Joués : ${club.joues}</span>
+                  <span>V : ${club.victoires}</span>
+                  <span>N : ${club.nuls}</span>
+                  <span>D : ${club.defaites}</span>
+                  <span>BP : ${club.butsPour}</span>
+                  <span>BC : ${club.butsContre}</span>
+                  <span>Diff. : ${club.difference}</span>
+                  <span>Série : ${club.serie}</span>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
           <p style="margin-top:14px; color:#B8B8C2; font-size:11px;">
             BP : buts pour · BC : buts contre · Diff. : différence de buts
           </p>
