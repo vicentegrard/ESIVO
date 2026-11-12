@@ -419,40 +419,46 @@ main {
   margin-bottom: 20px;
 }
 
+/* NAVIGATION MOBILE DARK PREMIUM */
+
 .bottom-nav {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(25, 25, 31, .97);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid #35353F;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 28px);
+  max-width: 620px;
+  background: rgba(31, 31, 39, .94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid #41414C;
+  border-radius: 22px;
   display: flex;
   justify-content: center;
-  z-index: 10;
-  box-shadow: 0 -8px 25px rgba(0, 0, 0, .25);
+  z-index: 100;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, .45);
 }
 
 .bottom-inner {
   width: 100%;
-  max-width: 600px;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 7px 5px 5px;
+  padding: 7px 5px;
 }
 
 .bottom-nav button {
   flex: 1;
+  min-width: 0;
   border: 0;
   background: transparent;
-  padding: 12px 8px 10px;
+  padding: 9px 4px;
   color: #92929D;
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 10px;
+  font-weight: 600;
   cursor: pointer;
   transition: color .2s ease, transform .2s ease;
+  position: relative;
 }
 
 .bottom-nav button span {
@@ -463,21 +469,25 @@ main {
 }
 
 .bottom-nav button.active {
-  color: var(--white);
-  font-weight: bold;
-  position: relative;
+  color: #FEFFFE;
+  font-weight: 800;
 }
 
 .bottom-nav button.active::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 25%;
-  width: 50%;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 25px;
   height: 3px;
-  background: var(--red);
-  border-radius: 0 0 5px 5px;
-  box-shadow: 0 0 10px rgba(170, 26, 36, .6);
+  background: #AA1A24;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(170, 26, 36, .7);
+}
+
+.bottom-nav button.active span {
+  transform: translateY(-2px);
 }
 
 .bottom-nav button:active span {
