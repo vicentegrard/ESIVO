@@ -2464,6 +2464,102 @@ function selectTeam(equipe) {
       return;
     }
 
+    
+    if (equipe === "Seniors Féminines à 8") {
+      const classementFeminines = [
+        { position: 1, equipe: "MEZIDON", logo: "logos/mezidon.png", points: 21, joues: 7, victoires: 7, nuls: 0, defaites: 0, forfait: 0, butsPour: 45, butsContre: 1, difference: "+44" },
+        { position: 2, equipe: "INTER ODON", logo: "logos/inter-odon.png", points: 16, joues: 7, victoires: 5, nuls: 1, defaites: 1, forfait: 0, butsPour: 32, butsContre: 9, difference: "+23" },
+        { position: 3, equipe: "HONFLEUR", logo: "logos/honfleur.png", points: 15, joues: 7, victoires: 5, nuls: 0, defaites: 2, forfait: 0, butsPour: 22, butsContre: 15, difference: "+7" },
+        { position: 4, equipe: "AJS COLL. OUISTREHAM", logo: "logos/ajs-ouistreham-c.png", points: 12, joues: 6, victoires: 3, nuls: 3, defaites: 0, forfait: 0, butsPour: 15, butsContre: 9, difference: "+6" },
+        { position: 5, equipe: "CAHAGNES", logo: "logos/cahagnes.png", points: 12, joues: 7, victoires: 3, nuls: 3, defaites: 1, forfait: 0, butsPour: 16, butsContre: 13, difference: "+3" },
+        { position: 6, equipe: "GIBERVILLE", logo: "logos/giberville.png", points: 10, joues: 7, victoires: 3, nuls: 1, defaites: 3, forfait: 0, butsPour: 10, butsContre: 9, difference: "+1" },
+        { position: 7, equipe: "ESIVO", logo: "logos/esivo.png", points: 8, joues: 7, victoires: 2, nuls: 2, defaites: 3, forfait: 0, butsPour: 12, butsContre: 16, difference: "-4" },
+        { position: 8, equipe: "BAIE DE L'ORNE", logo: "logos/baie-de-l-orne.png", points: 8, joues: 7, victoires: 2, nuls: 2, defaites: 3, forfait: 0, butsPour: 11, butsContre: 20, difference: "-9" },
+        { position: 9, equipe: "AUTHIE", logo: "logos/authie.png", points: 6, joues: 6, victoires: 2, nuls: 0, defaites: 4, forfait: 0, butsPour: 8, butsContre: 12, difference: "-4" },
+        { position: 10, equipe: "ST DESIR B", logo: "logos/st-desir-b.png", points: 3, joues: 7, victoires: 0, nuls: 3, defaites: 4, forfait: 0, butsPour: 6, butsContre: 26, difference: "-20" },
+        { position: 11, equipe: "HASTINGS", logo: "logos/hastings.png", points: 3, joues: 7, victoires: 1, nuls: 1, defaites: 4, forfait: 1, butsPour: 4, butsContre: 28, difference: "-24" },
+        { position: 12, equipe: "CAEN SUD OUEST", logo: "logos/caen-sud-ouest.png", points: 0, joues: 7, victoires: 0, nuls: 0, defaites: 7, forfait: 0, butsPour: 3, butsContre: 26, difference: "-23" }
+      ];
+
+      contenu.innerHTML = `
+        <strong>${page} · ${equipe}</strong>
+        <div class="content-card">
+          <h3>🏆 Départemental 1 Féminin à 8</h3>
+          <p>Classement du championnat 2026–2027</p>
+
+          <div class="classement-tableau">
+            <div style="overflow-x:auto; margin-top:18px;">
+              <table style="width:100%; border-collapse:collapse; min-width:780px; font-size:12px;">
+                <thead>
+                  <tr style="color:#B8B8C2; border-bottom:1px solid #454550;">
+                    <th style="padding:12px 7px;">Pos.</th>
+                    <th style="padding:12px 7px; text-align:left;">Équipe</th>
+                    <th>Pts</th><th>J</th><th>V</th><th>N</th><th>D</th>
+                    <th>Forf.</th><th>BP</th><th>BC</th><th>Diff.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${classementFeminines.map(club => `
+                    <tr style="
+                      background:${club.equipe === "ESIVO" ? "rgba(170,26,36,.22)" : "transparent"};
+                      border-bottom:1px solid #393943;
+                      font-weight:${club.equipe === "ESIVO" ? "800" : "500"};
+                      color:${club.equipe === "ESIVO" ? "#FFFFFF" : "#D0D0D8"};
+                    ">
+                      <td style="padding:12px 7px; text-align:center;">${club.position}</td>
+                      <td style="padding:10px 7px; white-space:nowrap;">
+                        <div style="display:flex; align-items:center; gap:9px;">
+                          <img src="${club.logo}" alt="Logo ${club.equipe}" style="width:30px; height:30px; object-fit:contain;">
+                          <span>${club.equipe}</span>
+                        </div>
+                      </td>
+                      <td style="text-align:center; font-weight:900; color:#FFFFFF; font-size:14px;">${club.points}</td>
+                      <td style="text-align:center;">${club.joues}</td>
+                      <td style="text-align:center;">${club.victoires}</td>
+                      <td style="text-align:center;">${club.nuls}</td>
+                      <td style="text-align:center;">${club.defaites}</td>
+                      <td style="text-align:center;">${club.forfait}</td>
+                      <td style="text-align:center;">${club.butsPour}</td>
+                      <td style="text-align:center;">${club.butsContre}</td>
+                      <td style="text-align:center;">${club.difference}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="classement-cartes">
+            ${classementFeminines.map(club => `
+              <div class="club-mobile ${club.equipe === "ESIVO" ? "club-esivo" : ""}">
+                <div class="club-mobile-entete">
+                  <span class="club-mobile-position">${club.position}</span>
+                  <img src="${club.logo}" alt="Logo ${club.equipe}">
+                  <strong>${club.equipe}</strong>
+                  <span class="club-mobile-points">${club.points} pts</span>
+                </div>
+                <div class="club-mobile-stats">
+                  <span>Joués : ${club.joues}</span>
+                  <span>V : ${club.victoires}</span>
+                  <span>N : ${club.nuls}</span>
+                  <span>D : ${club.defaites}</span>
+                  <span>Forf. : ${club.forfait}</span>
+                  <span>BP : ${club.butsPour}</span>
+                  <span>BC : ${club.butsContre}</span>
+                  <span>Diff. : ${club.difference}</span>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+          <p style="margin-top:14px; color:#B8B8C2; font-size:11px;">
+            J : matchs joués · Forf. : forfaits · BP : buts pour · BC : buts contre · Diff. : différence de buts
+          </p>
+        </div>
+      `;
+      return;
+    }
+
 
     if (equipe === "U13") {
       const classementU13 = [
