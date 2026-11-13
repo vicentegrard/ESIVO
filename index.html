@@ -1777,61 +1777,83 @@ function home() {
   location.reload();
 }
 
+  const seniorsACalendrier = [
+  ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2026-11-22","14h30","Départemental 1","Journée 9",true,"IFS B","ifs-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2026-11-29","14h30","Départemental 1","Journée 10",false,"LE TRONQUAY","le-tronquay.png","Stade Municipal","14490 Le Tronquay"],
+  ["2026-12-06","14h30","Départemental 1","Journée 11",true,"LYSTRIENNE","lystrienne.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-01-30","19h15","Départemental 1","Journée 12",false,"AVANT GARDE C","avant-garde-c.png","Stade I U T Caen Nord 2","14000 Caen"],
+  ["2027-02-07","14h30","Départemental 1","Journée 13",true,"MOUEN","mouen.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-02-14","14h30","Départemental 1","Journée 14",false,"INTER ODON","inter-odon.png","Stade Pierre Voisin","14210 Évrecy"],
+  ["2027-03-14","15h00","Départemental 1","Journée 15",true,"TROARN","troarn.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-03-21","15h00","Départemental 1","Journée 16",false,"TERRE ET MER","terre-et-mer.png","Stade Nadine Dupont 1","14880 Hermanville-sur-Mer"],
+  ["2027-04-04","15h00","Départemental 1","Journée 17",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-04-11","15h00","Départemental 1","Journée 18",true,"THAON BRETTEVILLE B","thaon-bretteville-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-04-17","18h00","Départemental 1","Journée 19",false,"IFS B","ifs-b.png","Stade Pierre Mendès France 1","14123 Ifs"],
+  ["2027-04-25","15h00","Départemental 1","Journée 20",true,"LE TRONQUAY","le-tronquay.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-05-08","18h30","Départemental 1","Journée 21",false,"LYSTRIENNE","lystrienne.png","Stade Municipal","14330 Le Molay-Littry"],
+  ["2027-05-23","15h00","Départemental 1","Journée 22",true,"ST VIGOR LE GRAND","st-vigor-le-grand.png","Stade Municipal","14320 Fontenay-le-Marmion"]
+];
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
   if (!conteneur) return;
 
   const aujourdHui = new Date();
-  const jour = aujourdHui.getDay();
+  aujourdHui.setHours(0, 0, 0, 0);
 
-  const samedi = new Date(aujourdHui);
-  samedi.setDate(aujourdHui.getDate() + (jour === 0 ? -1 : 6 - jour));
-  samedi.setHours(0, 0, 0, 0);
+  const prochainMatch = seniorsACalendrier
+    .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
+    .sort((a, b) => a[0].localeCompare(b[0]))[0];
 
-  const dimanche = new Date(samedi);
-  dimanche.setDate(samedi.getDate() + 1);
-  dimanche.setHours(23, 59, 59, 999);
-
-  const rencontres = matchsDemo
-    .filter(match => {
-      const dateMatch = new Date(match.date + "T12:00:00");
-      return dateMatch >= samedi && dateMatch <= dimanche;
-    })
-    .sort((a, b) =>
-      (a.date + a.heure).localeCompare(b.date + b.heure)
-    );
-
-  if (rencontres.length === 0) {
+  if (!prochainMatch) {
     conteneur.innerHTML =
-      '<p class="empty-state">Aucune rencontre programmée pour ce week-end.</p>';
+      '<p class="empty-state">La saison des Seniors A est terminée.</p>';
     return;
   }
 
-  conteneur.innerHTML = rencontres.map(match => {
-    const date = new Date(match.date + "T12:00:00")
-      .toLocaleDateString("fr-FR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long"
-      });
+  const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = prochainMatch;
 
-    return `
-      <div class="weekend-match">
-        <div>
-          <span class="match-team">${match.equipe}</span>
-          <strong>${match.domicile ? "ESIVO" : match.adversaire}</strong>
-          <span class="match-opponent">
-            ${match.domicile ? "vs " + match.adversaire : "chez l'adversaire"}
-          </span>
+  const dateFr = new Date(date + "T12:00:00")
+    .toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+
+  const equipeDomicile = domicile ? "ESIVO" : adversaire;
+  const equipeExterieure = domicile ? adversaire : "ESIVO";
+  const logoDomicile = domicile ? "esivo.png" : logo;
+  const logoExterieur = domicile ? logo : "esivo.png";
+
+  conteneur.innerHTML = `
+    <div class="weekend-match home-next-match">
+      <div class="mc-eyebrow">PROCHAIN MATCH · SENIORS A</div>
+
+      <div class="home-match-teams">
+        <div class="home-match-team">
+          <img src="logos/${logoDomicile}" alt="${equipeDomicile}"
+            style="width:55px;height:55px;object-fit:contain">
+          <strong>${equipeDomicile}</strong>
         </div>
-        <div class="match-info">
-          <strong>${match.heure}</strong>
-          <span>${date}</span>
-          <small>${match.lieu}</small>
+
+        <span class="mc-vs">VS</span>
+
+        <div class="home-match-team">
+          <img src="logos/${logoExterieur}" alt="${equipeExterieure}"
+            style="width:55px;height:55px;object-fit:contain">
+          <strong>${equipeExterieure}</strong>
         </div>
       </div>
-    `;
-  }).join("");
+
+      <div class="home-match-info">
+        <strong>${dateFr} · ${heure}</strong>
+        <span>${competition} · ${journee}</span>
+        <span>📍 ${lieu} · ${ville}</span>
+        <span>${domicile ? "🏠 À domicile" : "🚌 À l'extérieur"}</span>
+      </div>
+    </div>
+  `;
 }
 
 function afficherResultatsWeekend() {
