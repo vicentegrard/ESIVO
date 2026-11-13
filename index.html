@@ -1947,7 +1947,90 @@ function selectTeam(equipe) {
   const page = document.querySelector(".page-title h2").textContent;
   const contenu = document.getElementById("teamContent");
 
-  if (page === "Calendrier") {
+  
+if (page === "Calendrier") {
+
+  if (equipe === "Seniors A") {
+    const calendrier = [
+      ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+      ["2026-11-22","14h30","Départemental 1","Journée 9",true,"IFS B","ifs-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+      ["2026-11-29","14h30","Départemental 1","Journée 10",false,"LE TRONQUAY","le-tronquay.png","Stade Municipal","14490 Le Tronquay"],
+      ["2026-12-06","14h30","Départemental 1","Journée 11",true,"LYSTRIENNE","lystrienne.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+      ["2027-01-30","19h15","Départemental 1","Journée 12",false,"AVANT GARDE C","avant-garde-c.png","Stade I U T Caen Nord 2","14000 Caen"],
+      ["2027-02-07","14h30","Départemental 1","Journée 13",true,"MOUEN","mouen.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+      ["2027-02-14","14h30","Départemental 1","Journée 14",false,"INTER ODON","inter-odon.png","Stade Pierre Voisin","14210 Évrecy"],
+      ["2027-03-14","15h00","Départemental 1","Journée 15",true,"TROARN","troarn.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+      ["2027-03-21","15h00","Départemental 1","Journée 16",false,"TERRE ET MER","terre-et-mer.png","Stade Nadine Dupont 1","14880 Hermanville-sur-Mer"],
+      ["2027-04-04","15h00","Départemental 1","Journée 17",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+      ["2027-04-11","15h00","Départemental 1","Journée 18",true,"THAON BRETTEVILLE B","thaon-bretteville-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+      ["2027-04-17","18h00","Départemental 1","Journée 19",false,"IFS B","ifs-b.png","Stade Pierre Mendès France 1","14123 Ifs"],
+      ["2027-04-25","15h00","Départemental 1","Journée 20",true,"LE TRONQUAY","le-tronquay.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+      ["2027-05-08","18h30","Départemental 1","Journée 21",false,"LYSTRIENNE","lystrienne.png","Stade Municipal","14330 Le Molay-Littry"],
+      ["2027-05-23","15h00","Départemental 1","Journée 22",true,"ST VIGOR LE GRAND","st-vigor-le-grand.png","Stade Municipal","14320 Fontenay-le-Marmion"]
+    ];
+
+    const dateFr = date => new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    });
+
+    const equipeHTML = (nom, logo) => `
+      <div class="match-team">
+        <img src="logos/${logo}" alt="${nom}">
+        <strong>${nom}</strong>
+      </div>`;
+
+    const afficherMatch = (m, index) => {
+      const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = m;
+      const matchHome = domicile ? "ESIVO" : adversaire;
+      const matchAway = domicile ? adversaire : "ESIVO";
+      const logoHome = domicile ? "esivo.png" : logo;
+      const logoAway = domicile ? logo : "esivo.png";
+
+      return `
+        <article class="fixture-card">
+          <div class="fixture-date">
+            <strong>${dateFr(date)}</strong>
+            <span>${heure}</span>
+          </div>
+          <div class="fixture-teams">
+            ${equipeHTML(matchHome, logoHome)}
+            <span class="fixture-vs">VS</span>
+            ${equipeHTML(matchAway, logoAway)}
+          </div>
+          <div class="fixture-info">
+            <span>${competition} · ${journee}</span>
+            <span>${domicile ? "DOMICILE" : "EXTÉRIEUR"}</span>
+          </div>
+          <p class="fixture-venue">📍 ${lieu} · ${ville}</p>
+        </article>`;
+    };
+
+    const premier = calendrier[0];
+
+    contenu.innerHTML = `
+      <div class="seniors-calendar">
+        <div class="next-match-card">
+          <div class="next-match-label">PROCHAIN MATCH · SENIORS A</div>
+          <h2>MATCHDAY</h2>
+          <p class="next-match-competition">${premier[2]} · ${premier[3]}</p>
+          <div class="next-match-teams">
+            ${equipeHTML("ESIVO", "esivo.png")}
+            <span class="next-match-vs">VS</span>
+            ${equipeHTML(premier[5], premier[6])}
+          </div>
+          <div class="next-match-details">
+            <p>📅 ${dateFr(premier[0])}</p>
+            <p>🕒 ${premier[1]}</p>
+            <p>📍 ${premier[7]} · ${premier[8]}</p>
+          </div>
+        </div>
+        <h3 class="calendar-section-title">TOUTES LES RENCONTRES</h3>
+        <div class="fixtures-list">
+          ${calendrier.map(afficherMatch).join("")}
+        </div>
+      </div>`;
+
+  } else {
     const matchs = matchsDemo
       .filter(match => match.equipe === equipe)
       .sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -1964,12 +2047,9 @@ function selectTeam(equipe) {
       <strong>${page} · ${equipe}</strong>
       <div class="match-list">
         ${matchs.map(match => {
-          const date = new Date(match.date + "T00:00:00")
+          const date = new Date(match.date + "T12:00:00")
             .toLocaleDateString("fr-FR", {
-              weekday: "long",
-              day: "numeric",
-              month: "long",
-              year: "numeric"
+              weekday: "long", day: "numeric", month: "long", year: "numeric"
             });
 
           return `
@@ -1978,11 +2058,11 @@ function selectTeam(equipe) {
               <h3>ESIVO ${match.domicile ? "⚽" : "🆚"} ${match.adversaire}</h3>
               <p>${match.domicile ? "🏠 À domicile" : "🚌 À l'extérieur"}</p>
               <p>📍 ${match.lieu}</p>
-            </div>
-          `;
+            </div>`;
         }).join("")}
-      </div>
-    `;
+      </div>`;
+  }
+
   } else if (page === "Résultats") {
     const resultats = resultatsDemo
       .filter(resultat => resultat.equipe === equipe)
