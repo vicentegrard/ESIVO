@@ -1881,6 +1881,23 @@ function home() {
   ["2027-05-08","18h30","Départemental 1","Journée 21",false,"LYSTRIENNE","lystrienne.png","Stade Municipal","14330 Le Molay-Littry"],
   ["2027-05-23","15h00","Départemental 1","Journée 22",true,"ST VIGOR LE GRAND","st-vigor-le-grand.png","Stade Municipal","14320 Fontenay-le-Marmion"]
 ];
+
+  const seniorsBCalendrier = [
+  ["2026-11-21","18h30","Départemental 2","Journée 9",false,"AJS COLL. OUISTREHAM B","ajs-ouistreham-c.png","Stade Philippe Kieffer","14150 Ouistreham"],
+  ["2026-11-29","14h30","Départemental 2","Journée 10",true,"BASLY","basly.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2026-12-06","14h30","Départemental 2","Journée 11",false,"ES PORTAISE","es-portaise.png","Stade Albert Pignet 1","14520 Port-en-Bessin-Huppain"],
+  ["2027-01-31","14h30","Départemental 2","Journée 12",true,"BAIE DE L'ORNE","baie-de-l-orne.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-02-07","14h30","Départemental 2","Journée 13",false,"THAON BRETTEVILLE C","thaon-bretteville-b.png","Stade Municipal 1","14740 Bretteville-l'Orgueilleuse"],
+  ["2027-02-14","14h30","Départemental 2","Journée 14",true,"BRETTEVILLE/ODON B","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-03-13","18h30","Départemental 2","Journée 15",false,"COURSEULLES B","courseulles.png","Stade du Val Pican 1","14470 Courseulles-sur-Mer"],
+  ["2027-03-21","15h00","Départemental 2","Journée 16",true,"TRÉVIÈRES","trevieres.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-04-04","15h00","Départemental 2","Journée 17",false,"TERRE ET MER B","terre-et-mer.png","Stade Municipal 1","14440 Cresserons"],
+  ["2027-04-11","15h00","Départemental 2","Journée 18",false,"CHEMIN VERT B","chemin-vert.png","Stade de la Fossette 1","14000 Caen"],
+  ["2027-04-18","15h00","Départemental 2","Journée 19",true,"AJS COLL. OUISTREHAM B","ajs-ouistreham-c.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-04-25","15h00","Départemental 2","Journée 20",false,"BASLY","basly.png","Stade Municipal","14610 Basly"],
+  ["2027-05-09","15h00","Départemental 2","Journée 21",true,"ES PORTAISE","es-portaise.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2027-05-23","15h00","Départemental 2","Journée 22",false,"HASTINGS","hastings.png","Stade Aire de Sports et Loisirs 1","14740 Saint-Manvieu-Norrey"]
+];
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
   if (!conteneur) return;
@@ -2373,7 +2390,7 @@ function selectTeam(equipe) {
 if (page === "Calendrier") {
 
   if (equipe === "Seniors A") {
-    const calendrier = [
+    const calendrier = equipe === "Seniors A" ? [
       ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2026-11-22","14h30","Départemental 1","Journée 9",true,"IFS B","ifs-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2026-11-29","14h30","Départemental 1","Journée 10",false,"LE TRONQUAY","le-tronquay.png","Stade Municipal","14490 Le Tronquay"],
@@ -2389,7 +2406,7 @@ if (page === "Calendrier") {
       ["2027-04-25","15h00","Départemental 1","Journée 20",true,"LE TRONQUAY","le-tronquay.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2027-05-08","18h30","Départemental 1","Journée 21",false,"LYSTRIENNE","lystrienne.png","Stade Municipal","14330 Le Molay-Littry"],
       ["2027-05-23","15h00","Départemental 1","Journée 22",true,"ST VIGOR LE GRAND","st-vigor-le-grand.png","Stade Municipal","14320 Fontenay-le-Marmion"]
-    ];
+        ] : seniorsBCalendrier;
 
     const dateFr = date => new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
       weekday: "long", day: "numeric", month: "long", year: "numeric"
@@ -2429,6 +2446,9 @@ if (page === "Calendrier") {
 
     const premier = calendrier[0];
 
+    const nomEquipe = equipe === "Seniors B" ? "ESIVO B" : "ESIVO";
+const domicilePremier = premier[4];
+
 const afficherEquipe = (nom, logo) => `
   <div class="mc-team">
     <img src="logos/${logo}" alt="${nom}">
@@ -2440,7 +2460,7 @@ contenu.innerHTML = `
 
     <div class="mc-hero">
       <div class="mc-top">
-        <span>ESIVO · SENIORS A</span>
+        <span>ESIVO · ${equipe.toUpperCase()}</span>
         <span>SAISON 2026 / 2027</span>
       </div>
 
@@ -2457,9 +2477,9 @@ contenu.innerHTML = `
       </div>
 
       <div class="mc-main-teams">
-        ${afficherEquipe("ESIVO", "esivo.png")}
-        <span class="mc-vs">VS</span>
-        ${afficherEquipe(premier[5], premier[6])}
+        ${afficherEquipe(domicilePremier ? nomEquipe : premier[5], domicilePremier ? "esivo.png" : premier[6])}
+<span class="mc-vs">VS</span>
+${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? premier[6] : "esivo.png")}
       </div>
 
       <div class="mc-main-details">
@@ -2494,16 +2514,16 @@ contenu.innerHTML = `
 
             <div class="mc-fixture-teams">
               <div class="mc-fixture-team">
-                <img src="logos/${domicile ? "esivo.png" : logo}" alt="">
-                <strong>${domicile ? "ESIVO" : adversaire}</strong>
-              </div>
+  <img src="logos/${domicile ? "esivo.png" : logo}" alt="">
+  <strong>${domicile ? nomEquipe : adversaire}</strong>
+</div>
 
-              <span class="mc-fixture-vs">VS</span>
+<span class="mc-fixture-vs">VS</span>
 
-              <div class="mc-fixture-team">
-                <img src="logos/${domicile ? logo : "esivo.png"}" alt="">
-                <strong>${domicile ? adversaire : "ESIVO"}</strong>
-              </div>
+<div class="mc-fixture-team">
+  <img src="logos/${domicile ? logo : "esivo.png"}" alt="">
+  <strong>${domicile ? adversaire : nomEquipe}</strong>
+</div>
             </div>
 
             <div class="mc-fixture-meta">
@@ -2748,7 +2768,7 @@ contenu.innerHTML = `
     }
 
     
-    if (equipe === "Seniors A") {
+    if (equipe === "Seniors A" || equipe === "Seniors B") {
       const classementSeniorsA = [
         { position: 1, equipe: "LYSTRIENNE", logo: "logos/lystrienne.png", points: 19, joues: 8, victoires: 6, nuls: 1, defaites: 1, forfait: 0, butsPour: 20, butsContre: 6, difference: "+14" },
         { position: 2, equipe: "TROARN", logo: "logos/troarn.png", points: 17, joues: 8, victoires: 5, nuls: 2, defaites: 1, forfait: 0, butsPour: 17, butsContre: 7, difference: "+10" },
