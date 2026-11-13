@@ -2372,6 +2372,98 @@ function selectTeam(equipe) {
       return;
     }
 
+    
+    if (equipe === "Seniors C") {
+      const classementSeniorsC = [
+        { position: 1, equipe: "CONDÉ EN NORMANDIE B", logo: "logos/conde-normandie-b.png", points: 13, joues: 6, victoires: 4, nuls: 1, defaites: 1, forfait: 0, butsPour: 22, butsContre: 9, difference: "+13" },
+        { position: 2, equipe: "CAMPEAUX", logo: "logos/campeaux.png", points: 13, joues: 6, victoires: 4, nuls: 1, defaites: 1, forfait: 0, butsPour: 19, butsContre: 3, difference: "+16" },
+        { position: 3, equipe: "LA GRAVERIE B", logo: "logos/la-graverie-b.png", points: 12, joues: 6, victoires: 4, nuls: 0, defaites: 2, forfait: 0, butsPour: 20, butsContre: 12, difference: "+8" },
+        { position: 4, equipe: "J.S DU BOCAGE B", logo: "logos/js-du-bocage-b.png", points: 12, joues: 6, victoires: 4, nuls: 0, defaites: 2, forfait: 0, butsPour: 16, butsContre: 9, difference: "+7" },
+        { position: 5, equipe: "INTER ODON B", logo: "logos/inter-odon.png", points: 11, joues: 6, victoires: 3, nuls: 2, defaites: 1, forfait: 0, butsPour: 20, butsContre: 11, difference: "+9" },
+        { position: 6, equipe: "LE TOURNEUR", logo: "logos/le-tourneur.png", points: 6, joues: 6, victoires: 2, nuls: 0, defaites: 4, forfait: 0, butsPour: 9, butsContre: 24, difference: "-15" },
+        { position: 7, equipe: "SAINT GERMAIN B", logo: "logos/saint-germain-b.png", points: 1, joues: 6, victoires: 0, nuls: 1, defaites: 5, forfait: 0, butsPour: 6, butsContre: 23, difference: "-17" },
+        { position: 8, equipe: "ESIVO C", logo: "logos/esivo.png", points: 0, joues: 6, victoires: 0, nuls: 1, defaites: 4, forfait: 1, butsPour: 5, butsContre: 26, difference: "-21" }
+      ];
+
+      contenu.innerHTML = `
+        <strong>${page} · ${equipe}</strong>
+        <div class="content-card">
+          <h3>🏆 Départemental 4 Seniors · Groupe B</h3>
+          <p>Classement du championnat 2026–2027</p>
+
+          <div class="classement-tableau">
+            <div style="overflow-x:auto; margin-top:18px;">
+              <table style="width:100%; border-collapse:collapse; min-width:780px; font-size:12px;">
+                <thead>
+                  <tr style="color:#B8B8C2; border-bottom:1px solid #454550;">
+                    <th style="padding:12px 7px;">Pos.</th>
+                    <th style="padding:12px 7px; text-align:left;">Équipe</th>
+                    <th>Pts</th><th>J</th><th>V</th><th>N</th><th>D</th>
+                    <th>Forf.</th><th>BP</th><th>BC</th><th>Diff.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${classementSeniorsC.map(club => `
+                    <tr style="
+                      background:${club.equipe === "ESIVO C" ? "rgba(170,26,36,.22)" : "transparent"};
+                      border-bottom:1px solid #393943;
+                      font-weight:${club.equipe === "ESIVO C" ? "800" : "500"};
+                      color:${club.equipe === "ESIVO C" ? "#FFFFFF" : "#D0D0D8"};
+                    ">
+                      <td style="padding:12px 7px; text-align:center;">${club.position}</td>
+                      <td style="padding:10px 7px; white-space:nowrap;">
+                        <div style="display:flex; align-items:center; gap:9px;">
+                          <img src="${club.logo}" alt="Logo ${club.equipe}" style="width:30px; height:30px; object-fit:contain;">
+                          <span>${club.equipe}</span>
+                        </div>
+                      </td>
+                      <td style="text-align:center; font-weight:900; color:#FFFFFF; font-size:14px;">${club.points}</td>
+                      <td style="text-align:center;">${club.joues}</td>
+                      <td style="text-align:center;">${club.victoires}</td>
+                      <td style="text-align:center;">${club.nuls}</td>
+                      <td style="text-align:center;">${club.defaites}</td>
+                      <td style="text-align:center;">${club.forfait}</td>
+                      <td style="text-align:center;">${club.butsPour}</td>
+                      <td style="text-align:center;">${club.butsContre}</td>
+                      <td style="text-align:center;">${club.difference}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="classement-cartes">
+            ${classementSeniorsC.map(club => `
+              <div class="club-mobile ${club.equipe === "ESIVO C" ? "club-esivo" : ""}">
+                <div class="club-mobile-entete">
+                  <span class="club-mobile-position">${club.position}</span>
+                  <img src="${club.logo}" alt="Logo ${club.equipe}">
+                  <strong>${club.equipe}</strong>
+                  <span class="club-mobile-points">${club.points} pts</span>
+                </div>
+                <div class="club-mobile-stats">
+                  <span>Joués : ${club.joues}</span>
+                  <span>V : ${club.victoires}</span>
+                  <span>N : ${club.nuls}</span>
+                  <span>D : ${club.defaites}</span>
+                  <span>Forf. : ${club.forfait}</span>
+                  <span>BP : ${club.butsPour}</span>
+                  <span>BC : ${club.butsContre}</span>
+                  <span>Diff. : ${club.difference}</span>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+          <p style="margin-top:14px; color:#B8B8C2; font-size:11px;">
+            J : matchs joués · Forf. : forfaits · BP : buts pour · BC : buts contre · Diff. : différence de buts
+          </p>
+        </div>
+      `;
+      return;
+    }
+
 
     if (equipe === "U13") {
       const classementU13 = [
