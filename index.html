@@ -1513,8 +1513,12 @@ body {
 }
   /* CARROUSEL DES PROCHAINS MATCHS */
 
+/* CARROUSEL DES PROCHAINS MATCHS */
+
 .home-carousel {
   width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
   position: relative;
 }
 
@@ -1542,21 +1546,21 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 22px;
-  margin-top: 18px;
+  gap: 18px;
+  margin-top: 12px;
 }
 
 .home-carousel-arrow {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border: 1px solid rgba(255,255,255,.12);
   border-radius: 50%;
   background: #252832;
   color: #fff;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
   transition: .2s ease;
 }
@@ -1585,9 +1589,45 @@ body {
 }
 
 .home-carousel-dot.active {
-  width: 22px;
+  width: 20px;
   border-radius: 10px;
   background: #AA1A24;
+}
+
+/* ADAPTATION MOBILE */
+
+@media (max-width: 700px) {
+  .home-carousel {
+    max-width: 100%;
+  }
+
+  .home-carousel-track > .home-next-match {
+    padding: 16px 12px;
+    gap: 13px;
+  }
+
+  .home-carousel-track .home-match-team img {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  .home-carousel-track .home-match-team strong {
+    font-size: 11px;
+  }
+
+  .home-carousel-track .home-match-info {
+    font-size: 11px;
+    gap: 7px;
+  }
+
+  .home-carousel-track .home-match-info strong {
+    font-size: 13px;
+  }
+
+  .home-carousel-controls {
+    margin-top: 10px;
+    gap: 15px;
+  }
 }
 </style>
 </head>
@@ -2048,17 +2088,17 @@ function afficherRencontresWeekend() {
     `;
   };
 
+    const prochainMatch = (calendrier) => {
+    return calendrier
+      .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
+      .sort((a, b) => a[0].localeCompare(b[0]))[0];
+  };
+
   const tousLesMatchs = [
-    ...seniorsACalendrier.map(match => ({ match, equipe: "Seniors A" })),
-    ...seniorsBCalendrier.map(match => ({ match, equipe: "Seniors B" })),
-    ...seniorsCCalendrier.map(match => ({ match, equipe: "Seniors C" }))
-  ]
-    .filter(item => new Date(item.match[0] + "T12:00:00") >= aujourdHui)
-    .sort((a, b) => {
-      const dateComparaison = a.match[0].localeCompare(b.match[0]);
-      if (dateComparaison !== 0) return dateComparaison;
-      return a.match[1].localeCompare(b.match[1]);
-    });
+    { match: prochainMatch(seniorsACalendrier), equipe: "Seniors A" },
+    { match: prochainMatch(seniorsBCalendrier), equipe: "Seniors B" },
+    { match: prochainMatch(seniorsCCalendrier), equipe: "Seniors C" }
+  ].filter(item => item.match);
 
   if (tousLesMatchs.length === 0) {
     conteneur.innerHTML = '<p class="empty-state">Aucun prochain match programmé.</p>';
