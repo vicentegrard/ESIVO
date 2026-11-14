@@ -1905,59 +1905,66 @@ function afficherRencontresWeekend() {
   const aujourdHui = new Date();
   aujourdHui.setHours(0, 0, 0, 0);
 
-  const prochainMatch = seniorsACalendrier
+    const prochainMatchA = seniorsACalendrier
     .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
     .sort((a, b) => a[0].localeCompare(b[0]))[0];
 
-  if (!prochainMatch) {
-    conteneur.innerHTML =
-      '<p class="empty-state">La saison des Seniors A est terminée.</p>';
-    return;
-  }
+  const prochainMatchB = seniorsBCalendrier
+    .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
+    .sort((a, b) => a[0].localeCompare(b[0]))[0];
 
-  const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = prochainMatch;
+    const afficherCarte = (match, nomEquipe) => {
+    if (!match) return "";
 
-  const dateFr = new Date(date + "T12:00:00")
-    .toLocaleDateString("fr-FR", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-    });
+    const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = match;
 
-  const equipeDomicile = domicile ? "ESIVO" : adversaire;
-  const equipeExterieure = domicile ? adversaire : "ESIVO";
-  const logoDomicile = domicile ? "esivo.png" : logo;
-  const logoExterieur = domicile ? logo : "esivo.png";
+    const dateFr = new Date(date + "T12:00:00")
+      .toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
 
-  conteneur.innerHTML = `
-    <div class="weekend-match home-next-match">
-      <div class="mc-eyebrow">PROCHAIN MATCH · SENIORS A</div>
+    const equipeDomicile = domicile ? `ESIVO${nomEquipe === "Seniors B" ? " B" : ""}` : adversaire;
+    const equipeExterieure = domicile ? adversaire : `ESIVO${nomEquipe === "Seniors B" ? " B" : ""}`;
+    const logoDomicile = domicile ? "esivo.png" : logo;
+    const logoExterieur = domicile ? logo : "esivo.png";
 
-      <div class="home-match-teams">
-        <div class="home-match-team">
-          <img src="logos/${logoDomicile}" alt="${equipeDomicile}"
-            style="width:55px;height:55px;object-fit:contain">
-          <strong>${equipeDomicile}</strong>
+    return `
+      <div class="weekend-match home-next-match">
+        <div class="mc-eyebrow">PROCHAIN MATCH · ${nomEquipe.toUpperCase()}</div>
+
+        <div class="home-match-teams">
+          <div class="home-match-team">
+            <img src="logos/${logoDomicile}" alt="${equipeDomicile}"
+              style="width:55px;height:55px;object-fit:contain">
+            <strong>${equipeDomicile}</strong>
+          </div>
+
+          <span class="mc-vs">VS</span>
+
+          <div class="home-match-team">
+            <img src="logos/${logoExterieur}" alt="${equipeExterieure}"
+              style="width:55px;height:55px;object-fit:contain">
+            <strong>${equipeExterieure}</strong>
+          </div>
         </div>
 
-        <span class="mc-vs">VS</span>
-
-        <div class="home-match-team">
-          <img src="logos/${logoExterieur}" alt="${equipeExterieure}"
-            style="width:55px;height:55px;object-fit:contain">
-          <strong>${equipeExterieure}</strong>
+        <div class="home-match-info">
+          <strong>${dateFr} · ${heure}</strong>
+          <span>${competition} · ${journee}</span>
+          <span>📍 ${lieu} · ${ville}</span>
+          <span>${domicile ? "🏠 À domicile" : "🚌 À l'extérieur"}</span>
         </div>
       </div>
+    `;
+  };
 
-      <div class="home-match-info">
-        <strong>${dateFr} · ${heure}</strong>
-        <span>${competition} · ${journee}</span>
-        <span>📍 ${lieu} · ${ville}</span>
-        <span>${domicile ? "🏠 À domicile" : "🚌 À l'extérieur"}</span>
-      </div>
-    </div>
-  `;
+  conteneur.innerHTML = [
+    afficherCarte(prochainMatchA, "Seniors A"),
+    afficherCarte(prochainMatchB, "Seniors B")
+  ].filter(Boolean).join("");
 }
 
 function afficherResultatsWeekend() {
