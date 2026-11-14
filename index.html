@@ -1898,6 +1898,19 @@ function home() {
   ["2027-05-09","15h00","Départemental 2","Journée 21",true,"ES PORTAISE","es-portaise.png","Stade Municipal","14320 Fontenay-le-Marmion"],
   ["2027-05-23","15h00","Départemental 2","Journée 22",false,"HASTINGS","hastings.png","Stade Aire de Sports et Loisirs 1","14740 Saint-Manvieu-Norrey"]
 ];
+
+  
+const seniorsCCalendrier = [
+  ["2026-11-22","13h00","Départemental 4","Journée 7",true,"INTER ODON B","inter-odon.png","Stade Eugène Figeac","14320 Saint-Martin-de-May"],
+  ["2027-01-30","19h15","Départemental 4","Journée 8",false,"CONDÉ EN NORMANDIE B","conde-normandie-b.png","Stade de la Conterie","14110 Condé-en-Normandie"],
+  ["2027-02-07","13h00","Départemental 4","Journée 9",true,"SAINT GERMAIN B","saint-germain-b.png","Stade Eugène Figeac","14320 Saint-Martin-de-May"],
+  ["2027-02-14","14h30","Départemental 4","Journée 10",false,"CAMPEAUX","campeaux.png","Stade Campeaux","14350 Souleuvre-en-Bocage"],
+  ["2027-03-14","13h00","Départemental 4","Journée 11",true,"LA GRAVERIE B","la-graverie-b.png","Stade Eugène Figeac","14320 Saint-Martin-de-May"],
+  ["2027-03-21","13h00","Départemental 4","Journée 12",true,"J.S DU BOCAGE B","js-du-bocage-b.png","Stade Eugène Figeac","14320 Saint-Martin-de-May"],
+  ["2027-04-04","15h00","Départemental 4","Journée 13",false,"INTER ODON B","inter-odon.png","Stade Pierre Voisin","14210 Évrecy"],
+  ["2027-04-11","13h00","Départemental 4","Journée 14",true,"LE TOURNEUR","le-tourneur.png","Stade Eugène Figeac","14320 Saint-Martin-de-May"]
+];
+
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
   if (!conteneur) return;
@@ -2396,7 +2409,7 @@ function selectTeam(equipe) {
   
 if (page === "Calendrier") {
 
-  if (equipe === "Seniors A" || equipe === "Seniors B") {
+  if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C") {
     const calendrier = equipe === "Seniors A" ? [
       ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2026-11-22","14h30","Départemental 1","Journée 9",true,"IFS B","ifs-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
@@ -2413,7 +2426,7 @@ if (page === "Calendrier") {
       ["2027-04-25","15h00","Départemental 1","Journée 20",true,"LE TRONQUAY","le-tronquay.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2027-05-08","18h30","Départemental 1","Journée 21",false,"LYSTRIENNE","lystrienne.png","Stade Municipal","14330 Le Molay-Littry"],
       ["2027-05-23","15h00","Départemental 1","Journée 22",true,"ST VIGOR LE GRAND","st-vigor-le-grand.png","Stade Municipal","14320 Fontenay-le-Marmion"]
-        ] : seniorsBCalendrier;
+        ] : equipe === "Seniors B" ? seniorsBCalendrier : seniorsCCalendrier;
 
     const dateFr = date => new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
       weekday: "long", day: "numeric", month: "long", year: "numeric"
@@ -2453,7 +2466,7 @@ if (page === "Calendrier") {
 
     const premier = calendrier[0];
 
-    const nomEquipe = equipe === "Seniors B" ? "ESIVO B" : "ESIVO";
+    const nomEquipe = equipe === "Seniors C" ? "ESIVO C" : equipe === "Seniors B" ? "ESIVO B" : "ESIVO";
 const domicilePremier = premier[4];
 
 const afficherEquipe = (nom, logo) => `
