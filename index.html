@@ -1845,6 +1845,22 @@ body {
   color: #aeb0ba;
 }
 
+  @media (max-width: 600px) {
+  .u11-organizer-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .u11-organizer-text strong {
+    font-size: clamp(15px, 4.5vw, 21px);
+    overflow-wrap: anywhere;
+  }
+
+  .u11-organizer-text small {
+    font-size: 10px;
+  }
+}
+
 .u11-category {
   margin-left: auto;
   align-self: flex-start;
@@ -3113,6 +3129,18 @@ const prochainPlateau = calendrier
   .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
   .sort((a, b) => a.date.localeCompare(b.date))[0];
 
+    const logosOrganisateurs = {
+  "ESIVO": "esivo.png",
+  "ROCQUANCOURT": "rocquancourt.png",
+  "CAUMONT": "caumont.png"
+};
+
+const descriptionsOrganisateurs = {
+  "ESIVO": "Entente Sportive Intercommunale Vallée de l'Orne",
+  "ROCQUANCOURT": "Club de Rocquancourt",
+  "CAUMONT": "Club de Caumont"
+};
+
   contenu.innerHTML = `
     <div class="match-center">
       <div class="mc-list-heading">
@@ -3137,8 +3165,7 @@ const prochainPlateau = calendrier
       </div>
 
       <div class="u11-next-organizer">
-  <img src="logos/${prochainPlateau.organisateur === 'ESIVO' ? 'esivo.png' : prochainPlateau.organisateur === 'ROCQUANCOURT' ? 'rocquancourt.png' : prochainPlateau.organisateur === 'CAUMONT' ? 'caumont.png' : 'esivo.png'}" alt="${prochainPlateau.organisateur}">
-  <div>
+<img src="logos/${logosOrganisateurs[prochainPlateau.organisateur] || 'esivo.png'}" alt="${prochainPlateau.organisateur}">  <div>
     <small>ORGANISÉ PAR</small>
     <strong>${prochainPlateau.organisateur}</strong>
   </div>
@@ -3165,11 +3192,11 @@ const prochainPlateau = calendrier
           <article class="mc-fixture mc-fixture-plateau">
 
   <div class="u11-organizer">
-  <img src="${plateau.organisateur === 'ESIVO' ? 'logos/esivo.png' : 'logos/rocquancourt.png'}" alt="${plateau.organisateur}">
+  <img src="logos/${logosOrganisateurs[plateau.organisateur] || 'esivo.png'}" alt="${plateau.organisateur}">
   <div class="u11-organizer-text">
     <span>PLATEAU ORGANISÉ PAR</span>
     <strong>${plateau.organisateur}</strong>
-    <small>${plateau.organisateur === 'ESIVO' ? "Entente Sportive Intercommunale Vallée de l'Orne" : "Club de Rocquancourt"}</small>
+    <small>${descriptionsOrganisateurs[plateau.organisateur] || "Club organisateur"}</small>
   </div>
   <span class="u11-category">U11</span>
 </div>
