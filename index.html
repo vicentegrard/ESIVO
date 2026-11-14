@@ -2478,6 +2478,19 @@ const u13Calendrier = [
       { nom: "FCB2LC C", logo: "fcb2lc.png" },
       { nom: "MEZIDON B", logo: "mezidon.png" }
     ]
+  },
+  {
+    date: "2026-12-05",
+    heure: "10h00",
+    organisateur: "CAUMONT",
+    lieu: "Stade Jean-Jacques Viart",
+    ville: "14240 Caumont-sur-Aure",
+    equipes: [
+      { nom: "CAUMONT B", logo: "caumont.png" },
+      { nom: "BRETTEVILLE/ODON B", logo: "bretteville-odon.png" },
+      { nom: "CORMELLES C", logo: "cormelles.png" },
+      { nom: "ESIVO", logo: "esivo.png" }
+    ]
   }
 ];
 
@@ -3124,13 +3137,12 @@ const prochainPlateau = calendrier
       </div>
 
       <div class="u11-next-organizer">
-        <img src="${prochainPlateau.organisateur === 'ESIVO' ? 'logos/esivo.png' : 'logos/rocquancourt.png'}" alt="${prochainPlateau.organisateur}">
-        <div>
-          <small>ORGANISÉ PAR</small>
-          <strong>${prochainPlateau.organisateur}</strong>
-        </div>
-      </div>
-    </div>
+  <img src="logos/${prochainPlateau.organisateur === 'ESIVO' ? 'esivo.png' : prochainPlateau.organisateur === 'ROCQUANCOURT' ? 'rocquancourt.png' : prochainPlateau.organisateur === 'CAUMONT' ? 'caumont.png' : 'esivo.png'}" alt="${prochainPlateau.organisateur}">
+  <div>
+    <small>ORGANISÉ PAR</small>
+    <strong>${prochainPlateau.organisateur}</strong>
+  </div>
+</div>
 
     <div class="u11-next-teams">
       ${prochainPlateau.equipes.map(formation => `
