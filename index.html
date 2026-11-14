@@ -1305,6 +1305,28 @@ body {
   margin-bottom: 28px;
 }
 
+.u9-next-main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 600px) {
+  .u9-next-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .u9-next-organizer {
+    width: 100%;
+    gap: 20px;
+  }
+}
+
 .u11-next-date strong {
   display: block;
   font-size: 23px;
@@ -3467,7 +3489,7 @@ const descriptionsOrganisateurs = {
       <span>U11</span>
     </div>
 
-    <div class="u11-next-main">
+    <div class="u9-next-main">
       <div class="u11-next-date">
         <strong>${dateFr(prochainPlateau.date)}</strong>
         <span>${prochainPlateau.heure}</span>
