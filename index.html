@@ -2067,6 +2067,22 @@ const u13Calendrier = [
   ["2026-12-05","13h30","Départemental 3 U13 à 8","Journée 5",true,"FC VITAL B","fc-vital-b.png","Stade Roger Brion","14320 Saint-André-sur-Orne"]
 ];
 
+  const u11Calendrier = [
+  {
+    date: "2026-11-21",
+    heure: "10h00",
+    organisateur: "ESIVO",
+    lieu: "Stade Roger Brion",
+    ville: "14320 Saint-André-sur-Orne",
+    equipes: [
+      { nom: "ESIVO", logo: "esivo.png" },
+      { nom: "FCB2LC C", logo: "fcb2lc.png" },
+      { nom: "ROCQUANCOURT", logo: "rocquancourt.png" },
+      { nom: "AUNAY/ODON C", logo: "aunay-odon-c.png" }
+    ]
+  }
+];
+
 
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
@@ -2667,7 +2683,58 @@ function selectTeam(equipe) {
   
 if (page === "Calendrier") {
 
-  if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C" || equipe === "Seniors Féminines à 8" || equipe === "Seniors Vétérans" || equipe === "U18" || equipe === "U13") {
+  if (equipe === "U11") {
+  const calendrier = u11Calendrier;
+
+  if (calendrier.length === 0) {
+    contenu.innerHTML = "<p>Aucun plateau prévu pour cette équipe.</p>";
+    return;
+  }
+
+  const dateFr = date => new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
+    weekday: "long", day: "numeric", month: "long", year: "numeric"
+  });
+
+  contenu.innerHTML = `
+    <div class="match-center">
+      <div class="mc-list-heading">
+        <div>
+          <span class="mc-eyebrow">SAISON 2026 / 2027</span>
+          <h3>Les prochains plateaux</h3>
+        </div>
+        <span class="mc-count">${calendrier.length} PLATEAU${calendrier.length > 1 ? "X" : ""}</span>
+      </div>
+
+      <div class="mc-fixtures">
+        ${calendrier.map(plateau => `
+          <article class="mc-fixture">
+            <div class="mc-date">
+              <strong>${new Date(plateau.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "2-digit", month: "short" }).replace(".", "").toUpperCase()}</strong>
+              <span>${plateau.heure}</span>
+            </div>
+
+            <div class="mc-fixture-teams" style="flex-wrap:wrap;">
+              ${plateau.equipes.map(formation => `
+                <div class="mc-fixture-team">
+                  <img src="logos/${formation.logo}" alt="${formation.nom}">
+                  <strong>${formation.nom}</strong>
+                </div>
+              `).join("")}
+            </div>
+
+            <div class="mc-fixture-meta">
+              <span>PLATEAU U11</span>
+              <span>Organisé par ${plateau.organisateur}</span>
+            </div>
+
+            <p class="fixture-venue">📍 ${plateau.lieu} · ${plateau.ville}</p>
+          </article>
+        `).join("")}
+      </div>
+    </div>
+  `;
+  return;
+} else if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C" || equipe === "Seniors Féminines à 8" || equipe === "Seniors Vétérans" || equipe === "U18" || equipe === "U13") {
     const calendrier = equipe === "Seniors A" ? [
       ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2026-11-22","14h30","Départemental 1","Journée 9",true,"IFS B","ifs-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
