@@ -1926,6 +1926,10 @@ function afficherRencontresWeekend() {
     .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
     .sort((a, b) => a[0].localeCompare(b[0]))[0];
 
+  const prochainMatchC = seniorsCCalendrier
+  .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
+  .sort((a, b) => a[0].localeCompare(b[0]))[0];
+
     const afficherCarte = (match, nomEquipe) => {
     if (!match) return "";
 
@@ -1939,8 +1943,9 @@ function afficherRencontresWeekend() {
         year: "numeric"
       });
 
-    const equipeDomicile = domicile ? `ESIVO${nomEquipe === "Seniors B" ? " B" : ""}` : adversaire;
-    const equipeExterieure = domicile ? adversaire : `ESIVO${nomEquipe === "Seniors B" ? " B" : ""}`;
+    const nomClub = nomEquipe === "Seniors A" ? "ESIVO" : nomEquipe === "Seniors B" ? "ESIVO B" : "ESIVO C";
+const equipeDomicile = domicile ? nomClub : adversaire;
+const equipeExterieure = domicile ? adversaire : nomClub;
     const logoDomicile = domicile ? "esivo.png" : logo;
     const logoExterieur = domicile ? logo : "esivo.png";
 
@@ -1975,9 +1980,10 @@ function afficherRencontresWeekend() {
   };
 
   conteneur.innerHTML = [
-    afficherCarte(prochainMatchA, "Seniors A"),
-    afficherCarte(prochainMatchB, "Seniors B")
-  ].filter(Boolean).join("");
+  afficherCarte(prochainMatchA, "Seniors A"),
+  afficherCarte(prochainMatchB, "Seniors B"),
+  afficherCarte(prochainMatchC, "Seniors C")
+].filter(Boolean).join("");
 }
 
 function afficherResultatsWeekend() {
