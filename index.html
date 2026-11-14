@@ -2788,7 +2788,7 @@ function afficherRencontresWeekend() {
         <div class="mc-eyebrow">PROCHAIN PLATEAU · ${categorie}</div>
 
         <div class="home-plateau-organizer">
-          <img src="logos/${logosOrganisateurs[plateau.organisateur] || 'esivo.png'}" alt="${plateau.organisateur}">
+          <img src="logos/${logoOrganisateur || 'esivo.png'}" alt="${plateau.organisateur}">
           <div>
             <small>PLATEAU ORGANISÉ PAR</small>
             <strong>${plateau.organisateur}</strong>
@@ -3384,12 +3384,14 @@ const prochainPlateau = calendrier
   .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
   .sort((a, b) => a.date.localeCompare(b.date))[0];
 
-    const logosOrganisateurs = {
-  "ESIVO": "esivo.png",
-  "ROCQUANCOURT": "rocquancourt.png",
-  "CAUMONT": "caumont.png",
-  "BAVENT": "bavent.png"
-};
+    const equipeOrganisatrice = plateau.equipes.find(formation =>
+  formation.nom === plateau.organisateur ||
+  formation.nom.startsWith(plateau.organisateur + " ")
+);
+
+const logoOrganisateur = equipeOrganisatrice
+  ? equipeOrganisatrice.logo
+  : null;
 
 const descriptionsOrganisateurs = {
   "ESIVO": "Entente Sportive Intercommunale Vallée de l'Orne",
