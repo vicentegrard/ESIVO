@@ -3498,6 +3498,131 @@ const descriptionsOrganisateurs = {
     </div>
   `;
   return;
+} else if (equipe === "U9") {
+  const calendrier = u9Calendrier;
+      if (calendrier.length === 0) {
+    contenu.innerHTML = "<p>Aucun plateau prévu pour cette équipe.</p>";
+    return;
+  }
+
+  const dateFr = date => new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
+    weekday: "long", day: "numeric", month: "long", year: "numeric"
+  });
+
+  const aujourdHui = new Date();
+  aujourdHui.setHours(0, 0, 0, 0);
+
+  const prochainPlateau = calendrier
+    .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
+    .sort((a, b) => a.date.localeCompare(b.date))[0];
+
+  const logoOrganisateur = plateau => {
+    const equipeOrganisatrice = plateau.equipes.find(formation =>
+      formation.nom === plateau.organisateur ||
+      formation.nom.startsWith(plateau.organisateur + " ")
+    );
+
+    return equipeOrganisatrice ? equipeOrganisatrice.logo : "esivo.png";
+  };
+
+  const descriptionsOrganisateurs = {
+    "BAVENT": "Club de Bavent"
+  };
+
+  contenu.innerHTML = `
+    <div class="match-center">
+      <div class="mc-list-heading">
+        <div>
+          <span class="mc-eyebrow">SAISON 2026 / 2027</span>
+          <h3>Les prochains plateaux</h3>
+        </div>
+        <span class="mc-count">${calendrier.length} PLATEAU${calendrier.length > 1 ? "X" : ""}</span>
+      </div>
+
+      ${prochainPlateau ? `
+        <div class="u11-next-plateau">
+          <div class="u11-next-header">
+            <span>PROCHAIN PLATEAU</span>
+            <span>U9</span>
+          </div>
+
+          <div class="u11-next-main">
+            <div class="u11-next-date">
+              <strong>${dateFr(prochainPlateau.date)}</strong>
+              <span>${prochainPlateau.heure}</span>
+            </div>
+
+            <div class="u11-next-organizer">
+              <img src="logos/${logoOrganisateur(prochainPlateau)}" alt="${prochainPlateau.organisateur}">
+              <div>
+                <small>ORGANISÉ PAR</small>
+                <strong>${prochainPlateau.organisateur}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="u11-next-teams">
+            ${prochainPlateau.equipes.map(formation => `
+              <div>
+                <img src="logos/${formation.logo}" alt="${formation.nom}">
+                <strong>${formation.nom}</strong>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="u11-next-location">
+            <strong>📍 ${prochainPlateau.lieu}</strong>
+            <span>${prochainPlateau.ville}</span>
+          </div>
+        </div>
+      ` : ""}
+
+      <div class="mc-fixtures">
+        ${calendrier.map(plateau => `
+          <article class="mc-fixture mc-fixture-plateau">
+            <div class="u11-organizer">
+              <img src="logos/${logoOrganisateur(plateau)}" alt="${plateau.organisateur}">
+              <div class="u11-organizer-text">
+                <span>PLATEAU ORGANISÉ PAR</span>
+                <strong>${plateau.organisateur}</strong>
+                <small>${descriptionsOrganisateurs[plateau.organisateur] || "Club organisateur"}</small>
+              </div>
+              <span class="u11-category">U9</span>
+            </div>
+
+            <div class="u11-teams-section">
+              <div class="u11-section-title">
+                <strong>Les équipes participantes</strong>
+                <span>${plateau.equipes.length} ÉQUIPES</span>
+              </div>
+
+              <div class="u11-teams-grid">
+                ${plateau.equipes.map(formation => `
+                  <div class="u11-team">
+                    <img src="logos/${formation.logo}" alt="${formation.nom}">
+                    <strong>${formation.nom}</strong>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="u11-event-details">
+              <div>
+                <span>DATE ET HORAIRE</span>
+                <strong>📅 ${dateFr(plateau.date)} · ${plateau.heure}</strong>
+              </div>
+              <div>
+                <span>LIEU DU PLATEAU</span>
+                <strong>📍 ${plateau.lieu}</strong>
+                <small>${plateau.ville}</small>
+              </div>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </div>
+  `;
+  return;
 } else if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C" || equipe === "Seniors Féminines à 8" || equipe === "Seniors Vétérans" || equipe === "U18" || equipe === "U13") {
     const calendrier = equipe === "Seniors A" ? [
       ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
