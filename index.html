@@ -1803,10 +1803,41 @@ body {
 .u11-organizer {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
   padding: 22px 24px;
   background: linear-gradient(110deg, rgba(170,26,36,.22), rgba(170,26,36,.04));
   border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.u11-organizer img {
+  flex-shrink: 0;
+}
+
+.u11-organizer-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.u11-organizer-text strong {
+  white-space: nowrap;
+  font-size: clamp(10px, 3.8vw, 26px);
+  letter-spacing: -0.7px;
+}
+
+.u11-category {
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .u11-organizer {
+    gap: 8px;
+    padding: 16px 12px;
+  }
+
+  .u11-organizer-text strong {
+    font-size: clamp(9px, 3.5vw, 18px);
+    letter-spacing: -0.8px;
+  }
 }
 
 .u11-organizer img {
