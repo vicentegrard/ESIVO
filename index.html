@@ -1894,6 +1894,27 @@ body {
   }
 }
 
+  /* Correction des noms d'organisateurs U11 */
+.u11-organizer-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.u11-organizer-text strong {
+  display: block;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  font-size: clamp(8px, 3vw, 16px) !important;
+  letter-spacing: -0.8px;
+  line-height: 1.2;
+}
+
+@media (min-width: 601px) {
+  .u11-organizer-text strong {
+    font-size: 23px !important;
+  }
+}
+
 .u11-category {
   margin-left: auto;
   align-self: flex-start;
