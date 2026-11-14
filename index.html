@@ -1598,7 +1598,10 @@ body {
 
 @media (max-width: 700px) {
   .home-carousel {
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .home-carousel-track > .home-next-match {
@@ -2107,7 +2110,12 @@ function afficherRencontresWeekend() {
     { match: prochainMatch(seniorsBCalendrier), equipe: "Seniors B" },
     { match: prochainMatch(seniorsCCalendrier), equipe: "Seniors C" },
     { match: prochainMatch(seniorsFemininesCalendrier), equipe: "Seniors Féminines à 8" }
-  ].filter(item => item.match);
+  ].filter(item => item.match)
+ .sort((a, b) => {
+   const dateA = new Date(a.match[0] + "T" + a.match[1].replace("h", ":") + ":00");
+   const dateB = new Date(b.match[0] + "T" + b.match[1].replace("h", ":") + ":00");
+   return dateA - dateB;
+ });
 
   if (tousLesMatchs.length === 0) {
     conteneur.innerHTML = '<p class="empty-state">Aucun prochain match programmé.</p>';
