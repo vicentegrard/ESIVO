@@ -2389,7 +2389,7 @@ function selectTeam(equipe) {
   
 if (page === "Calendrier") {
 
-  if (equipe === "Seniors A") {
+  if (equipe === "Seniors A" || equipe === "Seniors B") {
     const calendrier = equipe === "Seniors A" ? [
       ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2026-11-22","14h30","Départemental 1","Journée 9",true,"IFS B","ifs-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
@@ -2768,7 +2768,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
     }
 
     
-    if (equipe === "Seniors A" || equipe === "Seniors B") {
+    if (equipe === "Seniors A") {
       const classementSeniorsA = [
         { position: 1, equipe: "LYSTRIENNE", logo: "logos/lystrienne.png", points: 19, joues: 8, victoires: 6, nuls: 1, defaites: 1, forfait: 0, butsPour: 20, butsContre: 6, difference: "+14" },
         { position: 2, equipe: "TROARN", logo: "logos/troarn.png", points: 17, joues: 8, victoires: 5, nuls: 2, defaites: 1, forfait: 0, butsPour: 17, butsContre: 7, difference: "+10" },
