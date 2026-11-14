@@ -1511,6 +1511,84 @@ body {
     font-size: 11px;
   }
 }
+  /* CARROUSEL DES PROCHAINS MATCHS */
+
+.home-carousel {
+  width: 100%;
+  position: relative;
+}
+
+.home-carousel-viewport {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.home-carousel-track {
+  display: flex;
+  width: 100%;
+  transition: transform 0.55s ease;
+  will-change: transform;
+}
+
+.home-carousel-track > .home-next-match {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.home-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 18px;
+}
+
+.home-carousel-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 50%;
+  background: #252832;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.home-carousel-arrow:hover {
+  background: #AA1A24;
+  border-color: #AA1A24;
+}
+
+.home-carousel-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.home-carousel-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,.3);
+  cursor: pointer;
+  transition: .25s ease;
+}
+
+.home-carousel-dot.active {
+  width: 22px;
+  border-radius: 10px;
+  background: #AA1A24;
+}
 </style>
 </head>
 
@@ -1911,6 +1989,7 @@ const seniorsCCalendrier = [
   ["2027-04-11","13h00","Départemental 4","Journée 14",true,"LE TOURNEUR","le-tourneur.png","Stade Eugène Figeac","14320 Saint-Martin-de-May"]
 ];
 
+
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
   if (!conteneur) return;
@@ -1918,19 +1997,7 @@ function afficherRencontresWeekend() {
   const aujourdHui = new Date();
   aujourdHui.setHours(0, 0, 0, 0);
 
-    const prochainMatchA = seniorsACalendrier
-    .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
-    .sort((a, b) => a[0].localeCompare(b[0]))[0];
-
-  const prochainMatchB = seniorsBCalendrier
-    .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
-    .sort((a, b) => a[0].localeCompare(b[0]))[0];
-
-  const prochainMatchC = seniorsCCalendrier
-  .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
-  .sort((a, b) => a[0].localeCompare(b[0]))[0];
-
-    const afficherCarte = (match, nomEquipe) => {
+  const afficherCarte = (match, nomEquipe) => {
     if (!match) return "";
 
     const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = match;
@@ -1943,9 +2010,11 @@ function afficherRencontresWeekend() {
         year: "numeric"
       });
 
-    const nomClub = nomEquipe === "Seniors A" ? "ESIVO" : nomEquipe === "Seniors B" ? "ESIVO B" : "ESIVO C";
-const equipeDomicile = domicile ? nomClub : adversaire;
-const equipeExterieure = domicile ? adversaire : nomClub;
+    const nomClub = nomEquipe === "Seniors A" ? "ESIVO" :
+      nomEquipe === "Seniors B" ? "ESIVO B" : "ESIVO C";
+
+    const equipeDomicile = domicile ? nomClub : adversaire;
+    const equipeExterieure = domicile ? adversaire : nomClub;
     const logoDomicile = domicile ? "esivo.png" : logo;
     const logoExterieur = domicile ? logo : "esivo.png";
 
@@ -1979,12 +2048,108 @@ const equipeExterieure = domicile ? adversaire : nomClub;
     `;
   };
 
-  conteneur.innerHTML = [
-  afficherCarte(prochainMatchA, "Seniors A"),
-  afficherCarte(prochainMatchB, "Seniors B"),
-  afficherCarte(prochainMatchC, "Seniors C")
-].filter(Boolean).join("");
+  const tousLesMatchs = [
+    ...seniorsACalendrier.map(match => ({ match, equipe: "Seniors A" })),
+    ...seniorsBCalendrier.map(match => ({ match, equipe: "Seniors B" })),
+    ...seniorsCCalendrier.map(match => ({ match, equipe: "Seniors C" }))
+  ]
+    .filter(item => new Date(item.match[0] + "T12:00:00") >= aujourdHui)
+    .sort((a, b) => {
+      const dateComparaison = a.match[0].localeCompare(b.match[0]);
+      if (dateComparaison !== 0) return dateComparaison;
+      return a.match[1].localeCompare(b.match[1]);
+    });
+
+  if (tousLesMatchs.length === 0) {
+    conteneur.innerHTML = '<p class="empty-state">Aucun prochain match programmé.</p>';
+    return;
+  }
+
+  let indexActuel = 0;
+
+  conteneur.innerHTML = `
+    <div class="home-carousel">
+      <div class="home-carousel-viewport">
+        <div class="home-carousel-track">
+          ${tousLesMatchs.map(item =>
+            afficherCarte(item.match, item.equipe)
+          ).join("")}
+        </div>
+      </div>
+
+      <div class="home-carousel-controls">
+        <button type="button" class="home-carousel-arrow" id="carouselPrev" aria-label="Match précédent">
+          &#10094;
+        </button>
+
+        <div class="home-carousel-dots">
+          ${tousLesMatchs.map((_, i) => `
+            <button type="button"
+              class="home-carousel-dot ${i === 0 ? "active" : ""}"
+              data-index="${i}"
+              aria-label="Afficher le match ${i + 1}">
+            </button>
+          `).join("")}
+        </div>
+
+        <button type="button" class="home-carousel-arrow" id="carouselNext" aria-label="Match suivant">
+          &#10095;
+        </button>
+      </div>
+    </div>
+  `;
+
+  const track = conteneur.querySelector(".home-carousel-track");
+  const dots = conteneur.querySelectorAll(".home-carousel-dot");
+
+  const afficherSlide = () => {
+    track.style.transform = `translateX(-${indexActuel * 100}%)`;
+
+    dots.forEach((dot, i) => {
+      dot.classList.toggle("active", i === indexActuel);
+    });
+  };
+
+  const allerAuSuivant = () => {
+    indexActuel = (indexActuel + 1) % tousLesMatchs.length;
+    afficherSlide();
+  };
+
+  const allerAuPrecedent = () => {
+    indexActuel = (indexActuel - 1 + tousLesMatchs.length) % tousLesMatchs.length;
+    afficherSlide();
+  };
+
+  const demarrerDefilement = () => {
+    clearInterval(conteneur._carouselTimer);
+
+    if (tousLesMatchs.length > 1) {
+      conteneur._carouselTimer = setInterval(allerAuSuivant, 5000);
+    }
+  };
+
+  conteneur.querySelector("#carouselPrev").addEventListener("click", () => {
+    allerAuPrecedent();
+    demarrerDefilement();
+  });
+
+  conteneur.querySelector("#carouselNext").addEventListener("click", () => {
+    allerAuSuivant();
+    demarrerDefilement();
+  });
+
+  dots.forEach(dot => {
+    dot.addEventListener("click", () => {
+      indexActuel = Number(dot.dataset.index);
+      afficherSlide();
+      demarrerDefilement();
+    });
+  });
+
+  afficherSlide();
+  demarrerDefilement();
 }
+
 
 function afficherResultatsWeekend() {
   const conteneur = document.getElementById("weekendResults");
