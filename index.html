@@ -2777,11 +2777,14 @@ function afficherRencontresWeekend() {
         year: "numeric"
       });
 
-    const logosOrganisateurs = {
-      "ESIVO": "esivo.png",
-      "ROCQUANCOURT": "rocquancourt.png",
-      "CAUMONT": "caumont.png"
-    };
+    const equipeOrganisatrice = plateau.equipes.find(formation =>
+  formation.nom === plateau.organisateur ||
+  formation.nom.startsWith(plateau.organisateur + " ")
+);
+
+const logoOrganisateur = equipeOrganisatrice
+  ? equipeOrganisatrice.logo
+  : "esivo.png";
 
     return `
       <div class="weekend-match home-next-match home-next-plateau">
