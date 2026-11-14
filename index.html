@@ -3387,14 +3387,16 @@ const prochainPlateau = calendrier
   .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
   .sort((a, b) => a.date.localeCompare(b.date))[0];
 
-    const equipeOrganisatrice = plateau.equipes.find(formation =>
-  formation.nom === plateau.organisateur ||
-  formation.nom.startsWith(plateau.organisateur + " ")
-);
+    const logoOrganisateur = plateau => {
+  const equipeOrganisatrice = plateau.equipes.find(formation =>
+    formation.nom === plateau.organisateur ||
+    formation.nom.startsWith(plateau.organisateur + " ")
+  );
 
-const logoOrganisateur = equipeOrganisatrice
-  ? equipeOrganisatrice.logo
-  : null;
+  return equipeOrganisatrice
+    ? equipeOrganisatrice.logo
+    : "esivo.png";
+};
 
 const descriptionsOrganisateurs = {
   "ESIVO": "Entente Sportive Intercommunale Vallée de l'Orne",
@@ -3426,7 +3428,7 @@ const descriptionsOrganisateurs = {
       </div>
 
       <div class="u11-next-organizer">
-<img src="logos/${logosOrganisateurs[prochainPlateau.organisateur] || 'esivo.png'}" alt="${prochainPlateau.organisateur}">  <div>
+<img src="logos/${logoOrganisateur(prochainPlateau)}" alt="${prochainPlateau.organisateur}">  <div>
     <small>ORGANISÉ PAR</small>
     <strong>${prochainPlateau.organisateur}</strong>
   </div>
@@ -3453,7 +3455,7 @@ const descriptionsOrganisateurs = {
           <article class="mc-fixture mc-fixture-plateau">
 
   <div class="u11-organizer">
-  <img src="logos/${logosOrganisateurs[plateau.organisateur] || 'esivo.png'}" alt="${plateau.organisateur}">
+  <img src="logos/${logoOrganisateur(plateau)}" alt="${plateau.organisateur}">
   <div class="u11-organizer-text">
     <span>PLATEAU ORGANISÉ PAR</span>
     <strong>${plateau.organisateur}</strong>
