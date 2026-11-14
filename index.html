@@ -1632,6 +1632,239 @@ body {
     gap: 15px;
   }
 }
+  /* PLATEAUX U11 */
+.mc-fixture-plateau {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  background: linear-gradient(145deg, #20232b, #191b22);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.mc-fixture-plateau:hover {
+  background: #242731;
+}
+
+.u11-organizer {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  background: linear-gradient(110deg, rgba(170,26,36,.22), rgba(170,26,36,.04));
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.u11-organizer img {
+  width: 82px;
+  height: 82px;
+  flex: 0 0 82px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 16px;
+  padding: 8px;
+}
+
+.u11-organizer-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.u11-organizer-text span {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #e66b73;
+  font-weight: 900;
+}
+
+.u11-organizer-text strong {
+  font-size: 26px;
+  line-height: 1;
+  color: #fff;
+  font-weight: 950;
+}
+
+.u11-organizer-text small {
+  font-size: 11px;
+  color: #aeb0ba;
+}
+
+.u11-category {
+  margin-left: auto;
+  align-self: flex-start;
+  background: #AA1A24;
+  color: white;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.u11-teams-section {
+  padding: 22px 24px;
+}
+
+.u11-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.u11-section-title strong {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 850;
+}
+
+.u11-section-title span {
+  font-size: 10px;
+  color: #aeb0ba;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.u11-teams-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.u11-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 128px;
+  padding: 16px 10px;
+  border-radius: 13px;
+  background: #292c36;
+  border: 1px solid rgba(255,255,255,.06);
+  text-align: center;
+}
+
+.u11-team img {
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+.u11-team strong {
+  font-size: 12px;
+  line-height: 1.3;
+  color: #f5f5f7;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.u11-event-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 18px 24px;
+  background: rgba(0,0,0,.15);
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+
+.u11-event-details > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.u11-event-details span {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #e66b73;
+  font-weight: 900;
+}
+
+.u11-event-details strong {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #fff;
+  font-weight: 800;
+}
+
+.u11-event-details small {
+  font-size: 12px;
+  color: #aeb0ba;
+}
+
+@media (max-width: 700px) {
+  .u11-organizer {
+    gap: 13px;
+    padding: 17px 15px;
+  }
+
+  .u11-organizer img {
+    width: 68px;
+    height: 68px;
+    flex-basis: 68px;
+    border-radius: 13px;
+    padding: 6px;
+  }
+
+  .u11-organizer-text strong {
+    font-size: 23px;
+  }
+
+  .u11-organizer-text small {
+    font-size: 9px;
+    line-height: 1.35;
+  }
+
+  .u11-category {
+    font-size: 10px;
+    padding: 7px 9px;
+  }
+
+  .u11-teams-section {
+    padding: 18px 14px;
+  }
+
+  .u11-section-title strong {
+    font-size: 14px;
+  }
+
+  .u11-teams-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .u11-team {
+    min-height: 116px;
+    padding: 13px 8px;
+    gap: 8px;
+  }
+
+  .u11-team img {
+    width: 54px;
+    height: 54px;
+  }
+
+  .u11-team strong {
+    font-size: 11px;
+  }
+
+  .u11-event-details {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 16px 15px;
+  }
+}
 </style>
 </head>
 
@@ -2707,28 +2940,47 @@ if (page === "Calendrier") {
 
       <div class="mc-fixtures">
         ${calendrier.map(plateau => `
-          <article class="mc-fixture">
-            <div class="mc-date">
-              <strong>${new Date(plateau.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "2-digit", month: "short" }).replace(".", "").toUpperCase()}</strong>
-              <span>${plateau.heure}</span>
-            </div>
+          <article class="mc-fixture mc-fixture-plateau">
 
-            <div class="mc-fixture-teams" style="flex-wrap:wrap;">
-              ${plateau.equipes.map(formation => `
-                <div class="mc-fixture-team">
-                  <img src="logos/${formation.logo}" alt="${formation.nom}">
-                  <strong>${formation.nom}</strong>
-                </div>
-              `).join("")}
-            </div>
+  <div class="u11-organizer">
+    <img src="logos/esivo.png" alt="ESIVO">
+    <div class="u11-organizer-text">
+      <span>PLATEAU ORGANISÉ PAR</span>
+      <strong>ESIVO</strong>
+      <small>Entente Sportive Intercommunale Vallée de l'Orne</small>
+    </div>
+    <span class="u11-category">U11</span>
+  </div>
 
-            <div class="mc-fixture-meta">
-              <span>PLATEAU U11</span>
-              <span>Organisé par ${plateau.organisateur}</span>
-            </div>
+  <div class="u11-teams-section">
+    <div class="u11-section-title">
+      <strong>Les équipes participantes</strong>
+      <span>4 ÉQUIPES</span>
+    </div>
 
-            <p class="fixture-venue">📍 ${plateau.lieu} · ${plateau.ville}</p>
-          </article>
+    <div class="u11-teams-grid">
+      ${plateau.equipes.map(formation => `
+        <div class="u11-team">
+          <img src="logos/${formation.logo}" alt="${formation.nom}">
+          <strong>${formation.nom}</strong>
+        </div>
+      `).join("")}
+    </div>
+  </div>
+
+  <div class="u11-event-details">
+    <div>
+      <span>DATE ET HORAIRE</span>
+      <strong>📅 ${dateFr(plateau.date)} · ${plateau.heure}</strong>
+    </div>
+    <div>
+      <span>LIEU DU PLATEAU</span>
+      <strong>📍 ${plateau.lieu}</strong>
+      <small>${plateau.ville}</small>
+    </div>
+  </div>
+
+</article>
         `).join("")}
       </div>
     </div>
