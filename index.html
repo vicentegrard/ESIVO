@@ -2029,6 +2029,14 @@ const seniorsCCalendrier = [
   ["2027-04-11","13h00","Départemental 4","Journée 14",true,"LE TOURNEUR","le-tourneur.png","Stade Eugène Figeac","14320 Saint-Martin-de-May"]
 ];
 
+  const seniorsFemininesCalendrier = [
+  ["2026-11-15","12h30","Départemental 1 Féminin à 8","Journée 8",false,"HASTINGS","hastings.png","Stade Aire De Sports Et Loisirs 2","14740 Saint-Manvieu-Norrey"],
+  ["2026-11-22","12h30","Départemental 1 Féminin à 8","Journée 9",true,"INTER ODON","inter-odon.png","Stade Roger Brion","14320 Saint-André-sur-Orne"],
+  ["2026-11-29","12h30","Départemental 1 Féminin à 8","Journée 10",false,"ST DESIR B","st-desir-b.png","Stade Municipal 1","14100 Saint-Désir"],
+  ["2026-12-06","12h30","Coupe Féminine Seniors à 8","Tour 1",false,"ST DESIR B","st-desir-b.png","Stade Municipal 1","14100 Saint-Désir"],
+  ["2026-12-13","12h30","Départemental 1 Féminin à 8","Journée 11",true,"AUTHIE","authie.png","Stade Roger Brion","14320 Saint-André-sur-Orne"]
+];
+
 
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
@@ -2050,8 +2058,8 @@ function afficherRencontresWeekend() {
         year: "numeric"
       });
 
-    const nomClub = nomEquipe === "Seniors A" ? "ESIVO" :
-      nomEquipe === "Seniors B" ? "ESIVO B" : "ESIVO C";
+    const nomClub = nomEquipe === "Seniors B" ? "ESIVO B" :
+      nomEquipe === "Seniors C" ? "ESIVO C" : "ESIVO";
 
     const equipeDomicile = domicile ? nomClub : adversaire;
     const equipeExterieure = domicile ? adversaire : nomClub;
@@ -2098,6 +2106,7 @@ function afficherRencontresWeekend() {
     { match: prochainMatch(seniorsACalendrier), equipe: "Seniors A" },
     { match: prochainMatch(seniorsBCalendrier), equipe: "Seniors B" },
     { match: prochainMatch(seniorsCCalendrier), equipe: "Seniors C" }
+    { match: prochainMatch(seniorsFemininesCalendrier), equipe: "Seniors Féminines à 8" }
   ].filter(item => item.match);
 
   if (tousLesMatchs.length === 0) {
@@ -2620,7 +2629,7 @@ function selectTeam(equipe) {
   
 if (page === "Calendrier") {
 
-  if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C") {
+  if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C" || equipe === "Seniors Féminines à 8") {
     const calendrier = equipe === "Seniors A" ? [
       ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2026-11-22","14h30","Départemental 1","Journée 9",true,"IFS B","ifs-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
@@ -2637,7 +2646,9 @@ if (page === "Calendrier") {
       ["2027-04-25","15h00","Départemental 1","Journée 20",true,"LE TRONQUAY","le-tronquay.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2027-05-08","18h30","Départemental 1","Journée 21",false,"LYSTRIENNE","lystrienne.png","Stade Municipal","14330 Le Molay-Littry"],
       ["2027-05-23","15h00","Départemental 1","Journée 22",true,"ST VIGOR LE GRAND","st-vigor-le-grand.png","Stade Municipal","14320 Fontenay-le-Marmion"]
-        ] : equipe === "Seniors B" ? seniorsBCalendrier : seniorsCCalendrier;
+        ] : equipe === "Seniors B" ? seniorsBCalendrier
+  : equipe === "Seniors C" ? seniorsCCalendrier
+  : seniorsFemininesCalendrier;
 
     const dateFr = date => new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
       weekday: "long", day: "numeric", month: "long", year: "numeric"
