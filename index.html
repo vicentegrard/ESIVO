@@ -2965,14 +2965,14 @@ if (page === "Calendrier") {
           <article class="mc-fixture mc-fixture-plateau">
 
   <div class="u11-organizer">
-    <img src="logos/esivo.png" alt="ESIVO">
-    <div class="u11-organizer-text">
-      <span>PLATEAU ORGANISÉ PAR</span>
-      <strong>ESIVO</strong>
-      <small>Entente Sportive Intercommunale Vallée de l'Orne</small>
-    </div>
-    <span class="u11-category">U11</span>
+  <img src="${plateau.organisateur === 'ESIVO' ? 'logos/esivo.png' : 'logos/rocquancourt.png'}" alt="${plateau.organisateur}">
+  <div class="u11-organizer-text">
+    <span>PLATEAU ORGANISÉ PAR</span>
+    <strong>${plateau.organisateur}</strong>
+    <small>${plateau.organisateur === 'ESIVO' ? "Entente Sportive Intercommunale Vallée de l'Orne" : "Club de Rocquancourt"}</small>
   </div>
+  <span class="u11-category">U11</span>
+</div>
 
   <div class="u11-teams-section">
     <div class="u11-section-title">
