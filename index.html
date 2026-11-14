@@ -2775,6 +2775,27 @@ const u13Calendrier = [
   }
 ];
 
+    {
+    date: "2026-12-05",
+    heure: "10h00",
+    organisateur: "ROCQUANCOURT",
+    lieu: "Stade Marcel Rousseau",
+    ville: "14540 Castine-en-Plaine",
+    equipes: [
+      { nom: "ROCQUANCOURT", logo: "rocquancourt.png" },
+      { nom: "GIBERVILLE C", logo: "giberville.png" },
+      { nom: "CORMELLES B", logo: "cormelles.png" },
+      { nom: "CORMELLES C", logo: "cormelles.png" },
+      { nom: "ESIVO", logo: "esivo.png" },
+      { nom: "ESIVO B", logo: "esivo.png" },
+      { nom: "BAIE DE L'ORNE", logo: "baie-de-l-orne.png" },
+      { nom: "BAIE DE L'ORNE B", logo: "baie-de-l-orne.png" },
+      { nom: "BAVENT", logo: "bavent.png" },
+      { nom: "FC VITAL", logo: "fc-vital-b.png" },
+      { nom: "FC VITAL B", logo: "fc-vital-b.png" }
+    ]
+  }
+
 
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
@@ -3594,8 +3615,9 @@ const descriptionsOrganisateurs = {
   };
 
   const descriptionsOrganisateurs = {
-    "BAVENT": "Club de Bavent"
-  };
+  "BAVENT": "Club de Bavent",
+  "ROCQUANCOURT": "Club de Rocquancourt"
+};
 
   contenu.innerHTML = `
     <div class="match-center">
