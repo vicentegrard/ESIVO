@@ -2777,7 +2777,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
         <span class="mc-eyebrow">SAISON 2026 / 2027</span>
         <h3>Les prochaines rencontres</h3>
       </div>
-      <span class="mc-count">${calendrier.length} MATCHS</span>
+      <span class="mc-count">${calendrier.length} MATCH${calendrier.length > 1 ? "S" : ""}</span>
     </div>
 
     <div class="mc-fixtures">
@@ -3026,7 +3026,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
                   <span class="club-mobile-position">${club.position}</span>
                   <img src="${club.logo}" alt="Logo ${club.equipe}">
                   <strong>${club.equipe}</strong>
-                  <span class="club-mobile-points">${club.points} pts</span>
+                  <span class="club-mobile-points">${club.points} ${Math.abs(club.points) === 1 ? "point" : "points"}</span>
                 </div>
                 <div class="club-mobile-stats">
                   <span>Joués : ${club.joues}</span>
@@ -3122,7 +3122,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
                   <span class="club-mobile-position">${club.position}</span>
                   <img src="${club.logo}" alt="Logo ${club.equipe}">
                   <strong>${club.equipe}</strong>
-                  <span class="club-mobile-points">${club.points} pts</span>
+                  <span class="club-mobile-points">${club.points} ${Math.abs(club.points) === 1 ? "point" : "points"}</span>
                 </div>
                 <div class="club-mobile-stats">
                   <span>Joués : ${club.joues}</span>
@@ -3218,7 +3218,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
                   <span class="club-mobile-position">${club.position}</span>
                   <img src="${club.logo}" alt="Logo ${club.equipe}">
                   <strong>${club.equipe}</strong>
-                  <span class="club-mobile-points">${club.points} pts</span>
+                  <span class="club-mobile-points">${club.points} ${Math.abs(club.points) === 1 ? "point" : "points"}</span>
                 </div>
                 <div class="club-mobile-stats">
                   <span>Joués : ${club.joues}</span>
@@ -3310,7 +3310,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
                   <span class="club-mobile-position">${club.position}</span>
                   <img src="${club.logo}" alt="Logo ${club.equipe}">
                   <strong>${club.equipe}</strong>
-                  <span class="club-mobile-points">${club.points} pts</span>
+                  <span class="club-mobile-points">${club.points} ${Math.abs(club.points) === 1 ? "point" : "points"}</span>
                 </div>
                 <div class="club-mobile-stats">
                   <span>Joués : ${club.joues}</span>
@@ -3406,7 +3406,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
                   <span class="club-mobile-position">${club.position}</span>
                   <img src="${club.logo}" alt="Logo ${club.equipe}">
                   <strong>${club.equipe}</strong>
-                  <span class="club-mobile-points">${club.points} pts</span>
+                  <span class="club-mobile-points">${club.points} ${Math.abs(club.points) === 1 ? "point" : "points"}</span>
                 </div>
                 <div class="club-mobile-stats">
                   <span>Joués : ${club.joues}</span>
@@ -3500,7 +3500,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
                   <span class="club-mobile-position">${club.position}</span>
                   <img src="${club.logo}" alt="Logo ${club.equipe}">
                   <strong>${club.equipe}</strong>
-                  <span class="club-mobile-points">${club.points} pts</span>
+                  <span class="club-mobile-points">${club.points} ${Math.abs(club.points) === 1 ? "point" : "points"}</span>
                 </div>
                 <div class="club-mobile-stats">
                   <span>Joués : ${club.joues}</span>
@@ -3530,27 +3530,27 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
         {
           position: 1, equipe: "ES BARBERY", logo: "logos/es-barbery.png",
           points: 6, joues: 2, victoires: 2, nuls: 0, defaites: 0,
-          forfait: 0, butsPour: 14, butsContre: 2, difference: "+12", serie: "VV"
+          forfait: 0, butsPour: 14, butsContre: 2, difference: "+12"
         },
         {
           position: 2, equipe: "FC VITAL B", logo: "logos/fc-vital-b.png",
           points: 4, joues: 2, victoires: 1, nuls: 1, defaites: 0,
-          forfait: 0, butsPour: 10, butsContre: 1, difference: "+9", serie: "VN"
+          forfait: 0, butsPour: 10, butsContre: 1, difference: "+9"
         },
         {
           position: 3, equipe: "USM BLAINVILLE B", logo: "logos/usm-blainville-b.png",
           points: 4, joues: 3, victoires: 1, nuls: 1, defaites: 1,
-          forfait: 0, butsPour: 5, butsContre: 8, difference: "-3", serie: "VND"
+          forfait: 0, butsPour: 5, butsContre: 8, difference: "-3"
         },
         {
           position: 4, equipe: "ESIVO", logo: "logos/esivo.png",
           points: 3, joues: 3, victoires: 1, nuls: 0, defaites: 2,
-          forfait: 0, butsPour: 6, butsContre: 13, difference: "-7", serie: "DDV"
+          forfait: 0, butsPour: 6, butsContre: 13, difference: "-7"
         },
         {
           position: 5, equipe: "AJS COLL. OUISTREHAM C", logo: "logos/ajs-ouistreham-c.png",
           points: 0, joues: 2, victoires: 0, nuls: 0, defaites: 2,
-          forfait: 0, butsPour: 3, butsContre: 14, difference: "-11", serie: "DD"
+          forfait: 0, butsPour: 3, butsContre: 14, difference: "-11"
         }
       ];
 
@@ -3618,7 +3618,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
                   <span class="club-mobile-position">${club.position}</span>
                   <img src="${club.logo}" alt="Logo ${club.equipe}">
                   <strong>${club.equipe}</strong>
-                  <span class="club-mobile-points">${club.points} pts</span>
+                  <span class="club-mobile-points">${club.points} ${Math.abs(club.points) === 1 ? "point" : "points"}</span>
                 </div>
                 <div class="club-mobile-stats">
                   <span>Joués : ${club.joues}</span>
@@ -3628,7 +3628,6 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
                   <span>BP : ${club.butsPour}</span>
                   <span>BC : ${club.butsContre}</span>
                   <span>Diff. : ${club.difference}</span>
-                  <span>Série : ${club.serie}</span>
                 </div>
               </div>
             `).join("")}
