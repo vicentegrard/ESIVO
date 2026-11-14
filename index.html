@@ -2040,6 +2040,22 @@ const seniorsCCalendrier = [
   ["2026-12-13","12h30","Départemental 1 Féminin à 8","Journée 11",true,"AUTHIE","authie.png","Stade Roger Brion","14320 Saint-André-sur-Orne"]
 ];
 
+  const seniorsVeteransCalendrier = [
+  ["2026-11-15","10h00","Départemental Vétérans","Journée 6",true,"CASTELET","castelet-st-sylvain.png","Stade Municipal","14320 Fontenay-le-Marmion"],
+  ["2026-11-22","10h00","Départemental Vétérans","Journée 7",false,"MUANCE-CAGNY","muance-cagny.png","Stade Franck Dumas 1","14370 Moult-Chicheboville"],
+  ["2026-11-29","10h00","Départemental Vétérans","Journée 8",true,"FALAISE","falaise.png","Stade André Louvel","14320 May-sur-Orne"],
+  ["2026-12-06","10h00","Départemental Vétérans","Journée 9",false,"ROCQUANCOURT","rocquancourt.png","Stade Marcel Rousseau","14540 Castine-en-Plaine"],
+  ["2027-01-31","10h00","Départemental Vétérans","Journée 10",false,"CONDÉ PÉTRUVIENNE","conde-petruvienne.png","Stade Saint Pierre Sur Dives 1","14170 Saint-Pierre-en-Auge"],
+  ["2027-02-07","10h00","Départemental Vétérans","Journée 11",true,"BAIE DE L'ORNE","baie-de-l-orne.png","Stade André Louvel","14320 May-sur-Orne"],
+  ["2027-02-14","10h00","Départemental Vétérans","Journée 12",false,"CINGAL","cingal.png","Stade du Manoir 1","14680 Bretteville-sur-Laize"],
+  ["2027-03-14","10h00","Départemental Vétérans","Journée 13",true,"FCB2LC","fcb2lc.png","Stade André Louvel","14320 May-sur-Orne"],
+  ["2027-04-04","10h00","Départemental Vétérans","Journée 14",false,"CASTELET","castelet-st-sylvain.png","Stade Walter Falk","14540 Saint-Aignan-de-Cramesnil"],
+  ["2027-04-18","10h00","Départemental Vétérans","Journée 15",true,"MUANCE-CAGNY","muance-cagny.png","Stade André Louvel","14320 May-sur-Orne"],
+  ["2027-05-16","10h00","Départemental Vétérans","Journée 16",false,"FALAISE","falaise.png","Stade Guibray 2","14700 Falaise"],
+  ["2027-05-23","10h00","Départemental Vétérans","Journée 17",true,"ROCQUANCOURT","rocquancourt.png","Stade André Louvel","14320 May-sur-Orne"],
+  ["2027-05-30","10h00","Départemental Vétérans","Journée 18",false,"POTIGNY","potigny.png","Stade Municipal","14420 Ussy"]
+];
+
 
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
@@ -2106,11 +2122,12 @@ function afficherRencontresWeekend() {
   };
 
   const tousLesMatchs = [
-    { match: prochainMatch(seniorsACalendrier), equipe: "Seniors A" },
-    { match: prochainMatch(seniorsBCalendrier), equipe: "Seniors B" },
-    { match: prochainMatch(seniorsCCalendrier), equipe: "Seniors C" },
-    { match: prochainMatch(seniorsFemininesCalendrier), equipe: "Seniors Féminines à 8" }
-  ].filter(item => item.match)
+  { match: prochainMatch(seniorsACalendrier), equipe: "Seniors A" },
+  { match: prochainMatch(seniorsBCalendrier), equipe: "Seniors B" },
+  { match: prochainMatch(seniorsCCalendrier), equipe: "Seniors C" },
+  { match: prochainMatch(seniorsFemininesCalendrier), equipe: "Seniors Féminines à 8" },
+  { match: prochainMatch(seniorsVeteransCalendrier), equipe: "Seniors Vétérans" }
+].filter(item => item.match)
  .sort((a, b) => {
    const dateA = new Date(a.match[0] + "T" + a.match[1].replace("h", ":") + ":00");
    const dateB = new Date(b.match[0] + "T" + b.match[1].replace("h", ":") + ":00");
@@ -2637,7 +2654,7 @@ function selectTeam(equipe) {
   
 if (page === "Calendrier") {
 
-  if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C" || equipe === "Seniors Féminines à 8") {
+  if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C" || equipe === "Seniors Féminines à 8" || equipe === "Seniors Vétérans") {
     const calendrier = equipe === "Seniors A" ? [
       ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2026-11-22","14h30","Départemental 1","Journée 9",true,"IFS B","ifs-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
@@ -2656,7 +2673,8 @@ if (page === "Calendrier") {
       ["2027-05-23","15h00","Départemental 1","Journée 22",true,"ST VIGOR LE GRAND","st-vigor-le-grand.png","Stade Municipal","14320 Fontenay-le-Marmion"]
         ] : equipe === "Seniors B" ? seniorsBCalendrier
   : equipe === "Seniors C" ? seniorsCCalendrier
-  : seniorsFemininesCalendrier;
+: equipe === "Seniors Féminines à 8" ? seniorsFemininesCalendrier
+: seniorsVeteransCalendrier;
 
     const dateFr = date => new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
       weekday: "long", day: "numeric", month: "long", year: "numeric"
