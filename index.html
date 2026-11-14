@@ -2938,6 +2938,10 @@ const logoOrganisateur = equipeOrganisatrice
   .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
   .sort((a, b) => a.date.localeCompare(b.date))[0];
 
+    const prochainPlateauU7 = u7Calendrier
+  .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
+  .sort((a, b) => a.date.localeCompare(b.date))[0];
+
   const tousLesMatchs = [
   { match: prochainMatch(seniorsACalendrier), equipe: "Seniors A" },
   { match: prochainMatch(seniorsBCalendrier), equipe: "Seniors B" },
@@ -2946,8 +2950,9 @@ const logoOrganisateur = equipeOrganisatrice
   { match: prochainMatch(seniorsVeteransCalendrier), equipe: "Seniors Vétérans" },
   { match: prochainMatch(u18Calendrier), equipe: "U18" },
     { match: prochainMatch(u13Calendrier), equipe: "U13" },
-  { plateau: prochainPlateauU11, equipe: "U11" },
-{ plateau: prochainPlateauU9, equipe: "U9" }
+    { plateau: prochainPlateauU11, equipe: "U11" },
+  { plateau: prochainPlateauU9, equipe: "U9" },
+  { plateau: prochainPlateauU7, equipe: "U7" }
 ].filter(item => item.match || item.plateau)
  .sort((a, b) => {
    const dateMatchA = a.match ? a.match[0] : a.plateau.date;
