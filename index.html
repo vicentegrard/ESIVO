@@ -1663,6 +1663,126 @@ body {
     font-size: 11px;
   }
 }
+
+  /* PLATEAU U11 - ACCUEIL */
+
+.home-next-plateau {
+  padding: 28px;
+}
+
+.home-plateau-organizer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 22px 0 30px;
+  text-align: left;
+}
+
+.home-plateau-organizer img {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+}
+
+.home-plateau-organizer small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.home-plateau-organizer strong {
+  display: block;
+  font-size: 22px;
+}
+
+.home-plateau-teams {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.home-plateau-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+  text-align: center;
+}
+
+.home-plateau-team img {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+}
+
+.home-plateau-team strong {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.home-plateau-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 25px;
+  text-align: center;
+}
+
+.home-plateau-info strong {
+  font-size: 16px;
+}
+
+.home-plateau-info span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .home-next-plateau {
+    padding: 20px 12px;
+  }
+
+  .home-plateau-organizer {
+    margin: 16px 0 22px;
+  }
+
+  .home-plateau-organizer img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .home-plateau-organizer strong {
+    font-size: 17px;
+  }
+
+  .home-plateau-teams {
+    gap: 8px;
+    margin: 20px 0;
+  }
+
+  .home-plateau-team img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .home-plateau-team strong {
+    font-size: 10px;
+  }
+
+  .home-plateau-info strong {
+    font-size: 13px;
+  }
+
+  .home-plateau-info span {
+    font-size: 11px;
+  }
+}
   /* CARROUSEL DES PROCHAINS MATCHS */
 
 /* CARROUSEL DES PROCHAINS MATCHS */
@@ -2623,11 +2743,62 @@ function afficherRencontresWeekend() {
     `;
   };
 
+    const afficherCartePlateau = (plateau) => {
+    if (!plateau) return "";
+
+    const dateFr = new Date(plateau.date + "T12:00:00")
+      .toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+
+    const logosOrganisateurs = {
+      "ESIVO": "esivo.png",
+      "ROCQUANCOURT": "rocquancourt.png",
+      "CAUMONT": "caumont.png"
+    };
+
+    return `
+      <div class="weekend-match home-next-match home-next-plateau">
+        <div class="mc-eyebrow">PROCHAIN PLATEAU · U11</div>
+
+        <div class="home-plateau-organizer">
+          <img src="logos/${logosOrganisateurs[plateau.organisateur] || 'esivo.png'}" alt="${plateau.organisateur}">
+          <div>
+            <small>PLATEAU ORGANISÉ PAR</small>
+            <strong>${plateau.organisateur}</strong>
+          </div>
+        </div>
+
+        <div class="home-plateau-teams">
+          ${plateau.equipes.map(formation => `
+            <div class="home-plateau-team">
+              <img src="logos/${formation.logo}" alt="${formation.nom}">
+              <strong>${formation.nom}</strong>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="home-plateau-info">
+          <strong>📅 ${dateFr} · ${plateau.heure}</strong>
+          <span>📍 ${plateau.lieu}</span>
+          <span>${plateau.ville}</span>
+        </div>
+      </div>
+    `;
+  };
+
     const prochainMatch = (calendrier) => {
     return calendrier
       .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
       .sort((a, b) => a[0].localeCompare(b[0]))[0];
   };
+
+  const prochainPlateauU11 = u11Calendrier
+  .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
+  .sort((a, b) => a.date.localeCompare(b.date))[0];
 
   const tousLesMatchs = [
   { match: prochainMatch(seniorsACalendrier), equipe: "Seniors A" },
@@ -2636,16 +2807,24 @@ function afficherRencontresWeekend() {
   { match: prochainMatch(seniorsFemininesCalendrier), equipe: "Seniors Féminines à 8" },
   { match: prochainMatch(seniorsVeteransCalendrier), equipe: "Seniors Vétérans" },
   { match: prochainMatch(u18Calendrier), equipe: "U18" },
-  { match: prochainMatch(u13Calendrier), equipe: "U13" }
-].filter(item => item.match)
+    { match: prochainMatch(u13Calendrier), equipe: "U13" },
+  { plateau: prochainPlateauU11, equipe: "U11" }
+].filter(item => item.match || item.plateau)
  .sort((a, b) => {
-   const dateA = new Date(a.match[0] + "T" + a.match[1].replace("h", ":") + ":00");
-   const dateB = new Date(b.match[0] + "T" + b.match[1].replace("h", ":") + ":00");
+   const dateMatchA = a.match ? a.match[0] : a.plateau.date;
+   const heureA = a.match ? a.match[1] : a.plateau.heure;
+
+   const dateMatchB = b.match ? b.match[0] : b.plateau.date;
+   const heureB = b.match ? b.match[1] : b.plateau.heure;
+
+   const dateA = new Date(dateMatchA + "T" + heureA.replace("h", ":") + ":00");
+   const dateB = new Date(dateMatchB + "T" + heureB.replace("h", ":") + ":00");
+
    return dateA - dateB;
- });
+});
 
   if (tousLesMatchs.length === 0) {
-    conteneur.innerHTML = '<p class="empty-state">Aucun prochain match programmé.</p>';
+    conteneur.innerHTML = '<p class="empty-state">Aucune prochaine rencontre ou plateau programmé.</p>';
     return;
   }
 
@@ -2656,8 +2835,10 @@ function afficherRencontresWeekend() {
       <div class="home-carousel-viewport">
         <div class="home-carousel-track">
           ${tousLesMatchs.map(item =>
-            afficherCarte(item.match, item.equipe)
-          ).join("")}
+  item.plateau
+    ? afficherCartePlateau(item.plateau)
+    : afficherCarte(item.match, item.equipe)
+).join("")}
         </div>
       </div>
 
