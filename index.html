@@ -2056,6 +2056,13 @@ const seniorsCCalendrier = [
   ["2027-05-30","10h00","Départemental Vétérans","Journée 18",false,"POTIGNY","potigny.png","Stade Municipal","14420 Ussy"]
 ];
 
+  const u18Calendrier = [
+  ["2026-11-14","15h15","Départemental 3 U18 Win Sport School","Journée 5",false,"HÉROUVILLE C","herouville-c.png","Stade Salvador Allende","14200 Hérouville-Saint-Clair"],
+  ["2026-11-21","15h15","Départemental 3 U18 Win Sport School","Journée 6",false,"AJS COLL. OUISTREHAM B","ajs-ouistreham-c.png","Stade Claude & Lucienne Legrand 1","14880 Colleville-Montgomery"],
+  ["2026-11-28","15h15","Départemental 3 U18 Win Sport School","Journée 7",true,"ASTDV B","astdv-b.png","Stade Eugène Figeac","14320 Saint-Martin-de-May"],
+  ["2026-12-05","15h15","Départemental 3 U18 Win Sport School","Journée 8",false,"POTIGNY","potigny.png","Stade Municipal","14420 Ussy"]
+];
+
 
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
@@ -2126,7 +2133,8 @@ function afficherRencontresWeekend() {
   { match: prochainMatch(seniorsBCalendrier), equipe: "Seniors B" },
   { match: prochainMatch(seniorsCCalendrier), equipe: "Seniors C" },
   { match: prochainMatch(seniorsFemininesCalendrier), equipe: "Seniors Féminines à 8" },
-  { match: prochainMatch(seniorsVeteransCalendrier), equipe: "Seniors Vétérans" }
+  { match: prochainMatch(seniorsVeteransCalendrier), equipe: "Seniors Vétérans" },
+  { match: prochainMatch(u18Calendrier), equipe: "U18" }
 ].filter(item => item.match)
  .sort((a, b) => {
    const dateA = new Date(a.match[0] + "T" + a.match[1].replace("h", ":") + ":00");
@@ -2654,7 +2662,7 @@ function selectTeam(equipe) {
   
 if (page === "Calendrier") {
 
-  if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C" || equipe === "Seniors Féminines à 8" || equipe === "Seniors Vétérans") {
+  if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C" || equipe === "Seniors Féminines à 8" || equipe === "Seniors Vétérans" || equipe === "U18") {
     const calendrier = equipe === "Seniors A" ? [
       ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
       ["2026-11-22","14h30","Départemental 1","Journée 9",true,"IFS B","ifs-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
@@ -2674,6 +2682,7 @@ if (page === "Calendrier") {
         ] : equipe === "Seniors B" ? seniorsBCalendrier
   : equipe === "Seniors C" ? seniorsCCalendrier
 : equipe === "Seniors Féminines à 8" ? seniorsFemininesCalendrier
+: equipe === "U18" ? u18Calendrier
 : seniorsVeteransCalendrier;
 
     const dateFr = date => new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
