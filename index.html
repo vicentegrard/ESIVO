@@ -2684,6 +2684,29 @@ const u13Calendrier = [
   }
 ];
 
+  const u9Calendrier = [
+  {
+    date: "2026-11-21",
+    heure: "10h00",
+    organisateur: "BAVENT",
+    lieu: "Stade Municipal",
+    ville: "14860 Bavent",
+    equipes: [
+      { nom: "BAVENT", logo: "bavent.png" },
+      { nom: "GIBERVILLE C", logo: "giberville.png" },
+      { nom: "CORMELLES B", logo: "cormelles.png" },
+      { nom: "CORMELLES C", logo: "cormelles.png" },
+      { nom: "ESIVO", logo: "esivo.png" },
+      { nom: "ESIVO B", logo: "esivo.png" },
+      { nom: "BAIE DE L'ORNE", logo: "baie-de-l-orne.png" },
+      { nom: "BAIE DE L'ORNE B", logo: "baie-de-l-orne.png" },
+      { nom: "ROCQUANCOURT", logo: "rocquancourt.png" },
+      { nom: "FC VITAL", logo: "fc-vital-b.png" },
+      { nom: "FC VITAL B", logo: "fc-vital-b.png" }
+    ]
+  }
+];
+
 
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
@@ -2743,7 +2766,7 @@ function afficherRencontresWeekend() {
     `;
   };
 
-    const afficherCartePlateau = (plateau) => {
+    const afficherCartePlateau = (plateau, categorie) => {
     if (!plateau) return "";
 
     const dateFr = new Date(plateau.date + "T12:00:00")
@@ -2762,7 +2785,7 @@ function afficherRencontresWeekend() {
 
     return `
       <div class="weekend-match home-next-match home-next-plateau">
-        <div class="mc-eyebrow">PROCHAIN PLATEAU · U11</div>
+        <div class="mc-eyebrow">PROCHAIN PLATEAU · ${categorie}</div>
 
         <div class="home-plateau-organizer">
           <img src="logos/${logosOrganisateurs[plateau.organisateur] || 'esivo.png'}" alt="${plateau.organisateur}">
@@ -2772,14 +2795,6 @@ function afficherRencontresWeekend() {
           </div>
         </div>
 
-        <div class="home-plateau-teams">
-          ${plateau.equipes.map(formation => `
-            <div class="home-plateau-team">
-              <img src="logos/${formation.logo}" alt="${formation.nom}">
-              <strong>${formation.nom}</strong>
-            </div>
-          `).join("")}
-        </div>
 
         <div class="home-plateau-info">
           <strong>📅 ${dateFr} · ${plateau.heure}</strong>
@@ -2800,6 +2815,10 @@ function afficherRencontresWeekend() {
   .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
   .sort((a, b) => a.date.localeCompare(b.date))[0];
 
+  const prochainPlateauU9 = u9Calendrier
+  .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
+  .sort((a, b) => a.date.localeCompare(b.date))[0];
+
   const tousLesMatchs = [
   { match: prochainMatch(seniorsACalendrier), equipe: "Seniors A" },
   { match: prochainMatch(seniorsBCalendrier), equipe: "Seniors B" },
@@ -2808,7 +2827,8 @@ function afficherRencontresWeekend() {
   { match: prochainMatch(seniorsVeteransCalendrier), equipe: "Seniors Vétérans" },
   { match: prochainMatch(u18Calendrier), equipe: "U18" },
     { match: prochainMatch(u13Calendrier), equipe: "U13" },
-  { plateau: prochainPlateauU11, equipe: "U11" }
+  { plateau: prochainPlateauU11, equipe: "U11" },
+{ plateau: prochainPlateauU9, equipe: "U9" }
 ].filter(item => item.match || item.plateau)
  .sort((a, b) => {
    const dateMatchA = a.match ? a.match[0] : a.plateau.date;
@@ -2836,8 +2856,8 @@ function afficherRencontresWeekend() {
         <div class="home-carousel-track">
           ${tousLesMatchs.map(item =>
   item.plateau
-    ? afficherCartePlateau(item.plateau)
-    : afficherCarte(item.match, item.equipe)
+  ? afficherCartePlateau(item.plateau, item.equipe)
+  : afficherCarte(item.match, item.equipe)
 ).join("")}
         </div>
       </div>
@@ -3367,7 +3387,8 @@ const prochainPlateau = calendrier
     const logosOrganisateurs = {
   "ESIVO": "esivo.png",
   "ROCQUANCOURT": "rocquancourt.png",
-  "CAUMONT": "caumont.png"
+  "CAUMONT": "caumont.png",
+  "BAVENT": "bavent.png"
 };
 
 const descriptionsOrganisateurs = {
