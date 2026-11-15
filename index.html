@@ -1317,6 +1317,7 @@ body {
   background: rgba(170, 26, 36, .2);
 }
 
+
 /* ADAPTATION MOBILE */
 
 @media (max-width: 600px) {
@@ -1335,32 +1336,46 @@ body {
   }
 
   .mc-result-team strong {
-    font-size: 12px;
-    overflow-wrap: anywhere;
+    font-size: clamp(9px, 2.8vw, 12px);
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: auto;
   }
 
   .mc-result-fixture {
-    grid-template-columns: 55px 1fr;
+    grid-template-columns: 55px minmax(0, 1fr);
     gap: 9px;
     padding: 13px 10px;
   }
 
   .mc-result-fixture-teams {
-    gap: 6px;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 5px;
+    min-width: 0;
   }
 
   .mc-result-fixture-team {
-    gap: 5px;
-    font-size: 10px;
+    gap: 4px;
+    min-width: 0;
+    font-size: clamp(8px, 2.5vw, 10px);
   }
 
   .mc-result-fixture-team img {
-    width: 25px;
-    height: 25px;
+    width: 23px;
+    height: 23px;
+  }
+
+  .mc-result-fixture-team strong {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: auto;
+    line-height: 1.2;
   }
 
   .mc-result-fixture-score {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .mc-result-meta {
@@ -1368,6 +1383,7 @@ body {
     font-size: 9px;
   }
 }
+
 
 
 .mc-top,
