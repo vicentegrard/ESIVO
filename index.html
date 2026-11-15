@@ -3627,7 +3627,10 @@ function afficherResultatsWeekend() {
   const derniersResultats = Object.values(
     resultatsDemo
       .slice()
-      .sort((a, b) => b.date.localeCompare(a.date))
+      .sort((a, b) =>
+  b.date.localeCompare(a.date) ||
+  b.heure.localeCompare(a.heure)
+)
       .reduce((groupes, resultat) => {
         if (!groupes[resultat.equipe]) {
           groupes[resultat.equipe] = resultat;
