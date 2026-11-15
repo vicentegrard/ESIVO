@@ -3467,48 +3467,63 @@ const logoOrganisateur = equipeOrganisatrice
 }
 
 
+
 function afficherResultatsWeekend() {
   const conteneur = document.getElementById("weekendResults");
   if (!conteneur) return;
 
-  const aujourdHui = new Date();
-  const jour = aujourdHui.getDay();
+  const derniersResultats = Object.values(
+    resultatsDemo
+      .slice()
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .reduce((groupes, resultat) => {
+        if (!groupes[resultat.equipe]) {
+          groupes[resultat.equipe] = resultat;
+        }
+        return groupes;
+      }, {})
+  );
 
-  const samedi = new Date(aujourdHui);
-  samedi.setDate(aujourdHui.getDate() - (jour === 0 ? 1 : jour + 1));
-  samedi.setHours(0, 0, 0, 0);
-
-  const dimanche = new Date(samedi);
-  dimanche.setDate(samedi.getDate() + 1);
-  dimanche.setHours(23, 59, 59, 999);
-
-  const resultats = resultatsDemo
-    .filter(resultat => {
-      const dateResultat = new Date(resultat.date + "T12:00:00");
-      return dateResultat >= samedi && dateResultat <= dimanche;
-    })
-    .sort((a, b) =>
-      (a.date).localeCompare(b.date)
-    );
-
-  if (resultats.length === 0) {
+  if (derniersResultats.length === 0) {
     conteneur.innerHTML =
-      '<p class="empty-state">Aucun résultat enregistré pour le dernier week-end.</p>';
+      '<p class="empty-state">Aucun résultat enregistré pour le moment.</p>';
     return;
   }
 
-  conteneur.innerHTML = resultats.map(resultat => {
-    const date = new Date(resultat.date + "T12:00:00")
-      .toLocaleDateString("fr-FR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long"
-      });
+  let indexActuel = 0;
+
+  const afficherDate = date =>
+    new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+
+  const afficherCarteResultat = resultat => {
+    const domicile = resultat.domicile;
+
+    const equipeDomicile = domicile ? "ESIVO" : resultat.adversaire;
+    const equipeExterieure = domicile ? resultat.adversaire : "ESIVO";
+
+    const logoDomicile = domicile ? "esivo.png" : resultat.logo;
+    const logoExterieur = domicile ? resultat.logo : "esivo.png";
+
+    const scoreDomicile = domicile
+      ? resultat.butsESIVO
+      : resultat.butsAdversaire;
+
+    const scoreExterieur = domicile
+      ? resultat.butsAdversaire
+      : resultat.butsESIVO;
 
     let statut = "match-draw";
     let libelle = "MATCH NUL";
 
-    if (resultat.butsESIVO > resultat.butsAdversaire) {
+    if (resultat.tirsAuBut) {
+      statut = "match-loss";
+      libelle = "ÉLIMINATION AUX TIRS AU BUT";
+    } else if (resultat.butsESIVO > resultat.butsAdversaire) {
       statut = "match-win";
       libelle = "VICTOIRE";
     } else if (resultat.butsESIVO < resultat.butsAdversaire) {
@@ -3517,21 +3532,133 @@ function afficherResultatsWeekend() {
     }
 
     return `
-      <div class="weekend-result ${statut}">
-        <div class="result-team">
-          <span class="match-team">${resultat.equipe}</span>
-          <strong>ESIVO</strong>
-          <span class="match-opponent">${resultat.adversaire}</span>
+      <div class="weekend-match home-next-match home-result-card">
+        <div class="mc-eyebrow">
+          DERNIER RÉSULTAT · ${resultat.equipe.toUpperCase()}
         </div>
-        <div class="result-score">
-          <strong>${resultat.butsESIVO} - ${resultat.butsAdversaire}</strong>
-          <span>${libelle}</span>
-          <small>${date}</small>
+
+        <div class="home-match-teams">
+          <div class="home-match-team">
+            <img src="logos/${logoDomicile}" alt="${equipeDomicile}"
+              style="width:55px;height:55px;object-fit:contain">
+            <strong>${equipeDomicile}</strong>
+          </div>
+
+          <div class="result-score">
+            <strong>${scoreDomicile} - ${scoreExterieur}</strong>
+            <span class="${statut}">${libelle}</span>
+          </div>
+
+          <div class="home-match-team">
+            <img src="logos/${logoExterieur}" alt="${equipeExterieure}"
+              style="width:55px;height:55px;object-fit:contain">
+            <strong>${equipeExterieure}</strong>
+          </div>
+        </div>
+
+        <div class="home-match-info">
+          <strong>${afficherDate(resultat.date)} · ${resultat.heure}</strong>
+          <span>${resultat.competition} · ${resultat.journee}</span>
+          <span>📍 ${resultat.lieu} · ${resultat.ville}</span>
+          ${resultat.tirsAuBut
+            ? `<span>⚽ Tirs au but : ${resultat.tirsAuBut}</span>`
+            : ""}
         </div>
       </div>
     `;
-  }).join("");
+  };
+
+  conteneur.innerHTML = `
+    <div class="home-carousel">
+      <div class="home-carousel-viewport">
+        <div class="home-carousel-track">
+          ${derniersResultats.map(afficherCarteResultat).join("")}
+        </div>
+      </div>
+
+      <div class="home-carousel-controls"
+        style="${derniersResultats.length <= 1 ? "display:none;" : ""}">
+        <button type="button" class="home-carousel-arrow"
+          id="resultsCarouselPrev" aria-label="Résultat précédent">
+          &#10094;
+        </button>
+
+        <div class="home-carousel-dots">
+          ${derniersResultats.map((_, i) => `
+            <button type="button"
+              class="home-carousel-dot ${i === 0 ? "active" : ""}"
+              data-index="${i}"
+              aria-label="Afficher le résultat ${i + 1}">
+            </button>
+          `).join("")}
+        </div>
+
+        <button type="button" class="home-carousel-arrow"
+          id="resultsCarouselNext" aria-label="Résultat suivant">
+          &#10095;
+        </button>
+      </div>
+    </div>
+  `;
+
+  const track = conteneur.querySelector(".home-carousel-track");
+  const dots = conteneur.querySelectorAll(".home-carousel-dot");
+
+  const afficherSlide = () => {
+    track.style.transform = `translateX(-${indexActuel * 100}%)`;
+
+    dots.forEach((dot, i) => {
+      dot.classList.toggle("active", i === indexActuel);
+    });
+  };
+
+  const allerAuSuivant = () => {
+    indexActuel = (indexActuel + 1) % derniersResultats.length;
+    afficherSlide();
+  };
+
+  const allerAuPrecedent = () => {
+    indexActuel =
+      (indexActuel - 1 + derniersResultats.length) % derniersResultats.length;
+    afficherSlide();
+  };
+
+  const demarrerDefilement = () => {
+    clearInterval(conteneur._resultsCarouselTimer);
+
+    if (derniersResultats.length > 1) {
+      conteneur._resultsCarouselTimer =
+        setInterval(allerAuSuivant, 5000);
+    }
+  };
+
+  const boutonPrecedent = conteneur.querySelector("#resultsCarouselPrev");
+  const boutonSuivant = conteneur.querySelector("#resultsCarouselNext");
+
+  if (boutonPrecedent && boutonSuivant) {
+    boutonPrecedent.addEventListener("click", () => {
+      allerAuPrecedent();
+      demarrerDefilement();
+    });
+
+    boutonSuivant.addEventListener("click", () => {
+      allerAuSuivant();
+      demarrerDefilement();
+    });
+
+    dots.forEach(dot => {
+      dot.addEventListener("click", () => {
+        indexActuel = Number(dot.dataset.index);
+        afficherSlide();
+        demarrerDefilement();
+      });
+    });
+  }
+
+  afficherSlide();
+  demarrerDefilement();
 }
+
 
 
 
