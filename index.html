@@ -1366,13 +1366,13 @@ body {
   }
 
   .mc-result-fixture-team strong {
-    min-width: 0;
-    white-space: normal;
-    overflow-wrap: break-word;
-    word-break: normal;
-    hyphens: auto;
-    line-height: 1.2;
-  }
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(7px, 2.2vw, 10px);
+  line-height: 1.2;
+}
 
   .mc-result-fixture-score {
     font-size: 15px;
