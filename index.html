@@ -2670,6 +2670,154 @@ body {
     padding: 16px 15px;
   }
 }
+  
+/* =====================================
+   ESIVO — CHAMPS ADMINISTRATION
+===================================== */
+
+#adminEmail,
+#adminPassword,
+#adminEquipe,
+#adminCalendrierFormulaire input:not([type="checkbox"]),
+#adminCalendrierFormulaire select,
+#adminCalendrierFormulaire textarea {
+  display: block;
+  width: 100%;
+  padding: 13px 15px;
+  background: #22232B;
+  color: #FEFFFE;
+  border: 1px solid #41424D;
+  border-radius: 11px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+#adminEmail,
+#adminPassword {
+  margin-bottom: 13px;
+}
+
+#adminCalendrierFormulaire input,
+#adminCalendrierFormulaire select,
+#adminCalendrierFormulaire textarea {
+  margin-top: 7px;
+}
+
+#adminEmail:focus,
+#adminPassword:focus,
+#adminEquipe:focus,
+#adminCalendrierFormulaire input:focus,
+#adminCalendrierFormulaire select:focus,
+#adminCalendrierFormulaire textarea:focus {
+  border-color: #AA1A24;
+  box-shadow: 0 0 0 3px rgba(170, 26, 36, .20);
+}
+
+#adminEmail::placeholder,
+#adminPassword::placeholder,
+#adminCalendrierFormulaire input::placeholder,
+#adminCalendrierFormulaire textarea::placeholder {
+  color: #92929D;
+}
+
+#adminCalendrierFormulaire select option,
+#adminEquipe option {
+  background: #22232B;
+  color: #FEFFFE;
+}
+
+#adminCalendrierFormulaire .form-group {
+  margin-bottom: 17px;
+}
+
+#adminCalendrierFormulaire .form-group label {
+  display: block;
+  color: #E6E6EA;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+#adminCalendrierFormulaire input[type="date"],
+#adminCalendrierFormulaire input[type="time"] {
+  color-scheme: dark;
+}
+
+
+/* =====================================
+   ESIVO — BOUTONS ADMINISTRATION
+===================================== */
+
+#adminCalendrierFormulaire button,
+#adminCalendrierFormulaire .admin-equipe-plateau button {
+  background: #AA1A24;
+  color: #FEFFFE;
+  border: 1px solid #AA1A24;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+
+#adminCalendrierFormulaire button:hover {
+  background: #80131B;
+  border-color: #80131B;
+  transform: translateY(-1px);
+}
+
+#adminCalendrierFormulaire button:active {
+  transform: translateY(0);
+}
+
+
+/* =====================================
+   ESIVO — CARTE DE CONNEXION ADMIN
+===================================== */
+
+.content-card:has(#adminEmail) {
+  background: #17191D;
+  border: 1px solid #383B43;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, .22);
+}
+
+.content-card:has(#adminEmail) h3 {
+  color: #FEFFFE;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.content-card:has(#adminEmail) p {
+  color: #B8BBC2;
+}
+
+.content-card:has(#adminEmail) form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.content-card:has(#adminEmail) button {
+  background: #AA1A24;
+  color: #FEFFFE;
+  border: none;
+  border-radius: 11px;
+  padding: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.content-card:has(#adminEmail) button:hover {
+  background: #80131B;
+  transform: translateY(-1px);
+}
+
 </style>
 </head>
 
