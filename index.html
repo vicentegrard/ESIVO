@@ -6193,29 +6193,89 @@ async function deconnecterAdmin() {
   await window.esivoAuth.signOut();
   showPage("Administration");
 }
-  async function chargerCalendriersFirebase() {
+  
+async function chargerCalendriersFirebase() {
   try {
     const snapshot = await window.esivoDb
       .collection("matchs")
       .get();
 
-    window.calendriersFirebase = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    if (snapshot.empty) {
+      throw new Error("Aucune donnée trouvée dans Firebase.");
+    }
+
+    const documents = snapshot.docs.map(doc => doc.data());
+
+    window.calendriersFirebase = documents;
+
+    const equipesCalendriers = {
+      "U7": u7Calendrier,
+      "U9": u9Calendrier,
+      "U11": u11Calendrier,
+      "U13": u13Calendrier,
+      "U18": u18Calendrier,
+      "Seniors A": seniorsACalendrier,
+      "Seniors B": seniorsBCalendrier,
+      "Seniors C": seniorsCCalendrier,
+      "Seniors Féminines à 8": seniorsFemininesCalendrier,
+      "Seniors Vétérans": seniorsVeteransCalendrier
+    };
+
+    for (const [nomEquipe, calendrier] of Object.entries(equipesCalendriers)) {
+      const rencontres = documents
+        .filter(doc => doc.equipe === nomEquipe && doc.type === "match")
+        .map(doc => [
+          doc.date,
+          doc.heure,
+          doc.competition,
+          doc.journee,
+          doc.domicile,
+          doc.adversaire,
+          doc.logo,
+          doc.lieu,
+          doc.ville
+        ]);
+
+      const plateaux = documents
+        .filter(doc => doc.equipe === nomEquipe && doc.type === "plateau")
+        .map(doc => ({
+          date: doc.date,
+          heure: doc.heure,
+          organisateur: doc.organisateur,
+          lieu: doc.lieu,
+          ville: doc.ville,
+          equipes: doc.equipes || []
+        }));
+
+      const nouvellesDonnees = [...rencontres, ...plateaux];
+
+      nouvellesDonnees.sort((a, b) => {
+        const dateA = Array.isArray(a) ? a[0] : a.date;
+        const dateB = Array.isArray(b) ? b[0] : b.date;
+
+        const heureA = Array.isArray(a) ? a[1] : a.heure;
+        const heureB = Array.isArray(b) ? b[1] : b.heure;
+
+        return (dateA + " " + heureA).localeCompare(dateB + " " + heureB);
+      });
+
+      calendrier.splice(0, calendrier.length, ...nouvellesDonnees);
+    }
 
     console.log(
-      window.calendriersFirebase.length +
-      " rencontres et plateaux chargés depuis Firebase."
+      documents.length + " rencontres et plateaux synchronisés avec Firebase."
     );
+
+    afficherRencontresWeekend();
 
   } catch (erreur) {
     console.error(
-      "Erreur de lecture des calendriers Firebase :",
+      "Erreur de synchronisation des calendriers Firebase :",
       erreur
     );
   }
 }
+
 
 chargerCalendriersFirebase();
 afficherRencontresWeekend();
