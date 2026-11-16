@@ -4053,6 +4053,7 @@ const logoOrganisateur = equipeOrganisatrice
 
 
 
+
 function afficherResultatsWeekend() {
   const conteneur = document.getElementById("weekendResults");
   if (!conteneur) return;
@@ -4061,9 +4062,9 @@ function afficherResultatsWeekend() {
     resultatsDemo
       .slice()
       .sort((a, b) =>
-  b.date.localeCompare(a.date) ||
-  b.heure.localeCompare(a.heure)
-)
+        b.date.localeCompare(a.date) ||
+        b.heure.localeCompare(a.heure)
+      )
       .reduce((groupes, resultat) => {
         if (!groupes[resultat.equipe]) {
           groupes[resultat.equipe] = resultat;
@@ -4107,10 +4108,21 @@ function afficherResultatsWeekend() {
 
     let statut = "match-draw";
     let libelle = "MATCH NUL";
+    let scoreTirsAuBut = "";
 
-    if (resultat.tirsAuBut) {
+    if (resultat.forfait) {
       statut = "match-loss";
-      libelle = "ÉLIMINATION AUX TIRS AU BUT";
+      libelle = "FORFAIT";
+    } else if (resultat.tirsAuBut) {
+      const [butsAdversaireTAB, butsESIVOTAB] =
+        resultat.tirsAuBut.split("-").map(Number);
+
+      statut = "match-win";
+      libelle = "QUALIFICATION AUX TIRS AU BUT";
+
+      scoreTirsAuBut = domicile
+        ? `${butsESIVOTAB}-${butsAdversaireTAB}`
+        : `${butsAdversaireTAB}-${butsESIVOTAB}`;
     } else if (resultat.butsESIVO > resultat.butsAdversaire) {
       statut = "match-win";
       libelle = "VICTOIRE";
@@ -4149,7 +4161,7 @@ function afficherResultatsWeekend() {
           <span>${resultat.competition} · ${resultat.journee}</span>
           <span>📍 ${resultat.lieu} · ${resultat.ville}</span>
           ${resultat.tirsAuBut
-            ? `<span>⚽ Tirs au but : ${resultat.tirsAuBut}</span>`
+            ? `<span>⚽ Tirs au but : ${scoreTirsAuBut}</span>`
             : ""}
         </div>
       </div>
@@ -4246,6 +4258,7 @@ function afficherResultatsWeekend() {
   afficherSlide();
   demarrerDefilement();
 }
+
 
 
 
