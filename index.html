@@ -4272,7 +4272,27 @@ function ajouterEquipePlateauAdmin(nom = "", logo = "esivo.png") {
   liste.appendChild(ligne);
 }
 
+function filtrerLogosAdmin() {
+  const recherche = document.getElementById("adminRechercheLogo").value.toLowerCase();
+  const selection = document.getElementById("adminMatchLogo");
+  const valeurActuelle = selection.value;
 
+  const logosFiltres = logosDisponibles.filter(logo =>
+    logo.toLowerCase().includes(recherche)
+  );
+
+  selection.innerHTML = logosFiltres.map(logo => `
+    <option value="${logo}">${logo}</option>
+  `).join("");
+
+  if (logosFiltres.includes(valeurActuelle)) {
+    selection.value = valeurActuelle;
+  }
+
+  document.getElementById("adminMatchLogoApercu").src =
+    "logos/" + selection.value;
+}
+  
 function afficherFormulaireCalendrier(equipe) {
   const conteneur = document.getElementById("adminCalendrierFormulaire");
 
@@ -4383,6 +4403,12 @@ if (estPlateau) {
 
     <div class="form-group">
   <label>Logo de l'adversaire</label>
+  <input
+  type="text"
+  id="adminRechercheLogo"
+  placeholder="Rechercher un club..."
+  oninput="filtrerLogosAdmin()"
+>
 
   <select id="adminMatchLogo">
     ${logosDisponibles.map(logo => `
@@ -4415,8 +4441,8 @@ if (estPlateau) {
   const apercuLogo = document.getElementById("adminMatchLogoApercu");
 
   selectionLogo.addEventListener("change", () => {
-    apercuLogo.src = "logos/" + selectionLogo.value;
-  });
+  apercuLogo.src = "logos/" + selectionLogo.value;
+});
 
   apercuLogo.src = "logos/" + selectionLogo.value;
 
