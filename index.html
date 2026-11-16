@@ -4087,6 +4087,147 @@ async function enregistrerMatchAdmin() {
   }
 }
 
+
+function cleImportCalendrier(item) {
+  const heure = String(item.heure || "").replace("h", ":");
+
+  if (item.type === "plateau") {
+    const participants = (item.equipes || [])
+      .map(e => e.nom)
+      .sort()
+      .join(",");
+
+    return [
+      item.equipe, item.type, item.date, heure,
+      item.organisateur, item.lieu, item.ville, participants
+    ].join("|");
+  }
+
+  return [
+    item.equipe, item.type, item.date, heure,
+    item.competition, item.journee, item.domicile,
+    item.adversaire, item.lieu, item.ville
+  ].join("|");
+}
+
+async function importerCalendriersExistantsAdmin() {
+  const message = document.getElementById("adminImportMessage");
+  const utilisateur = window.esivoAuth && window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    message.textContent = "Accès refusé.";
+    return;
+  }
+
+  message.textContent = "Préparation de l'importation...";
+
+  try {
+    const calendriers = [
+      ...u7Calendrier.map(p => ({ equipe: "U7", type: "plateau", ...p })),
+      ...u9Calendrier.map(p => ({ equipe: "U9", type: "plateau", ...p })),
+      ...u11Calendrier.map(p => ({ equipe: "U11", type: "plateau", ...p })),
+
+      ...u13Calendrier.map(m => ({
+        equipe: "U13", type: "match",
+        date: m[0], heure: m[1], competition: m[2],
+        journee: m[3], domicile: m[4], adversaire: m[5],
+        logo: m[6], lieu: m[7], ville: m[8]
+      })),
+
+      ...u18Calendrier.map(m => ({
+        equipe: "U18", type: "match",
+        date: m[0], heure: m[1], competition: m[2],
+        journee: m[3], domicile: m[4], adversaire: m[5],
+        logo: m[6], lieu: m[7], ville: m[8]
+      })),
+
+      ...seniorsACalendrier.map(m => ({
+        equipe: "Seniors A", type: "match",
+        date: m[0], heure: m[1], competition: m[2],
+        journee: m[3], domicile: m[4], adversaire: m[5],
+        logo: m[6], lieu: m[7], ville: m[8]
+      })),
+
+      ...seniorsBCalendrier.map(m => ({
+        equipe: "Seniors B", type: "match",
+        date: m[0], heure: m[1], competition: m[2],
+        journee: m[3], domicile: m[4], adversaire: m[5],
+        logo: m[6], lieu: m[7], ville: m[8]
+      })),
+
+      ...seniorsCCalendrier.map(m => ({
+        equipe: "Seniors C", type: "match",
+        date: m[0], heure: m[1], competition: m[2],
+        journee: m[3], domicile: m[4], adversaire: m[5],
+        logo: m[6], lieu: m[7], ville: m[8]
+      })),
+
+      ...seniorsFemininesCalendrier.map(m => ({
+        equipe: "Seniors Féminines à 8", type: "match",
+        date: m[0], heure: m[1], competition: m[2],
+        journee: m[3], domicile: m[4], adversaire: m[5],
+        logo: m[6], lieu: m[7], ville: m[8]
+      })),
+
+      ...seniorsVeteransCalendrier.map(m => ({
+        equipe: "Seniors Vétérans", type: "match",
+        date: m[0], heure: m[1], competition: m[2],
+        journee: m[3], domicile: m[4], adversaire: m[5],
+        logo: m[6], lieu: m[7], ville: m[8]
+      }))
+    ];
+
+    const collection = window.esivoDb.collection("matchs");
+    const snapshot = await collection.get();
+    const clesExistantes = new Set();
+
+    snapshot.forEach(doc => {
+      clesExistantes.add(cleImportCalendrier(doc.data()));
+    });
+
+    const aImporter = [];
+
+    calendriers.forEach(item => {
+      const cle = cleImportCalendrier(item);
+
+      if (!clesExistantes.has(cle)) {
+        clesExistantes.add(cle);
+        aImporter.push(item);
+      }
+    });
+
+    if (aImporter.length === 0) {
+      message.textContent = "Tous les calendriers semblent déjà importés. Aucun doublon créé.";
+      return;
+    }
+
+    const confirmation = window.confirm(
+      aImporter.length + " rencontres et plateaux vont être importés dans Firebase. Continuer ?"
+    );
+
+    if (!confirmation) {
+      message.textContent = "Importation annulée. Aucune donnée ajoutée.";
+      return;
+    }
+
+    let importes = 0;
+
+    for (const item of aImporter) {
+      await collection.add(item);
+      importes++;
+    }
+
+    message.textContent =
+      importes + " rencontres et plateaux importés avec succès !";
+
+  } catch (erreur) {
+    console.error("Erreur d'importation :", erreur);
+    message.textContent =
+      "Une erreur est survenue. Relance l'importation : les éléments déjà importés seront ignorés.";
+  }
+}
+
+
   
 function showPage(page) {
   const app = document.getElementById("app");
@@ -4312,6 +4453,14 @@ function showPage(page) {
       <option value="Seniors Féminines à 8">Seniors Féminines à 8</option>
     </select>
   </div>
+
+
+<div style="margin-top: 15px;">
+  <button type="button" onclick="importerCalendriersExistantsAdmin()">
+    Importer mes calendriers actuels
+  </button>
+  <p id="adminImportMessage"></p>
+</div>
 
   <div id="adminCalendrierFormulaire">
     <p>Sélectionne une équipe pour commencer.</p>
