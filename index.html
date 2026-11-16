@@ -5106,28 +5106,17 @@ const descriptionsOrganisateurs = {
   `;
   return;
 } else if (equipe === "Seniors A" || equipe === "Seniors B" || equipe === "Seniors C" || equipe === "Seniors Féminines à 8" || equipe === "Seniors Vétérans" || equipe === "U18" || equipe === "U13") {
-    const calendrier = equipe === "Seniors A" ? [
-      ["2026-11-15","14h30","Coupe de Normandie","3e tour",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
-      ["2026-11-22","14h30","Départemental 1","Journée 9",true,"IFS B","ifs-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
-      ["2026-11-29","14h30","Départemental 1","Journée 10",false,"LE TRONQUAY","le-tronquay.png","Stade Municipal","14490 Le Tronquay"],
-      ["2026-12-06","14h30","Départemental 1","Journée 11",true,"LYSTRIENNE","lystrienne.png","Stade Municipal","14320 Fontenay-le-Marmion"],
-      ["2027-01-30","19h15","Départemental 1","Journée 12",false,"AVANT GARDE C","avant-garde-c.png","Stade I U T Caen Nord 2","14000 Caen"],
-      ["2027-02-07","14h30","Départemental 1","Journée 13",true,"MOUEN","mouen.png","Stade Municipal","14320 Fontenay-le-Marmion"],
-      ["2027-02-14","14h30","Départemental 1","Journée 14",false,"INTER ODON","inter-odon.png","Stade Pierre Voisin","14210 Évrecy"],
-      ["2027-03-14","15h00","Départemental 1","Journée 15",true,"TROARN","troarn.png","Stade Municipal","14320 Fontenay-le-Marmion"],
-      ["2027-03-21","15h00","Départemental 1","Journée 16",false,"TERRE ET MER","terre-et-mer.png","Stade Nadine Dupont 1","14880 Hermanville-sur-Mer"],
-      ["2027-04-04","15h00","Départemental 1","Journée 17",true,"BRETTEVILLE/ODON","bretteville-odon.png","Stade Municipal","14320 Fontenay-le-Marmion"],
-      ["2027-04-11","15h00","Départemental 1","Journée 18",true,"THAON BRETTEVILLE B","thaon-bretteville-b.png","Stade Municipal","14320 Fontenay-le-Marmion"],
-      ["2027-04-17","18h00","Départemental 1","Journée 19",false,"IFS B","ifs-b.png","Stade Pierre Mendès France 1","14123 Ifs"],
-      ["2027-04-25","15h00","Départemental 1","Journée 20",true,"LE TRONQUAY","le-tronquay.png","Stade Municipal","14320 Fontenay-le-Marmion"],
-      ["2027-05-08","18h30","Départemental 1","Journée 21",false,"LYSTRIENNE","lystrienne.png","Stade Municipal","14330 Le Molay-Littry"],
-      ["2027-05-23","15h00","Départemental 1","Journée 22",true,"ST VIGOR LE GRAND","st-vigor-le-grand.png","Stade Municipal","14320 Fontenay-le-Marmion"]
-        ] : equipe === "Seniors B" ? seniorsBCalendrier
-  : equipe === "Seniors C" ? seniorsCCalendrier
-: equipe === "Seniors Féminines à 8" ? seniorsFemininesCalendrier
-: equipe === "U18" ? u18Calendrier
-: equipe === "U13" ? u13Calendrier
-: seniorsVeteransCalendrier;
+    const calendriersEquipes = {
+  "Seniors A": seniorsACalendrier,
+  "Seniors B": seniorsBCalendrier,
+  "Seniors C": seniorsCCalendrier,
+  "Seniors Féminines à 8": seniorsFemininesCalendrier,
+  "Seniors Vétérans": seniorsVeteransCalendrier,
+  "U18": u18Calendrier,
+  "U13": u13Calendrier
+};
+
+const calendrier = calendriersEquipes[equipe];
 
     const dateFr = date => new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
       weekday: "long", day: "numeric", month: "long", year: "numeric"
