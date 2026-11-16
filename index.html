@@ -2818,6 +2818,34 @@ body {
   transform: translateY(-1px);
 }
 
+
+/* Correction des champs sur mobile */
+
+#adminCalendrierFormulaire input,
+#adminCalendrierFormulaire select,
+#adminCalendrierFormulaire textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  #adminCalendrierFormulaire input[type="date"],
+  #adminCalendrierFormulaire input[type="time"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    font-size: 14px;
+    padding: 11px 8px;
+  }
+
+  #adminCalendrierFormulaire {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+}
+  
 </style>
 </head>
 
