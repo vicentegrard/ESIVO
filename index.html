@@ -4037,9 +4037,54 @@ function afficherFormulaireCalendrier(equipe) {
       </label>
     </div>
 
-    <p>Le bouton d'enregistrement sera ajouté à l'étape suivante.</p>
+    <button type="button" onclick="enregistrerMatchAdmin()">
+  Enregistrer le match
+</button>
+
+<p id="adminMatchMessage"></p>
   `;
 
+}
+
+
+
+async function enregistrerMatchAdmin() {
+  const message = document.getElementById("adminMatchMessage");
+  const equipe = document.getElementById("adminEquipe").value;
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    message.textContent = "Accès refusé.";
+    return;
+  }
+
+  const match = {
+    equipe: equipe,
+    type: "match",
+    date: document.getElementById("adminMatchDate").value,
+    heure: document.getElementById("adminMatchHeure").value,
+    competition: document.getElementById("adminMatchCompetition").value.trim(),
+    journee: document.getElementById("adminMatchJournee").value.trim(),
+    adversaire: document.getElementById("adminMatchAdversaire").value.trim(),
+    lieu: document.getElementById("adminMatchLieu").value.trim(),
+    ville: document.getElementById("adminMatchVille").value.trim(),
+    logo: document.getElementById("adminMatchLogo").value.trim(),
+    domicile: document.getElementById("adminMatchDomicile").checked
+  };
+
+  if (!equipe || !match.date || !match.heure || !match.adversaire) {
+    message.textContent = "Merci de renseigner l'équipe, la date, l'heure et l'adversaire.";
+    return;
+  }
+
+  try {
+    await window.esivoDb.collection("matchs").add(match);
+    message.textContent = "Match enregistré avec succès !";
+  } catch (erreur) {
+    console.error("Erreur d'enregistrement :", erreur);
+    message.textContent = "Erreur lors de l'enregistrement du match.";
+  }
 }
 
   
