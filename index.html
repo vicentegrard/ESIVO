@@ -4212,6 +4212,7 @@ const logosDisponibles = [
 ];
 
 
+
 function ajouterEquipePlateauAdmin(nom = "", logo = "esivo.png") {
   const liste = document.getElementById("adminPlateauListeEquipes");
 
@@ -4230,23 +4231,43 @@ function ajouterEquipePlateauAdmin(nom = "", logo = "esivo.png") {
   champNom.placeholder = "Nom de l'équipe";
   champNom.value = nom;
 
+  const rechercheLogo = document.createElement("input");
+  rechercheLogo.type = "text";
+  rechercheLogo.placeholder = "Rechercher un club...";
+
   const selectionLogo = document.createElement("select");
 
-  logosDisponibles.forEach(fichier => {
-    const option = document.createElement("option");
-    option.value = fichier;
-    option.textContent = fichier;
-    selectionLogo.appendChild(option);
-  });
+  function remplirLogos(recherche = "") {
+    const valeurActuelle = selectionLogo.value || logo;
 
-  if (!logosDisponibles.includes(logo)) {
-    const option = document.createElement("option");
-    option.value = logo;
-    option.textContent = logo;
-    selectionLogo.appendChild(option);
+    const logosFiltres = logosDisponibles.filter(fichier =>
+      fichier.toLowerCase().includes(recherche.toLowerCase())
+    );
+
+    selectionLogo.innerHTML = "";
+
+    logosFiltres.forEach(fichier => {
+      const option = document.createElement("option");
+      option.value = fichier;
+      option.textContent = fichier;
+      selectionLogo.appendChild(option);
+    });
+
+    if (!logosFiltres.includes(logo) && !logosFiltres.includes(valeurActuelle)) {
+      const option = document.createElement("option");
+      option.value = logo;
+      option.textContent = logo;
+      selectionLogo.appendChild(option);
+    }
+
+    if (logosFiltres.includes(valeurActuelle)) {
+      selectionLogo.value = valeurActuelle;
+    } else if (logosFiltres.includes(logo)) {
+      selectionLogo.value = logo;
+    }
   }
 
-  selectionLogo.value = logo;
+  remplirLogos();
 
   const apercu = document.createElement("img");
   apercu.src = "logos/" + logo;
@@ -4254,6 +4275,10 @@ function ajouterEquipePlateauAdmin(nom = "", logo = "esivo.png") {
   apercu.style.width = "42px";
   apercu.style.height = "42px";
   apercu.style.objectFit = "contain";
+
+  rechercheLogo.addEventListener("input", () => {
+    remplirLogos(rechercheLogo.value);
+  });
 
   selectionLogo.addEventListener("change", () => {
     apercu.src = "logos/" + selectionLogo.value;
@@ -4265,12 +4290,14 @@ function ajouterEquipePlateauAdmin(nom = "", logo = "esivo.png") {
   boutonSupprimer.onclick = () => ligne.remove();
 
   ligne.appendChild(champNom);
+  ligne.appendChild(rechercheLogo);
   ligne.appendChild(selectionLogo);
   ligne.appendChild(apercu);
   ligne.appendChild(boutonSupprimer);
 
   liste.appendChild(ligne);
 }
+
 
 function filtrerLogosAdmin() {
   const recherche = document.getElementById("adminRechercheLogo").value.toLowerCase();
