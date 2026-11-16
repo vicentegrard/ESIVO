@@ -3980,13 +3980,56 @@ function afficherFormulaireCalendrier(equipe) {
   const estPlateau = equipesPlateaux.includes(equipe);
 
   
-  if (estPlateau) {
-    conteneur.innerHTML = `
-      <h4>Gestion des plateaux — ${equipe}</h4>
-      <p>Le formulaire des plateaux sera ajouté prochainement.</p>
-    `;
-    return;
-  }
+  
+if (estPlateau) {
+  conteneur.innerHTML = `
+    <h4>Ajouter un plateau — ${equipe}</h4>
+
+    <div class="form-group">
+      <label>Date du plateau</label>
+      <input type="date" id="adminPlateauDate">
+    </div>
+
+    <div class="form-group">
+      <label>Heure</label>
+      <input type="time" id="adminPlateauHeure">
+    </div>
+
+    <div class="form-group">
+      <label>Organisateur</label>
+      <input type="text" id="adminPlateauOrganisateur" placeholder="Nom du club organisateur">
+    </div>
+
+    <div class="form-group">
+      <label>Lieu</label>
+      <input type="text" id="adminPlateauLieu" placeholder="Nom du stade">
+    </div>
+
+    <div class="form-group">
+      <label>Ville</label>
+      <input type="text" id="adminPlateauVille" placeholder="Ville du plateau">
+    </div>
+
+    
+<div class="form-group">
+  <label>Équipes participantes et logos</label>
+  <textarea id="adminPlateauEquipes" rows="8" placeholder="Une équipe par ligne :
+J.S. FLEURY S/ORNE | js-fleury.png
+GIBERVILLE | giberville.png
+ESIVO | esivo.png"></textarea>
+  <small>Format : nom de l'équipe | nom du fichier logo</small>
+</div>
+
+
+    <button type="button" onclick="enregistrerPlateauAdmin()">
+      Enregistrer le plateau
+    </button>
+
+    <p id="adminPlateauMessage"></p>
+  `;
+  return;
+}
+
 
   conteneur.innerHTML = `
     <h4>Ajouter un match — ${equipe}</h4>
@@ -4105,6 +4148,18 @@ async function chargerListeCalendrierAdmin(equipe) {
         " · " + (item.lieu || "") +
         " · " + (item.ville || "");
 
+      
+if (item.type === "plateau" && item.equipes && item.equipes.length > 0) {
+  const participants = document.createElement("p");
+
+  participants.textContent =
+    "Équipes participantes : " +
+    item.equipes.map(equipe => equipe.nom).join(", ");
+
+  carte.appendChild(participants);
+}
+
+
       const boutonSupprimer = document.createElement("button");
       boutonSupprimer.textContent = "Supprimer";
       boutonSupprimer.type = "button";
@@ -4190,10 +4245,34 @@ async function modifierRencontreAdmin(id, equipe) {
 
     const match = documentMatch.data();
 
-    if (match.type !== "match") {
-      alert("La modification des plateaux sera ajoutée séparément.");
-      return;
-    }
+    if (match.type === "plateau") {
+  document.getElementById("adminPlateauDate").value = match.date || "";
+  document.getElementById("adminPlateauHeure").value = match.heure || "";
+  document.getElementById("adminPlateauOrganisateur").value = match.organisateur || "";
+  document.getElementById("adminPlateauLieu").value = match.lieu || "";
+  document.getElementById("adminPlateauVille").value = match.ville || "";
+
+  document.getElementById("adminPlateauEquipes").value =
+    (match.equipes || [])
+      .map(formation => formation.nom + " | " + (formation.logo || "esivo.png"))
+      .join("\n");
+
+  document.getElementById("adminCalendrierFormulaire").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+  const titre = document.querySelector("#adminCalendrierFormulaire h4");
+  if (titre) titre.textContent = "Modifier un plateau — " + equipe;
+
+  const bouton = document.querySelector("#adminCalendrierFormulaire button");
+  if (bouton) {
+    bouton.textContent = "Enregistrer les modifications";
+    bouton.onclick = () => enregistrerModificationPlateauAdmin(id, equipe);
+  }
+
+  return;
+}
 
     document.getElementById("adminMatchDate").value = match.date || "";
     document.getElementById("adminMatchHeure").value = match.heure || "";
@@ -4277,6 +4356,137 @@ async function enregistrerModificationMatchAdmin(id, equipe) {
   } catch (erreur) {
     console.error("Erreur de modification :", erreur);
     message.textContent = "Erreur lors de la modification du match.";
+  }
+}
+
+async function enregistrerModificationPlateauAdmin(id, equipe) {
+  const message = document.getElementById("adminPlateauMessage");
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    alert("Accès refusé.");
+    return;
+  }
+
+  const equipesTexte = document.getElementById("adminPlateauEquipes").value;
+
+  const equipes = equipesTexte
+    .split("\n")
+    .map(ligne => ligne.trim())
+    .filter(ligne => ligne !== "")
+    .map(ligne => {
+      const [nom, logo] = ligne.split("|").map(partie => partie.trim());
+
+      return {
+        nom: nom || "",
+        logo: logo || "esivo.png"
+      };
+    })
+    .filter(formation => formation.nom !== "");
+
+  const plateau = {
+    equipe: equipe,
+    type: "plateau",
+    date: document.getElementById("adminPlateauDate").value,
+    heure: document.getElementById("adminPlateauHeure").value,
+    organisateur: document.getElementById("adminPlateauOrganisateur").value.trim(),
+    lieu: document.getElementById("adminPlateauLieu").value.trim(),
+    ville: document.getElementById("adminPlateauVille").value.trim(),
+    equipes: equipes
+  };
+
+  if (!plateau.date || !plateau.heure || !plateau.organisateur || equipes.length === 0) {
+    message.textContent = "Merci de renseigner les informations obligatoires et au moins une équipe.";
+    return;
+  }
+
+  try {
+    await window.esivoDb
+      .collection("matchs")
+      .doc(id)
+      .update(plateau);
+
+    message.textContent = "Plateau modifié avec succès !";
+
+    const titre = document.querySelector("#adminCalendrierFormulaire h4");
+    if (titre) titre.textContent = "Ajouter un plateau — " + equipe;
+
+    const bouton = document.querySelector("#adminCalendrierFormulaire button");
+    if (bouton) {
+      bouton.textContent = "Enregistrer le plateau";
+      bouton.onclick = () => enregistrerPlateauAdmin();
+    }
+
+    await chargerListeCalendrierAdmin(equipe);
+    await chargerCalendriersFirebase();
+
+  } catch (erreur) {
+    console.error("Erreur de modification du plateau :", erreur);
+    message.textContent = "Impossible de modifier ce plateau.";
+  }
+}
+  
+async function enregistrerPlateauAdmin() {
+  const message = document.getElementById("adminPlateauMessage");
+  const equipe = document.getElementById("adminEquipe").value;
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    message.textContent = "Accès refusé.";
+    return;
+  }
+
+  const equipesTexte = document.getElementById("adminPlateauEquipes").value;
+
+  
+const equipes = equipesTexte
+  .split("\n")
+  .map(ligne => ligne.trim())
+  .filter(ligne => ligne !== "")
+  .map(ligne => {
+    const [nom, logo] = ligne.split("|").map(partie => partie.trim());
+
+    return {
+      nom: nom || "",
+      logo: logo || "esivo.png"
+    };
+  })
+  .filter(equipe => equipe.nom !== "");
+
+
+  const plateau = {
+    equipe: equipe,
+    type: "plateau",
+    date: document.getElementById("adminPlateauDate").value,
+    heure: document.getElementById("adminPlateauHeure").value,
+    organisateur: document.getElementById("adminPlateauOrganisateur").value.trim(),
+    lieu: document.getElementById("adminPlateauLieu").value.trim(),
+    ville: document.getElementById("adminPlateauVille").value.trim(),
+    equipes: equipes
+  };
+
+  if (
+    !plateau.date ||
+    !plateau.heure ||
+    !plateau.organisateur ||
+    equipes.length === 0
+  ) {
+    message.textContent = "Merci de renseigner la date, l'heure, l'organisateur et au moins une équipe.";
+    return;
+  }
+
+  try {
+    await window.esivoDb.collection("matchs").add(plateau);
+
+    message.textContent = "Plateau enregistré avec succès !";
+
+    await chargerListeCalendrierAdmin(equipe);
+    await chargerCalendriersFirebase();
+
+  } catch (erreur) {
+    console.error("Erreur d'enregistrement du plateau :", erreur);
+    message.textContent = "Erreur lors de l'enregistrement du plateau.";
   }
 }
 
