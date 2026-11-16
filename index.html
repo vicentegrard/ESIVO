@@ -5871,6 +5871,30 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
   }
 }
 
+  async function connecterAdmin() {
+  const email = document.getElementById("adminEmail").value;
+  const password = document.getElementById("adminPassword").value;
+  const message = document.getElementById("adminMessage");
+
+  try {
+    const resultat = await window.esivoAuth.signInWithEmailAndPassword(email, password);
+
+    if (resultat.user.uid !== ADMIN_UID) {
+      await window.esivoAuth.signOut();
+      message.textContent = "Ce compte n'est pas autorisé.";
+      return;
+    }
+
+    showPage("Administration");
+  } catch (erreur) {
+    message.textContent = "Identifiants incorrects ou erreur de connexion.";
+  }
+}
+
+async function deconnecterAdmin() {
+  await window.esivoAuth.signOut();
+  showPage("Administration");
+}
 afficherRencontresWeekend();
 afficherResultatsWeekend();
 
