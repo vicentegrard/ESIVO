@@ -6218,23 +6218,30 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
   const anciens = resultats.slice(1);
 
   const afficherStatut = resultat => {
-    if (resultat.tirsAuBut) {
-      return {
-        classe: "match-loss",
-        libelle: "ÉLIMINATION AUX TIRS AU BUT"
-      };
-    }
+  if (resultat.forfait) {
+    return {
+      classe: "match-loss",
+      libelle: "FORFAIT"
+    };
+  }
 
-    if (resultat.butsESIVO > resultat.butsAdversaire) {
-      return { classe: "match-win", libelle: "VICTOIRE" };
-    }
+  if (resultat.tirsAuBut) {
+    return {
+      classe: "match-win",
+      libelle: "QUALIFICATION AUX TIRS AU BUT"
+    };
+  }
 
-    if (resultat.butsESIVO < resultat.butsAdversaire) {
-      return { classe: "match-loss", libelle: "DÉFAITE" };
-    }
+  if (resultat.butsESIVO > resultat.butsAdversaire) {
+    return { classe: "match-win", libelle: "VICTOIRE" };
+  }
 
-    return { classe: "match-draw", libelle: "MATCH NUL" };
-  };
+  if (resultat.butsESIVO < resultat.butsAdversaire) {
+    return { classe: "match-loss", libelle: "DÉFAITE" };
+  }
+
+  return { classe: "match-draw", libelle: "MATCH NUL" };
+};
 
   const afficherDate = date => new Date(date + "T12:00:00")
     .toLocaleDateString("fr-FR", {
