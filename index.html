@@ -6193,6 +6193,31 @@ async function deconnecterAdmin() {
   await window.esivoAuth.signOut();
   showPage("Administration");
 }
+  async function chargerCalendriersFirebase() {
+  try {
+    const snapshot = await window.esivoDb
+      .collection("matchs")
+      .get();
+
+    window.calendriersFirebase = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    console.log(
+      window.calendriersFirebase.length +
+      " rencontres et plateaux chargés depuis Firebase."
+    );
+
+  } catch (erreur) {
+    console.error(
+      "Erreur de lecture des calendriers Firebase :",
+      erreur
+    );
+  }
+}
+
+chargerCalendriersFirebase();
 afficherRencontresWeekend();
 afficherResultatsWeekend();
 
