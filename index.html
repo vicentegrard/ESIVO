@@ -4049,6 +4049,7 @@ function afficherFormulaireCalendrier(equipe) {
 
 
 
+
 async function chargerListeCalendrierAdmin(equipe) {
   const conteneur = document.getElementById("adminListeCalendrier");
 
@@ -4104,8 +4105,16 @@ async function chargerListeCalendrierAdmin(equipe) {
         " · " + (item.lieu || "") +
         " · " + (item.ville || "");
 
+      const boutonSupprimer = document.createElement("button");
+      boutonSupprimer.textContent = "Supprimer";
+      boutonSupprimer.type = "button";
+      boutonSupprimer.onclick = () => {
+        supprimerRencontreAdmin(item.id, equipe);
+      };
+
       carte.appendChild(nom);
       carte.appendChild(details);
+      carte.appendChild(boutonSupprimer);
 
       conteneur.appendChild(carte);
     });
@@ -4113,6 +4122,40 @@ async function chargerListeCalendrierAdmin(equipe) {
   } catch (erreur) {
     console.error("Erreur de chargement de la liste :", erreur);
     conteneur.textContent = "Impossible de charger les rencontres.";
+  }
+}
+
+
+async function supprimerRencontreAdmin(id, equipe) {
+  if (!id || !equipe) return;
+
+  const confirmation = confirm(
+    "Voulez-vous vraiment supprimer cette rencontre ? Cette action est définitive."
+  );
+
+  if (!confirmation) return;
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    alert("Accès refusé.");
+    return;
+  }
+
+  try {
+    await window.esivoDb
+      .collection("matchs")
+      .doc(id)
+      .delete();
+
+    await chargerListeCalendrierAdmin(equipe);
+    await chargerCalendriersFirebase();
+
+    alert("La rencontre a bien été supprimée.");
+
+  } catch (erreur) {
+    console.error("Erreur de suppression :", erreur);
+    alert("Impossible de supprimer cette rencontre.");
   }
 }
 
