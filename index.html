@@ -4093,6 +4093,7 @@ ESIVO | esivo.png"></textarea>
 
 
 
+
 async function chargerListeCalendrierAdmin(equipe) {
   const conteneur = document.getElementById("adminListeCalendrier");
 
@@ -4119,7 +4120,8 @@ async function chargerListeCalendrierAdmin(equipe) {
     }));
 
     documents.sort((a, b) =>
-      (a.date + " " + a.heure).localeCompare(b.date + " " + b.heure)
+      ((a.date || "") + " " + (a.heure || ""))
+        .localeCompare((b.date || "") + " " + (b.heure || ""))
     );
 
     conteneur.innerHTML = "";
@@ -4148,17 +4150,25 @@ async function chargerListeCalendrierAdmin(equipe) {
         " · " + (item.lieu || "") +
         " · " + (item.ville || "");
 
-      
-if (item.type === "plateau" && item.equipes && item.equipes.length > 0) {
-  const participants = document.createElement("p");
+      carte.appendChild(nom);
+      carte.appendChild(details);
 
-  participants.textContent =
-    "Équipes participantes : " +
-    item.equipes.map(equipe => equipe.nom).join(", ");
+      if (item.type === "plateau" && item.equipes && item.equipes.length > 0) {
+        const participants = document.createElement("p");
 
-  carte.appendChild(participants);
-}
+        participants.textContent =
+          "Équipes participantes (" + item.equipes.length + ") : " +
+          item.equipes.map(formation => formation.nom).join(", ");
 
+        carte.appendChild(participants);
+      }
+
+      const boutonModifier = document.createElement("button");
+      boutonModifier.textContent = "Modifier";
+      boutonModifier.type = "button";
+      boutonModifier.onclick = () => {
+        modifierRencontreAdmin(item.id, equipe);
+      };
 
       const boutonSupprimer = document.createElement("button");
       boutonSupprimer.textContent = "Supprimer";
@@ -4167,18 +4177,8 @@ if (item.type === "plateau" && item.equipes && item.equipes.length > 0) {
         supprimerRencontreAdmin(item.id, equipe);
       };
 
-      carte.appendChild(nom);
-carte.appendChild(details);
-
-const boutonModifier = document.createElement("button");
-boutonModifier.textContent = "Modifier";
-boutonModifier.type = "button";
-boutonModifier.onclick = () => {
-  modifierRencontreAdmin(item.id, equipe);
-};
-
-carte.appendChild(boutonModifier);
-carte.appendChild(boutonSupprimer);
+      carte.appendChild(boutonModifier);
+      carte.appendChild(boutonSupprimer);
 
       conteneur.appendChild(carte);
     });
@@ -4188,6 +4188,7 @@ carte.appendChild(boutonSupprimer);
     conteneur.textContent = "Impossible de charger les rencontres.";
   }
 }
+
 
 
 async function supprimerRencontreAdmin(id, equipe) {
