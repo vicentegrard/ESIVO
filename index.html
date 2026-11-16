@@ -3974,6 +3974,7 @@ function afficherFormulaireCalendrier(equipe) {
     conteneur.innerHTML = "<p>Sélectionne une équipe pour commencer.</p>";
     return;
   }
+  chargerListeCalendrierAdmin(equipe);
 
   const equipesPlateaux = ["U7", "U9", "U11"];
   const estPlateau = equipesPlateaux.includes(equipe);
@@ -4048,6 +4049,74 @@ function afficherFormulaireCalendrier(equipe) {
 
 
 
+async function chargerListeCalendrierAdmin(equipe) {
+  const conteneur = document.getElementById("adminListeCalendrier");
+
+  if (!conteneur || !equipe) return;
+
+  conteneur.textContent = "Chargement des rencontres...";
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    conteneur.textContent = "Accès refusé.";
+    return;
+  }
+
+  try {
+    const snapshot = await window.esivoDb
+      .collection("matchs")
+      .where("equipe", "==", equipe)
+      .get();
+
+    const documents = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    documents.sort((a, b) =>
+      (a.date + " " + a.heure).localeCompare(b.date + " " + b.heure)
+    );
+
+    conteneur.innerHTML = "";
+
+    const titre = document.createElement("h4");
+    titre.textContent = "Rencontres enregistrées — " + equipe;
+    conteneur.appendChild(titre);
+
+    if (documents.length === 0) {
+      conteneur.textContent = "Aucune rencontre enregistrée pour cette équipe.";
+      return;
+    }
+
+    documents.forEach(item => {
+      const carte = document.createElement("div");
+      carte.className = "content-card";
+
+      const nom = document.createElement("h4");
+      nom.textContent = item.type === "plateau"
+        ? "Plateau — " + (item.organisateur || "")
+        : (item.domicile ? "ESIVO — " : "") + (item.adversaire || "");
+
+      const details = document.createElement("p");
+      details.textContent =
+        (item.date || "") + " à " + (item.heure || "") +
+        " · " + (item.lieu || "") +
+        " · " + (item.ville || "");
+
+      carte.appendChild(nom);
+      carte.appendChild(details);
+
+      conteneur.appendChild(carte);
+    });
+
+  } catch (erreur) {
+    console.error("Erreur de chargement de la liste :", erreur);
+    conteneur.textContent = "Impossible de charger les rencontres.";
+  }
+}
+
+  
 async function enregistrerMatchAdmin() {
   const message = document.getElementById("adminMatchMessage");
   const equipe = document.getElementById("adminEquipe").value;
@@ -4463,8 +4532,11 @@ function showPage(page) {
 </div>
 
   <div id="adminCalendrierFormulaire">
-    <p>Sélectionne une équipe pour commencer.</p>
-  </div>
+  <p>Sélectionne une équipe pour commencer.</p>
+</div>
+
+<div id="adminListeCalendrier" style="margin-top: 20px;">
+</div>
 </div>
 
 
