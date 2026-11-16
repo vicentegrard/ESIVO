@@ -4113,8 +4113,17 @@ async function chargerListeCalendrierAdmin(equipe) {
       };
 
       carte.appendChild(nom);
-      carte.appendChild(details);
-      carte.appendChild(boutonSupprimer);
+carte.appendChild(details);
+
+const boutonModifier = document.createElement("button");
+boutonModifier.textContent = "Modifier";
+boutonModifier.type = "button";
+boutonModifier.onclick = () => {
+  modifierRencontreAdmin(item.id, equipe);
+};
+
+carte.appendChild(boutonModifier);
+carte.appendChild(boutonSupprimer);
 
       conteneur.appendChild(carte);
     });
@@ -4156,6 +4165,118 @@ async function supprimerRencontreAdmin(id, equipe) {
   } catch (erreur) {
     console.error("Erreur de suppression :", erreur);
     alert("Impossible de supprimer cette rencontre.");
+  }
+}
+
+
+async function modifierRencontreAdmin(id, equipe) {
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    alert("Accès refusé.");
+    return;
+  }
+
+  try {
+    const documentMatch = await window.esivoDb
+      .collection("matchs")
+      .doc(id)
+      .get();
+
+    if (!documentMatch.exists) {
+      alert("Cette rencontre n'existe plus.");
+      return;
+    }
+
+    const match = documentMatch.data();
+
+    if (match.type !== "match") {
+      alert("La modification des plateaux sera ajoutée séparément.");
+      return;
+    }
+
+    document.getElementById("adminMatchDate").value = match.date || "";
+    document.getElementById("adminMatchHeure").value = match.heure || "";
+    document.getElementById("adminMatchCompetition").value = match.competition || "";
+    document.getElementById("adminMatchJournee").value = match.journee || "";
+    document.getElementById("adminMatchAdversaire").value = match.adversaire || "";
+    document.getElementById("adminMatchLieu").value = match.lieu || "";
+    document.getElementById("adminMatchVille").value = match.ville || "";
+    document.getElementById("adminMatchLogo").value = match.logo || "";
+    document.getElementById("adminMatchDomicile").checked = match.domicile === true;
+
+    document.getElementById("adminCalendrierFormulaire").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+    const titre = document.querySelector("#adminCalendrierFormulaire h4");
+    if (titre) titre.textContent = "Modifier un match — " + equipe;
+
+    const bouton = document.querySelector("#adminCalendrierFormulaire button");
+    if (bouton) {
+      bouton.textContent = "Enregistrer les modifications";
+      bouton.onclick = () => enregistrerModificationMatchAdmin(id, equipe);
+    }
+
+  } catch (erreur) {
+    console.error("Erreur de chargement du match :", erreur);
+    alert("Impossible de charger cette rencontre.");
+  }
+}
+
+
+async function enregistrerModificationMatchAdmin(id, equipe) {
+  const message = document.getElementById("adminMatchMessage");
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    message.textContent = "Accès refusé.";
+    return;
+  }
+
+  const match = {
+    equipe: equipe,
+    type: "match",
+    date: document.getElementById("adminMatchDate").value,
+    heure: document.getElementById("adminMatchHeure").value,
+    competition: document.getElementById("adminMatchCompetition").value.trim(),
+    journee: document.getElementById("adminMatchJournee").value.trim(),
+    adversaire: document.getElementById("adminMatchAdversaire").value.trim(),
+    lieu: document.getElementById("adminMatchLieu").value.trim(),
+    ville: document.getElementById("adminMatchVille").value.trim(),
+    logo: document.getElementById("adminMatchLogo").value.trim(),
+    domicile: document.getElementById("adminMatchDomicile").checked
+  };
+
+  if (!match.date || !match.heure || !match.adversaire) {
+    message.textContent = "Merci de renseigner la date, l'heure et l'adversaire.";
+    return;
+  }
+
+  try {
+    await window.esivoDb
+      .collection("matchs")
+      .doc(id)
+      .update(match);
+
+    message.textContent = "Match modifié avec succès !";
+
+    await chargerListeCalendrierAdmin(equipe);
+    await chargerCalendriersFirebase();
+
+    const titre = document.querySelector("#adminCalendrierFormulaire h4");
+    if (titre) titre.textContent = "Ajouter un match — " + equipe;
+
+    const bouton = document.querySelector("#adminCalendrierFormulaire button");
+    if (bouton) {
+      bouton.textContent = "Enregistrer le match";
+      bouton.onclick = () => enregistrerMatchAdmin();
+    }
+
+  } catch (erreur) {
+    console.error("Erreur de modification :", erreur);
+    message.textContent = "Erreur lors de la modification du match.";
   }
 }
 
