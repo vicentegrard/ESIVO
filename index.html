@@ -3964,6 +3964,32 @@ function afficherResultatsWeekend() {
 
 
 
+
+function afficherFormulaireCalendrier(equipe) {
+  const conteneur = document.getElementById("adminCalendrierFormulaire");
+
+  if (!conteneur) return;
+
+  if (!equipe) {
+    conteneur.innerHTML = "<p>Sélectionne une équipe pour commencer.</p>";
+    return;
+  }
+
+  const equipesPlateaux = ["U7", "U9", "U11"];
+  const estPlateau = equipesPlateaux.includes(equipe);
+
+  conteneur.innerHTML = `
+    <h4>${estPlateau ? "Gestion des plateaux" : "Gestion des matchs"}</h4>
+    <p>Équipe sélectionnée : <strong>${equipe}</strong></p>
+    <p>
+      ${estPlateau
+        ? "Tu pourras ajouter et gérer les plateaux de cette équipe."
+        : "Tu pourras ajouter et gérer les rencontres de cette équipe."}
+    </p>
+  `;
+}
+
+  
 function showPage(page) {
   const app = document.getElementById("app");
   const pagesAvecEquipes = ["Calendrier", "Résultats", "Classements"];
@@ -4174,7 +4200,7 @@ function showPage(page) {
 
   <div class="form-group">
     <label for="adminEquipe">Choisir une équipe</label>
-    <select id="adminEquipe">
+    <select id="adminEquipe" onchange="afficherFormulaireCalendrier(this.value)">
       <option value="">-- Sélectionner une équipe --</option>
       <option value="U7">U7</option>
       <option value="U9">U9</option>
