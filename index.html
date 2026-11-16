@@ -3964,6 +3964,129 @@ function afficherResultatsWeekend() {
 
 
 
+const logosDisponibles = [
+  "aftfc.png",
+  "ajs-ouistreham-c.png",
+  "astdv-b.png",
+  "aunay-odon-c.png",
+  "authie.png",
+  "avant-garde-c.png",
+  "baie-de-l-orne.png",
+  "basly.png",
+  "bavent.png",
+  "bougibus-soliers.png",
+  "bretteville-odon.png",
+  "caen-sud-ouest.png",
+  "cahagnes.png",
+  "campeaux.png",
+  "castelet-st-sylvain.png",
+  "caumont.png",
+  "chemin-vert.png",
+  "cingal.png",
+  "conde-normandie-b.png",
+  "conde-petruvienne.png",
+  "cormelles.png",
+  "courcelles.png",
+  "courseulles.png",
+  "es-barbery.png",
+  "es-portaise.png",
+  "esivo.png",
+  "falaise-c.png",
+  "falaise.png",
+  "fc-vital-b.png",
+  "fcb2lc.png",
+  "giberville.png",
+  "hastings.png",
+  "herouville-c.png",
+  "honfleur.png",
+  "ifs-b.png",
+  "inter-odon.png",
+  "js-du-bocage-b.png",
+  "js-fleury.png",
+  "la-graverie-b.png",
+  "le-tourneur.png",
+  "le-tronquay.png",
+  "louvigny.png",
+  "lystrienne.png",
+  "mezidon.png",
+  "mouen.png",
+  "moyaux-b.png",
+  "muance-cagny.png",
+  "potigny.png",
+  "rocquancourt.png",
+  "saint-germain-b.png",
+  "saint-marcel.png",
+  "st-cyr-fervaques.png",
+  "st-desir-b.png",
+  "st-vigor-le-grand.png",
+  "terre-et-mer.png",
+  "thaon-bretteville-b.png",
+  "trevieres.png",
+  "troarn.png",
+  "usm-blainville-b.png"
+];
+
+
+function ajouterEquipePlateauAdmin(nom = "", logo = "esivo.png") {
+  const liste = document.getElementById("adminPlateauListeEquipes");
+
+  if (!liste) return;
+
+  const ligne = document.createElement("div");
+  ligne.className = "admin-equipe-plateau";
+  ligne.style.display = "grid";
+  ligne.style.gridTemplateColumns = "1fr 1fr auto";
+  ligne.style.gap = "10px";
+  ligne.style.alignItems = "center";
+  ligne.style.marginBottom = "12px";
+
+  const champNom = document.createElement("input");
+  champNom.type = "text";
+  champNom.placeholder = "Nom de l'équipe";
+  champNom.value = nom;
+
+  const selectionLogo = document.createElement("select");
+
+  logosDisponibles.forEach(fichier => {
+    const option = document.createElement("option");
+    option.value = fichier;
+    option.textContent = fichier;
+    selectionLogo.appendChild(option);
+  });
+
+  if (!logosDisponibles.includes(logo)) {
+    const option = document.createElement("option");
+    option.value = logo;
+    option.textContent = logo;
+    selectionLogo.appendChild(option);
+  }
+
+  selectionLogo.value = logo;
+
+  const apercu = document.createElement("img");
+  apercu.src = "logos/" + logo;
+  apercu.alt = "Aperçu du logo";
+  apercu.style.width = "42px";
+  apercu.style.height = "42px";
+  apercu.style.objectFit = "contain";
+
+  selectionLogo.addEventListener("change", () => {
+    apercu.src = "logos/" + selectionLogo.value;
+  });
+
+  const boutonSupprimer = document.createElement("button");
+  boutonSupprimer.type = "button";
+  boutonSupprimer.textContent = "×";
+  boutonSupprimer.onclick = () => ligne.remove();
+
+  ligne.appendChild(champNom);
+  ligne.appendChild(selectionLogo);
+  ligne.appendChild(apercu);
+  ligne.appendChild(boutonSupprimer);
+
+  liste.appendChild(ligne);
+}
+
 
 function afficherFormulaireCalendrier(equipe) {
   const conteneur = document.getElementById("adminCalendrierFormulaire");
@@ -4012,12 +4135,13 @@ if (estPlateau) {
 
     
 <div class="form-group">
-  <label>Équipes participantes et logos</label>
-  <textarea id="adminPlateauEquipes" rows="8" placeholder="Une équipe par ligne :
-J.S. FLEURY S/ORNE | js-fleury.png
-GIBERVILLE | giberville.png
-ESIVO | esivo.png"></textarea>
-  <small>Format : nom de l'équipe | nom du fichier logo</small>
+  <label>Équipes participantes</label>
+
+  <div id="adminPlateauListeEquipes"></div>
+
+  <button type="button" onclick="ajouterEquipePlateauAdmin()">
+    + Ajouter une équipe
+  </button>
 </div>
 
 
@@ -4025,8 +4149,11 @@ ESIVO | esivo.png"></textarea>
       Enregistrer le plateau
     </button>
 
-    <p id="adminPlateauMessage"></p>
+        <p id="adminPlateauMessage"></p>
   `;
+
+  ajouterEquipePlateauAdmin();
+
   return;
 }
 
@@ -4253,10 +4380,20 @@ async function modifierRencontreAdmin(id, equipe) {
   document.getElementById("adminPlateauLieu").value = match.lieu || "";
   document.getElementById("adminPlateauVille").value = match.ville || "";
 
-  document.getElementById("adminPlateauEquipes").value =
-    (match.equipes || [])
-      .map(formation => formation.nom + " | " + (formation.logo || "esivo.png"))
-      .join("\n");
+  const listeEquipes = document.getElementById("adminPlateauListeEquipes");
+
+listeEquipes.innerHTML = "";
+
+(match.equipes || []).forEach(formation => {
+  ajouterEquipePlateauAdmin(
+    formation.nom,
+    formation.logo || "esivo.png"
+  );
+});
+
+if (!match.equipes || match.equipes.length === 0) {
+  ajouterEquipePlateauAdmin();
+}
 
   document.getElementById("adminCalendrierFormulaire").scrollIntoView({
     behavior: "smooth",
@@ -4369,21 +4506,21 @@ async function enregistrerModificationPlateauAdmin(id, equipe) {
     return;
   }
 
-  const equipesTexte = document.getElementById("adminPlateauEquipes").value;
+  const lignes = document.querySelectorAll(
+  "#adminPlateauListeEquipes .admin-equipe-plateau"
+);
 
-  const equipes = equipesTexte
-    .split("\n")
-    .map(ligne => ligne.trim())
-    .filter(ligne => ligne !== "")
-    .map(ligne => {
-      const [nom, logo] = ligne.split("|").map(partie => partie.trim());
+const equipes = Array.from(lignes)
+  .map(ligne => {
+    const nom = ligne.querySelector("input").value.trim();
+    const logo = ligne.querySelector("select").value;
 
-      return {
-        nom: nom || "",
-        logo: logo || "esivo.png"
-      };
-    })
-    .filter(formation => formation.nom !== "");
+    return {
+      nom: nom,
+      logo: logo || "esivo.png"
+    };
+  })
+  .filter(equipe => equipe.nom !== "");
 
   const plateau = {
     equipe: equipe,
@@ -4438,22 +4575,21 @@ async function enregistrerPlateauAdmin() {
     return;
   }
 
-  const equipesTexte = document.getElementById("adminPlateauEquipes").value;
+  const lignes = document.querySelectorAll(
+  "#adminPlateauListeEquipes .admin-equipe-plateau"
+);
 
-  
-const equipes = equipesTexte
-  .split("\n")
-  .map(ligne => ligne.trim())
-  .filter(ligne => ligne !== "")
+const equipes = Array.from(lignes)
   .map(ligne => {
-    const [nom, logo] = ligne.split("|").map(partie => partie.trim());
+    const nom = ligne.querySelector("input").value.trim();
+    const logo = ligne.querySelector("select").value;
 
     return {
-      nom: nom || "",
+      nom: nom,
       logo: logo || "esivo.png"
     };
   })
-  .filter(equipe => equipe.nom !== "");
+  .filter(formation => formation.nom !== "");
 
 
   const plateau = {
