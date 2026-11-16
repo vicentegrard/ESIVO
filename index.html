@@ -4167,10 +4167,33 @@ function showPage(page) {
           <button onclick="deconnecterAdmin()">Se déconnecter</button>
         </div>
 
-        <div class="content-card">
-          <h3>📅 Gestion des calendriers</h3>
-          <p>Ajouter et modifier les prochains matchs des équipes.</p>
-        </div>
+        
+<div class="content-card">
+  <h3>📅 Gestion des calendriers</h3>
+  <p>Ajouter, modifier et supprimer les matchs et plateaux de toutes les équipes.</p>
+
+  <div class="form-group">
+    <label for="adminEquipe">Choisir une équipe</label>
+    <select id="adminEquipe">
+      <option value="">-- Sélectionner une équipe --</option>
+      <option value="U7">U7</option>
+      <option value="U9">U9</option>
+      <option value="U11">U11</option>
+      <option value="U13">U13</option>
+      <option value="U18">U18</option>
+      <option value="Seniors A">Seniors A</option>
+      <option value="Seniors B">Seniors B</option>
+      <option value="Seniors C">Seniors C</option>
+      <option value="Seniors Vétérans">Seniors Vétérans</option>
+      <option value="Seniors Féminines à 8">Seniors Féminines à 8</option>
+    </select>
+  </div>
+
+  <div id="adminCalendrierFormulaire">
+    <p>Sélectionne une équipe pour commencer.</p>
+  </div>
+</div>
+
 
         <div class="content-card">
           <h3>⚽ Gestion des résultats</h3>
