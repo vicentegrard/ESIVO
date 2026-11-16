@@ -3554,8 +3554,16 @@ function afficherRencontresWeekend() {
 
     const equipeDomicile = domicile ? nomClub : adversaire;
     const equipeExterieure = domicile ? adversaire : nomClub;
-    const logoDomicile = domicile ? "esivo.png" : logo;
-    const logoExterieur = domicile ? logo : "esivo.png";
+    const logoDomicileBrut = domicile ? "esivo.png" : logo;
+const logoExterieurBrut = domicile ? logo : "esivo.png";
+
+const logoDomicile = logoDomicileBrut.startsWith("http")
+  ? logoDomicileBrut
+  : "logos/" + logoDomicileBrut;
+
+const logoExterieur = logoExterieurBrut.startsWith("http")
+  ? logoExterieurBrut
+  : "logos/" + logoExterieurBrut;
 
     return `
       <div class="weekend-match home-next-match">
@@ -3563,7 +3571,7 @@ function afficherRencontresWeekend() {
 
         <div class="home-match-teams">
           <div class="home-match-team">
-            <img src="logos/${logoDomicile}" alt="${equipeDomicile}"
+            <img src="${logoDomicile}" alt="${equipeDomicile}"
               style="width:55px;height:55px;object-fit:contain">
             <strong>${equipeDomicile}</strong>
           </div>
@@ -3571,7 +3579,7 @@ function afficherRencontresWeekend() {
           <span class="mc-vs">VS</span>
 
           <div class="home-match-team">
-            <img src="logos/${logoExterieur}" alt="${equipeExterieure}"
+            <img src="${logoExterieur}" alt="${equipeExterieure}"
               style="width:55px;height:55px;object-fit:contain">
             <strong>${equipeExterieure}</strong>
           </div>
@@ -4197,9 +4205,21 @@ if (estPlateau) {
     </div>
 
     <div class="form-group">
-      <label>Logo de l'adversaire (URL)</label>
-      <input type="url" id="adminMatchLogo" placeholder="https://...">
-    </div>
+  <label>Logo de l'adversaire</label>
+
+  <select id="adminMatchLogo">
+    ${logosDisponibles.map(logo => `
+      <option value="${logo}">${logo}</option>
+    `).join("")}
+  </select>
+
+  <img
+    id="adminMatchLogoApercu"
+    src="logos/esivo.png"
+    alt="Aperçu du logo"
+    style="width:60px;height:60px;object-fit:contain;margin-top:10px;"
+  >
+</div>
 
     <div class="form-group">
       <label>
@@ -4214,6 +4234,14 @@ if (estPlateau) {
 
 <p id="adminMatchMessage"></p>
   `;
+    const selectionLogo = document.getElementById("adminMatchLogo");
+  const apercuLogo = document.getElementById("adminMatchLogoApercu");
+
+  selectionLogo.addEventListener("change", () => {
+    apercuLogo.src = "logos/" + selectionLogo.value;
+  });
+
+  apercuLogo.src = "logos/" + selectionLogo.value;
 
 }
 
@@ -4419,7 +4447,33 @@ if (!match.equipes || match.equipes.length === 0) {
     document.getElementById("adminMatchAdversaire").value = match.adversaire || "";
     document.getElementById("adminMatchLieu").value = match.lieu || "";
     document.getElementById("adminMatchVille").value = match.ville || "";
-    document.getElementById("adminMatchLogo").value = match.logo || "";
+    const selectionLogo = document.getElementById("adminMatchLogo");
+const apercuLogo = document.getElementById("adminMatchLogoApercu");
+
+const logoActuel = match.logo || "esivo.png";
+const fichierLogo = logoActuel.startsWith("logos/")
+  ? logoActuel.replace("logos/", "")
+  : logoActuel;
+
+if (!logosDisponibles.includes(fichierLogo) && !fichierLogo.startsWith("http")) {
+  const option = document.createElement("option");
+  option.value = fichierLogo;
+  option.textContent = fichierLogo;
+  selectionLogo.appendChild(option);
+}
+
+if (fichierLogo.startsWith("http")) {
+  const option = document.createElement("option");
+  option.value = fichierLogo;
+  option.textContent = "Logo actuel (URL)";
+  selectionLogo.appendChild(option);
+}
+
+selectionLogo.value = fichierLogo;
+
+apercuLogo.src = fichierLogo.startsWith("http")
+  ? fichierLogo
+  : "logos/" + fichierLogo;
     document.getElementById("adminMatchDomicile").checked = match.domicile === true;
 
     document.getElementById("adminCalendrierFormulaire").scrollIntoView({
@@ -5633,11 +5687,17 @@ const calendrier = calendriersEquipes[equipe];
       weekday: "long", day: "numeric", month: "long", year: "numeric"
     });
 
-    const equipeHTML = (nom, logo) => `
-      <div class="match-team">
-        <img src="logos/${logo}" alt="${nom}">
-        <strong>${nom}</strong>
-      </div>`;
+    const equipeHTML = (nom, logo) => {
+  const cheminLogo = logo.startsWith("http")
+    ? logo
+    : "logos/" + logo;
+
+  return `
+    <div class="match-team">
+      <img src="${cheminLogo}" alt="${nom}">
+      <strong>${nom}</strong>
+    </div>`;
+};
 
     const afficherMatch = (m, index) => {
       const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = m;
@@ -5670,11 +5730,17 @@ const calendrier = calendriersEquipes[equipe];
     const nomEquipe = equipe === "Seniors C" ? "ESIVO C" : equipe === "Seniors B" ? "ESIVO B" : "ESIVO";
 const domicilePremier = premier[4];
 
-const afficherEquipe = (nom, logo) => `
-  <div class="mc-team">
-    <img src="logos/${logo}" alt="${nom}">
-    <strong>${nom}</strong>
-  </div>`;
+const afficherEquipe = (nom, logo) => {
+  const cheminLogo = logo.startsWith("http")
+    ? logo
+    : "logos/" + logo;
+
+  return `
+    <div class="mc-team">
+      <img src="${cheminLogo}" alt="${nom}">
+      <strong>${nom}</strong>
+    </div>`;
+};
 
 contenu.innerHTML = `
   <div class="match-center">
@@ -5735,14 +5801,14 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
 
             <div class="mc-fixture-teams">
               <div class="mc-fixture-team">
-  <img src="logos/${domicile ? "esivo.png" : logo}" alt="">
+  <img src="${(domicile ? "esivo.png" : logo).startsWith("http") ? (domicile ? "esivo.png" : logo) : "logos/" + (domicile ? "esivo.png" : logo)}" alt="">
   <strong>${domicile ? nomEquipe : adversaire}</strong>
 </div>
 
 <span class="mc-fixture-vs">VS</span>
 
 <div class="mc-fixture-team">
-  <img src="logos/${domicile ? logo : "esivo.png"}" alt="">
+  <img src="${(domicile ? logo : "esivo.png").startsWith("http") ? (domicile ? logo : "esivo.png") : "logos/" + (domicile ? logo : "esivo.png")}" alt="">
   <strong>${domicile ? adversaire : nomEquipe}</strong>
 </div>
             </div>
