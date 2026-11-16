@@ -2818,6 +2818,20 @@ body {
 <script src="https://www.gstatic.com/firebasejs/13.2.0/firebase-auth-compat.js"></script>
 
 <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyC5XbNrOru_qK6H877QJs1AoKlF2Qtnpuw",
+  authDomain: "esivo-club.firebaseapp.com",
+  projectId: "esivo-club",
+  storageBucket: "esivo-club.firebasestorage.app",
+  messagingSenderId: "1036761665979",
+  appId: "1:1036761665979:web:6e47376bffa7389d4cb49e"
+};
+
+firebase.initializeApp(firebaseConfig);
+window.esivoAuth = firebase.auth();
+
+const ADMIN_UID = "89slmmfD1FQdOmwbdPna1lqXIVH2";
+
 const equipes = [
   "U7",
   "U9",
