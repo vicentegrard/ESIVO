@@ -6739,51 +6739,83 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
       </div>
 
       <div class="mc-results-list">
-        ${anciens.map(resultat => {
-          const statut = afficherStatut(resultat);
-          const domicileMatch = resultat.domicile;
+        
+${anciens
+  .filter((resultat, index, tableau) => {
+    if (equipe !== "U13" || resultat.competition !== "CHALLENGE U13") {
+      return true;
+    }
+
+    return tableau.findIndex(r =>
+      r.equipe === resultat.equipe &&
+      r.competition === resultat.competition &&
+      r.date === resultat.date
+    ) === index;
+  })
+  .map(resultat => {
+    const challenge = equipe === "U13" && resultat.competition === "CHALLENGE U13";
+
+    const matchs = challenge
+      ? anciens.filter(r =>
+          r.equipe === resultat.equipe &&
+          r.competition === resultat.competition &&
+          r.date === resultat.date
+        )
+      : [resultat];
+
+    return `
+      <article class="mc-result-fixture">
+
+        <div class="mc-result-date">
+          <strong>${new Date(resultat.date + "T12:00:00")
+            .toLocaleDateString("fr-FR", {
+              day: "2-digit",
+              month: "short"
+            }).replace(".", "").toUpperCase()}</strong>
+          <span>${resultat.heure}</span>
+        </div>
+
+        <div class="mc-result-meta">
+          <span>${resultat.competition}</span>
+          <span>${resultat.journee}</span>
+          ${challenge
+            ? `<span>${resultat.lieu} · ${resultat.ville}</span>`
+            : ""}
+        </div>
+
+        ${matchs.map(match => {
+          const statut = afficherStatut(match);
+          const domicileMatch = match.domicile;
 
           return `
-            <article class="mc-result-fixture">
-              <div class="mc-result-date">
-                <strong>${new Date(resultat.date + "T12:00:00")
-                  .toLocaleDateString("fr-FR", {
-                    day: "2-digit",
-                    month: "short"
-                  }).replace(".", "").toUpperCase()}</strong>
-                <span>${resultat.heure}</span>
+            <div class="mc-result-fixture-teams">
+              <div class="mc-result-fixture-team">
+                <img src="logos/${domicileMatch ? "esivo.png" : match.logo}" alt="">
+                <strong>${domicileMatch ? "ESIVO" : match.adversaire}</strong>
               </div>
 
-              <div class="mc-result-fixture-teams">
-                <div class="mc-result-fixture-team">
-                  <img src="logos/${domicileMatch ? "esivo.png" : resultat.logo}" alt="">
-                  <strong>${domicileMatch ? "ESIVO" : resultat.adversaire}</strong>
-                </div>
+              <strong class="mc-result-fixture-score">
+                ${domicileMatch ? match.butsESIVO : match.butsAdversaire}
+                -
+                ${domicileMatch ? match.butsAdversaire : match.butsESIVO}
+              </strong>
 
-                <strong class="mc-result-fixture-score">
-                  ${domicileMatch ? resultat.butsESIVO : resultat.butsAdversaire}
-                  -
-                  ${domicileMatch ? resultat.butsAdversaire : resultat.butsESIVO}
-                </strong>
-
-                <div class="mc-result-fixture-team">
-                  <img src="logos/${domicileMatch ? resultat.logo : "esivo.png"}" alt="">
-                  <strong>${domicileMatch ? resultat.adversaire : "ESIVO"}</strong>
-                </div>
+              <div class="mc-result-fixture-team">
+                <img src="logos/${domicileMatch ? match.logo : "esivo.png"}" alt="">
+                <strong>${domicileMatch ? match.adversaire : "ESIVO"}</strong>
               </div>
+            </div>
 
-              <div class="mc-result-meta">
-                <span>${resultat.competition}</span>
-                <span>${resultat.journee}</span>
-                <span class="${statut.classe}">${statut.libelle}</span>
-                ${resultat.tirsAuBut
-                  ? `<span>TAB : ${resultat.tirsAuBut}</span>`
-                  : ""}
-              </div>
-            </article>
+            <div class="mc-result-meta">
+              <span class="${statut.classe}">${statut.libelle}</span>
+            </div>
           `;
         }).join("")}
-      </div>
+
+      </article>
+    `;
+  }).join("")}
+
 
     </div>
   `;
