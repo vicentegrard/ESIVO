@@ -4450,6 +4450,25 @@ const logoOrganisateur = equipeOrganisatrice
   .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
   .sort((a, b) => a.date.localeCompare(b.date))[0];
 
+  const heureEnMinutes = heure => {
+  const resultat = heure.match(/^(\d{1,2})h?(\d{2})?$/);
+  return resultat ? Number(resultat[1]) * 60 + Number(resultat[2] || 0) : 0;
+};
+
+const matchU13 = prochainMatch(u13Calendrier);
+
+const evenementsU13 = [
+  ...(matchU13 ? [{ match: matchU13, date: matchU13[0], heure: matchU13[1] }] : []),
+  ...(prochainPlateauU13 ? [{
+    plateau: prochainPlateauU13,
+    date: prochainPlateauU13.date,
+    heure: prochainPlateauU13.heure
+  }] : [])
+].sort((a, b) =>
+  a.date.localeCompare(b.date) ||
+  heureEnMinutes(a.heure) - heureEnMinutes(b.heure)
+)[0];
+
   const tousLesMatchs = [
   { match: prochainMatch(seniorsACalendrier), equipe: "Seniors A" },
   { match: prochainMatch(seniorsBCalendrier), equipe: "Seniors B" },
@@ -4457,23 +4476,20 @@ const logoOrganisateur = equipeOrganisatrice
   { match: prochainMatch(seniorsFemininesCalendrier), equipe: "Seniors Féminines à 8" },
   { match: prochainMatch(seniorsVeteransCalendrier), equipe: "Seniors Vétérans" },
   { match: prochainMatch(u18Calendrier), equipe: "U18" },
-    { match: prochainMatch(u13Calendrier), equipe: "U13" },
-    { plateau: prochainPlateauU13, equipe: "U13" },
+    { ...evenementsU13, equipe: "U13" },
     { plateau: prochainPlateauU11, equipe: "U11" },
   { plateau: prochainPlateauU9, equipe: "U9" },
   { plateau: prochainPlateauU7, equipe: "U7" }
 ].filter(item => item.match || item.plateau)
  .sort((a, b) => {
-   const dateMatchA = a.match ? a.match[0] : a.plateau.date;
-   const heureA = a.match ? a.match[1] : a.plateau.heure;
+  const dateA = a.match ? a.match[0] : a.plateau.date;
+  const heureA = a.match ? a.match[1] : a.plateau.heure;
 
-   const dateMatchB = b.match ? b.match[0] : b.plateau.date;
-   const heureB = b.match ? b.match[1] : b.plateau.heure;
+  const dateB = b.match ? b.match[0] : b.plateau.date;
+  const heureB = b.match ? b.match[1] : b.plateau.heure;
 
-   const dateA = new Date(dateMatchA + "T" + heureA.replace("h", ":") + ":00");
-   const dateB = new Date(dateMatchB + "T" + heureB.replace("h", ":") + ":00");
-
-   return dateA - dateB;
+  return dateA.localeCompare(dateB) ||
+    heureEnMinutes(heureA) - heureEnMinutes(heureB);
 });
 
   if (tousLesMatchs.length === 0) {
