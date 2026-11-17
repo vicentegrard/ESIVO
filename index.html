@@ -4629,15 +4629,42 @@ const dateAujourdhui =
   String(aujourdHui.getMonth() + 1).padStart(2, "0") + "-" +
   String(aujourdHui.getDate()).padStart(2, "0");
 
+// Conversion des dates pour comparer correctement
+const convertirDate = date => {
+  if (!date) return null;
+
+  const valeur = String(date);
+
+  // Format YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(valeur)) {
+    return new Date(valeur + "T12:00:00");
+  }
+
+  // Format DD/MM/YYYY
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(valeur)) {
+    const [jour, mois, annee] = valeur.split("/");
+    return new Date(`${annee}-${mois}-${jour}T12:00:00`);
+  }
+
+  return null;
+};
+
+const aujourdHui = new Date();
+aujourdHui.setHours(23, 59, 59, 999);
+
 const derniersPlateauxU11 = (window.calendriersFirebase || [])
-  .filter(doc =>
-    doc.equipe === "U11" &&
-    doc.type === "plateau" &&
-    doc.date <= dateAujourdhui
-  )
+  .filter(doc => {
+    const datePlateau = convertirDate(doc.date);
+
+    return (
+      doc.equipe === "U11" &&
+      doc.type === "plateau" &&
+      datePlateau &&
+      datePlateau <= aujourdHui
+    );
+  })
   .sort((a, b) =>
-    b.date.localeCompare(a.date) ||
-    (b.heure || "").localeCompare(a.heure || "")
+    convertirDate(b.date) - convertirDate(a.date)
   )
   .slice(0, 1)
   .map(plateau => ({
