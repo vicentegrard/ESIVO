@@ -3967,7 +3967,7 @@ const plateauxU11Demo = [
       { nom: "ESIVO", logo: "esivo.png" },
       { nom: "MOUEN", logo: "mouen.png" }
     ],
-    bilan: { victoires: 2, nuls: 0, defaites: 1 }
+    bilan: null
   },
   {
     date: "2026-10-10",
@@ -4009,7 +4009,7 @@ const plateauxU11Demo = [
       { nom: "CAUMONT B", logo: "caumont.png" },
       { nom: "AUNAY S/ODON C", logo: "aunay-odon-c.png" }
     ],
-    bilan: null
+    bilan: { victoires: 2, nuls: 0, defaites: 1 }
   }
 ];
 
@@ -4944,6 +4944,33 @@ const derniersPlateauxU11 = (window.calendriersFirebase || [])
             </div>
           `).join("")}
         </div>
+
+
+       ${plateau.bilanESIVO ? `
+         <div style="
+           display:flex;
+           justify-content:center;
+           align-items:center;
+           gap:12px;
+           flex-wrap:wrap;
+           margin:12px 0 18px;
+           font-weight:700;
+         ">
+           <span class="match-win">
+             ${plateau.bilanESIVO.victoires} victoire(s)
+           </span>
+           <span class="match-draw">
+             ${plateau.bilanESIVO.nuls} nul(s)
+           </span>
+           <span class="match-loss">
+             ${plateau.bilanESIVO.defaites} défaite(s)
+           </span>
+         </div>
+       ` : `
+         <p style="text-align:center;margin:12px 0;">
+           Aucun résultat enregistré pour ce plateau.
+         </p>
+       `}
 
         <div class="home-match-info">
           <strong>
@@ -7419,10 +7446,16 @@ if (equipe === "U11") {
                 plateau.bilan
                   ? `
                     <div class="u13-challenge-match">
-                      <strong> ${plateau.bilan.victoires} victoire(s)</strong>
-                      <strong>${plateau.bilan.nuls} nul(s)</strong>
-                      <strong>${plateau.bilan.defaites} défaite(s)</strong>
-                    </div>
+  <strong class="match-win">
+    ${plateau.bilan.victoires} victoire(s)
+  </strong>
+  <strong>
+    ${plateau.bilan.nuls} nul(s)
+  </strong>
+  <strong class="match-loss">
+    ${plateau.bilan.defaites} défaite(s)
+  </strong>
+</div>
                   `
                   : `<p>Aucun résultat enregistré pour ce plateau.</p>`
               }
