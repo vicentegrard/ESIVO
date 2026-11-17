@@ -6542,11 +6542,13 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
 
   const afficherStatut = resultat => {
   if (resultat.forfait) {
-    return {
-      classe: "match-loss",
-      libelle: "FORFAIT"
-    };
-  }
+  const victoireForfait = resultat.butsESIVO > resultat.butsAdversaire;
+
+  return {
+    classe: victoireForfait ? "match-win" : "match-loss",
+    libelle: victoireForfait ? "VICTOIRE PAR FORFAIT" : "FORFAIT"
+  };
+}
 
   if (resultat.tirsAuBut) {
     const [tabDomicile, tabExterieur] = resultat.tirsAuBut
