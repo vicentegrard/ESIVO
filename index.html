@@ -1722,6 +1722,102 @@ body {
   }
 }
 
+  
+/* CHALLENGE U13 - RESULTATS REGROUPES */
+
+.u13-challenge-card {
+  display: block !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.u13-challenge-results {
+  padding: 22px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.u13-challenge-match {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 15px;
+  padding: 17px 0;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.u13-challenge-match:last-child {
+  border-bottom: none;
+}
+
+.u13-challenge-team {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: #FEFFFE;
+  font-size: 12px;
+}
+
+.u13-challenge-team img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.u13-challenge-team strong {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.u13-challenge-team-right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.u13-challenge-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.u13-challenge-score > strong {
+  color: #FEFFFE;
+  font-size: 23px;
+}
+
+.u13-challenge-score > span {
+  font-size: 9px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .u13-challenge-results {
+    padding: 15px 10px;
+  }
+
+  .u13-challenge-match {
+    gap: 5px;
+  }
+
+  .u13-challenge-team {
+    gap: 5px;
+    font-size: 9px;
+  }
+
+  .u13-challenge-team img {
+    width: 25px;
+    height: 25px;
+  }
+
+  .u13-challenge-score > strong {
+    font-size: 19px;
+  }
+}
+
+
 .u11-next-date strong {
   display: block;
   font-size: 23px;
@@ -6753,19 +6849,113 @@ ${anciens
     ) === index;
   })
   .map(resultat => {
-    const challenge = equipe === "U13" && resultat.competition === "CHALLENGE U13";
+    const challenge = equipe === "U13" &&
+      resultat.competition === "CHALLENGE U13";
 
-    const matchs = challenge
-      ? anciens.filter(r =>
-          r.equipe === resultat.equipe &&
-          r.competition === resultat.competition &&
-          r.date === resultat.date
-        )
-      : [resultat];
+    if (challenge) {
+      const matchs = anciens.filter(r =>
+        r.equipe === resultat.equipe &&
+        r.competition === resultat.competition &&
+        r.date === resultat.date
+      );
+
+      return `
+        <article class="mc-result-fixture u13-challenge-card">
+
+          <div class="u11-organizer">
+            <img src="logos/fcb2lc.png" alt="FCB2LC">
+            <div class="u11-organizer-text">
+              <span>PLATEAU ORGANISÉ PAR</span>
+              <strong>FCB2LC</strong>
+              <small>Club organisateur</small>
+            </div>
+            <span class="u11-category">U13</span>
+          </div>
+
+          <div class="u11-teams-section">
+            <div class="u11-section-title">
+              <strong>Les équipes participantes</strong>
+              <span>4 ÉQUIPES</span>
+            </div>
+
+            <div class="u11-teams-grid">
+              ${[
+                { nom: "FCB2LC", logo: "fcb2lc.png" },
+                { nom: "AVANT GARDE B", logo: "avant-garde-c.png" },
+                { nom: "ESIVO", logo: "esivo.png" },
+                { nom: "U.S. GUÉRINIÈRE", logo: "us-gueriniere.png" }
+              ].map(formation => `
+                <div class="u11-team">
+                  <img src="logos/${formation.logo}" alt="${formation.nom}">
+                  <strong>${formation.nom}</strong>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+          <div class="u13-challenge-results">
+            <div class="u11-section-title">
+              <strong>Résultats de l'ESIVO</strong>
+              <span>${matchs.length} MATCHS</span>
+            </div>
+
+            ${matchs.map(match => {
+              const statut = afficherStatut(match);
+              const domicileMatch = match.domicile;
+
+              return `
+                <div class="u13-challenge-match">
+
+                  <div class="u13-challenge-team">
+                    <img src="logos/${domicileMatch ? "esivo.png" : match.logo}" alt="">
+                    <strong>${domicileMatch ? "ESIVO" : match.adversaire}</strong>
+                  </div>
+
+                  <div class="u13-challenge-score">
+                    <strong>
+                      ${domicileMatch ? match.butsESIVO : match.butsAdversaire}
+                      -
+                      ${domicileMatch ? match.butsAdversaire : match.butsESIVO}
+                    </strong>
+                    <span class="${statut.classe}">${statut.libelle}</span>
+                  </div>
+
+                  <div class="u13-challenge-team u13-challenge-team-right">
+                    <strong>${domicileMatch ? match.adversaire : "ESIVO"}</strong>
+                    <img src="logos/${domicileMatch ? match.logo : "esivo.png"}" alt="">
+                  </div>
+
+                </div>
+              `;
+            }).join("")}
+          </div>
+
+          <div class="u11-event-details">
+            <div>
+              <span>DATE ET HORAIRE</span>
+              <strong>📅 ${new Date(resultat.date + "T12:00:00").toLocaleDateString("fr-FR", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+              })} · ${resultat.heure}</strong>
+            </div>
+            <div>
+              <span>LIEU DU PLATEAU</span>
+              <strong>📍 ${resultat.lieu}</strong>
+              <small>${resultat.ville}</small>
+            </div>
+          </div>
+
+        </article>
+      `;
+    }
+
+    const statut = afficherStatut(resultat);
+    const domicileMatch = resultat.domicile;
 
     return `
       <article class="mc-result-fixture">
-
         <div class="mc-result-date">
           <strong>${new Date(resultat.date + "T12:00:00")
             .toLocaleDateString("fr-FR", {
@@ -6775,43 +6965,32 @@ ${anciens
           <span>${resultat.heure}</span>
         </div>
 
+        <div class="mc-result-fixture-teams">
+          <div class="mc-result-fixture-team">
+            <img src="logos/${domicileMatch ? "esivo.png" : resultat.logo}" alt="">
+            <strong>${domicileMatch ? "ESIVO" : resultat.adversaire}</strong>
+          </div>
+
+          <strong class="mc-result-fixture-score">
+            ${domicileMatch ? resultat.butsESIVO : resultat.butsAdversaire}
+            -
+            ${domicileMatch ? resultat.butsAdversaire : resultat.butsESIVO}
+          </strong>
+
+          <div class="mc-result-fixture-team">
+            <img src="logos/${domicileMatch ? resultat.logo : "esivo.png"}" alt="">
+            <strong>${domicileMatch ? resultat.adversaire : "ESIVO"}</strong>
+          </div>
+        </div>
+
         <div class="mc-result-meta">
           <span>${resultat.competition}</span>
           <span>${resultat.journee}</span>
-          ${challenge
-            ? `<span>${resultat.lieu} · ${resultat.ville}</span>`
+          <span class="${statut.classe}">${statut.libelle}</span>
+          ${resultat.tirsAuBut
+            ? `<span>TAB : ${resultat.tirsAuBut}</span>`
             : ""}
         </div>
-
-        ${matchs.map(match => {
-          const statut = afficherStatut(match);
-          const domicileMatch = match.domicile;
-
-          return `
-            <div class="mc-result-fixture-teams">
-              <div class="mc-result-fixture-team">
-                <img src="logos/${domicileMatch ? "esivo.png" : match.logo}" alt="">
-                <strong>${domicileMatch ? "ESIVO" : match.adversaire}</strong>
-              </div>
-
-              <strong class="mc-result-fixture-score">
-                ${domicileMatch ? match.butsESIVO : match.butsAdversaire}
-                -
-                ${domicileMatch ? match.butsAdversaire : match.butsESIVO}
-              </strong>
-
-              <div class="mc-result-fixture-team">
-                <img src="logos/${domicileMatch ? match.logo : "esivo.png"}" alt="">
-                <strong>${domicileMatch ? match.adversaire : "ESIVO"}</strong>
-              </div>
-            </div>
-
-            <div class="mc-result-meta">
-              <span class="${statut.classe}">${statut.libelle}</span>
-            </div>
-          `;
-        }).join("")}
-
       </article>
     `;
   }).join("")}
