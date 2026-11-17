@@ -2057,6 +2057,14 @@ body {
   letter-spacing: .5px;
 }
 
+  .fixture-venue {
+  grid-column: 2 / -1;
+  margin: 0;
+  color: #aeb0ba;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 @media (max-width: 700px) {
   .mc-hero {
     padding: 22px 16px;
@@ -4438,6 +4446,10 @@ const logoOrganisateur = equipeOrganisatrice
   .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
   .sort((a, b) => a.date.localeCompare(b.date))[0];
 
+  const prochainPlateauU13 = u13PlateauxCalendrier
+  .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
+  .sort((a, b) => a.date.localeCompare(b.date))[0];
+
   const tousLesMatchs = [
   { match: prochainMatch(seniorsACalendrier), equipe: "Seniors A" },
   { match: prochainMatch(seniorsBCalendrier), equipe: "Seniors B" },
@@ -4446,6 +4458,7 @@ const logoOrganisateur = equipeOrganisatrice
   { match: prochainMatch(seniorsVeteransCalendrier), equipe: "Seniors Vétérans" },
   { match: prochainMatch(u18Calendrier), equipe: "U18" },
     { match: prochainMatch(u13Calendrier), equipe: "U13" },
+    { plateau: prochainPlateauU13, equipe: "U13" },
     { plateau: prochainPlateauU11, equipe: "U11" },
   { plateau: prochainPlateauU9, equipe: "U9" },
   { plateau: prochainPlateauU7, equipe: "U7" }
