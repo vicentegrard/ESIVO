@@ -6435,6 +6435,35 @@ function showPage(page) {
 </div>
 </div>
 
+<div class="content-card" style="margin-top:20px;">
+  <h3>⚽ Gestion des résultats</h3>
+  <p>Enregistrer et modifier les résultats des matchs et les bilans des plateaux.</p>
+
+  <div class="form-group">
+    <label for="adminResultatsEquipe">Choisir une équipe</label>
+    <select id="adminResultatsEquipe"
+      onchange="chargerEvenementsResultatsAdmin(this.value)">
+      <option value="">-- Sélectionner une équipe --</option>
+      <option value="U7">U7</option>
+      <option value="U9">U9</option>
+      <option value="U11">U11</option>
+      <option value="U13">U13</option>
+      <option value="U18">U18</option>
+      <option value="Seniors A">Seniors A</option>
+      <option value="Seniors B">Seniors B</option>
+      <option value="Seniors C">Seniors C</option>
+      <option value="Seniors Vétérans">Seniors Vétérans</option>
+      <option value="Seniors Féminines à 8">Seniors Féminines à 8</option>
+    </select>
+  </div>
+
+  <div id="adminResultatsListe" style="margin-top:20px;">
+    <p>Sélectionne une équipe pour retrouver ses matchs et ses plateaux.</p>
+  </div>
+
+  <p id="adminResultatsMessage"></p>
+</div>
+
 
         <div class="content-card">
           <h3>⚽ Gestion des résultats</h3>
@@ -8613,7 +8642,10 @@ async function chargerCalendriersFirebase() {
       throw new Error("Aucune donnée trouvée dans Firebase.");
     }
 
-    const documents = snapshot.docs.map(doc => doc.data());
+    const documents = snapshot.docs.map(doc => ({
+  ...doc.data(),
+  id: doc.id
+}));
 
     window.calendriersFirebase = documents;
 
@@ -8654,8 +8686,7 @@ async function chargerCalendriersFirebase() {
     organisateur: doc.organisateur,
     lieu: doc.lieu,
     ville: doc.ville,
-    equipes: doc.equipes || [],
-    bilanESIVO: doc.bilanESIVO || null
+    equipes: doc.equipes || []
   }));
 
       const nouvellesDonnees = [...rencontres, ...plateaux];
