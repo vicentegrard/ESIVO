@@ -4408,7 +4408,9 @@ const logoOrganisateur = equipeOrganisatrice
 
     return `
       <div class="weekend-match home-next-match home-next-plateau">
-        <div class="mc-eyebrow">PROCHAIN PLATEAU · ${categorie}</div>
+        <div class="mc-eyebrow">
+  ${categorie === "U13" ? "PROCHAIN CHALLENGE" : "PROCHAIN PLATEAU"} · ${categorie}
+</div>
 
         <div class="home-plateau-organizer">
           <img src="logos/${logoOrganisateur || 'esivo.png'}" alt="${plateau.organisateur}">
@@ -4429,10 +4431,13 @@ const logoOrganisateur = equipeOrganisatrice
   };
 
     const prochainMatch = (calendrier) => {
-    return calendrier
-      .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHui)
-      .sort((a, b) => a[0].localeCompare(b[0]))[0];
-  };
+  return calendrier
+    .filter(match =>
+      Array.isArray(match) &&
+      new Date(match[0] + "T12:00:00") >= aujourdHui
+    )
+    .sort((a, b) => a[0].localeCompare(b[0]))[0];
+};
 
   const prochainPlateauU11 = u11Calendrier
   .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
@@ -4446,13 +4451,18 @@ const logoOrganisateur = equipeOrganisatrice
   .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
   .sort((a, b) => a.date.localeCompare(b.date))[0];
 
-  const prochainPlateauU13 = u13PlateauxCalendrier
-  .filter(plateau => new Date(plateau.date + "T12:00:00") >= aujourdHui)
+  const prochainPlateauU13 = u13Calendrier
+  .filter(item =>
+    !Array.isArray(item) &&
+    new Date(item.date + "T12:00:00") >= aujourdHui
+  )
   .sort((a, b) => a.date.localeCompare(b.date))[0];
 
   const heureEnMinutes = heure => {
-  const resultat = heure.match(/^(\d{1,2})h?(\d{2})?$/);
-  return resultat ? Number(resultat[1]) * 60 + Number(resultat[2] || 0) : 0;
+  const resultat = heure.match(/^(\d{1,2})(?:h|:)?(\d{2})?$/);
+  return resultat
+    ? Number(resultat[1]) * 60 + Number(resultat[2] || 0)
+    : 0;
 };
 
 const matchU13 = prochainMatch(u13Calendrier);
@@ -4979,14 +4989,22 @@ function afficherFormulaireCalendrier(equipe) {
   }
   chargerListeCalendrierAdmin(equipe);
 
-  const equipesPlateaux = ["U7", "U9", "U11"];
-  const estPlateau = equipesPlateaux.includes(equipe);
+  const equipesPlateaux = ["U7", "U9", "U11", "U13"];
+const estPlateau = equipesPlateaux.includes(equipe);
+const estChallengeU13 = equipe === "U13";
 
   
   
 if (estPlateau) {
   conteneur.innerHTML = `
-    <h4>Ajouter un plateau — ${equipe}</h4>
+    <h4>Ajouter ${estChallengeU13 ? "un Challenge" : "un plateau"} — ${equipe}</h4>
+
+    ${estChallengeU13 ? `
+      <div class="form-group">
+        <label>Compétition</label>
+        <input type="text" id="adminPlateauCompetition" value="CHALLENGE U13" readonly>
+      </div>
+    ` : ""}
 
     <div class="form-group">
       <label>Date du plateau</label>
@@ -5173,9 +5191,14 @@ async function chargerListeCalendrierAdmin(equipe) {
       carte.className = "content-card";
 
       const nom = document.createElement("h4");
-      nom.textContent = item.type === "plateau"
-        ? "Plateau — " + (item.organisateur || "")
-        : (item.domicile ? "ESIVO — " : "") + (item.adversaire || "");
+
+if (item.type === "plateau" && equipe === "U13") {
+  nom.textContent = "Challenge U13 — " + (item.organisateur || "");
+} else if (item.type === "plateau") {
+  nom.textContent = "Plateau — " + (item.organisateur || "");
+} else {
+  nom.textContent = (item.domicile ? "ESIVO — " : "") + (item.adversaire || "");
+}
 
       const details = document.createElement("p");
       details.textContent =
@@ -5280,6 +5303,11 @@ async function modifierRencontreAdmin(id, equipe) {
     const match = documentMatch.data();
 
     if (match.type === "plateau") {
+        const champCompetition = document.getElementById("adminPlateauCompetition");
+  if (champCompetition) {
+    champCompetition.value = match.competition || "CHALLENGE U13";
+  }
+      
   document.getElementById("adminPlateauDate").value = match.date || "";
   document.getElementById("adminPlateauHeure").value = match.heure || "";
   document.getElementById("adminPlateauOrganisateur").value = match.organisateur || "";
@@ -5307,7 +5335,11 @@ if (!match.equipes || match.equipes.length === 0) {
   });
 
   const titre = document.querySelector("#adminCalendrierFormulaire h4");
-  if (titre) titre.textContent = "Modifier un plateau — " + equipe;
+  if (titre) {
+  titre.textContent = equipe === "U13"
+    ? "Modifier un Challenge U13"
+    : "Modifier un plateau — " + equipe;
+}
 
   const bouton = document.querySelector("#adminCalendrierFormulaire button");
   if (bouton) {
@@ -5360,7 +5392,11 @@ apercuLogo.src = fichierLogo.startsWith("http")
     });
 
     const titre = document.querySelector("#adminCalendrierFormulaire h4");
-    if (titre) titre.textContent = "Modifier un match — " + equipe;
+if (titre) {
+  titre.textContent = equipe === "U13"
+    ? "Ajouter un Challenge — U13"
+    : "Ajouter un plateau — " + equipe;
+}
 
     const bouton = document.querySelector("#adminCalendrierFormulaire button");
     if (bouton) {
@@ -5457,6 +5493,9 @@ const equipes = Array.from(lignes)
   const plateau = {
     equipe: equipe,
     type: "plateau",
+        competition: equipe === "U13"
+      ? document.getElementById("adminPlateauCompetition").value
+      : "",
     date: document.getElementById("adminPlateauDate").value,
     heure: document.getElementById("adminPlateauHeure").value,
     organisateur: document.getElementById("adminPlateauOrganisateur").value.trim(),
@@ -5527,6 +5566,9 @@ const equipes = Array.from(lignes)
   const plateau = {
     equipe: equipe,
     type: "plateau",
+        competition: equipe === "U13"
+      ? document.getElementById("adminPlateauCompetition").value
+      : "",
     date: document.getElementById("adminPlateauDate").value,
     heure: document.getElementById("adminPlateauHeure").value,
     organisateur: document.getElementById("adminPlateauOrganisateur").value.trim(),
@@ -5645,6 +5687,12 @@ async function importerCalendriersExistantsAdmin() {
         journee: m[3], domicile: m[4], adversaire: m[5],
         logo: m[6], lieu: m[7], ville: m[8]
       })),
+
+      ...u13PlateauxCalendrier.map(p => ({
+  equipe: "U13",
+  type: "plateau",
+  ...p
+})),
 
       ...u18Calendrier.map(m => ({
         equipe: "U18", type: "match",
@@ -6564,7 +6612,14 @@ const calendrier = calendriersEquipes[equipe];
     
 if (equipe === "U13") {
   const calendrier = u13Calendrier;
-  const plateaux = u13PlateauxCalendrier;
+
+  const matchs = calendrier.filter(item =>
+    Array.isArray(item)
+  );
+
+  const plateaux = calendrier.filter(item =>
+    !Array.isArray(item)
+  );
 
   const dateFr = date => new Date(date + "T12:00:00")
     .toLocaleDateString("fr-FR", {
@@ -6600,7 +6655,7 @@ if (equipe === "U13") {
         </div>
         <span class="mc-count">
           ${plateaux.length} PLATEAU${plateaux.length > 1 ? "X" : ""}
-          · ${calendrier.length} MATCH${calendrier.length > 1 ? "S" : ""}
+          · ${matchs.length} MATCH${matchs.length > 1 ? "S" : ""}
         </span>
       </div>
 
@@ -6698,7 +6753,7 @@ if (equipe === "U13") {
           </article>
         `).join("")}
 
-        ${calendrier.map(m => {
+        ${matchs.map(m => {
           const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = m;
 
           const dateCourte = new Date(date + "T12:00:00")
@@ -8082,15 +8137,16 @@ async function chargerCalendriersFirebase() {
         ]);
 
       const plateaux = documents
-        .filter(doc => doc.equipe === nomEquipe && doc.type === "plateau")
-        .map(doc => ({
-          date: doc.date,
-          heure: doc.heure,
-          organisateur: doc.organisateur,
-          lieu: doc.lieu,
-          ville: doc.ville,
-          equipes: doc.equipes || []
-        }));
+  .filter(doc => doc.equipe === nomEquipe && doc.type === "plateau")
+  .map(doc => ({
+    date: doc.date,
+    heure: doc.heure,
+    competition: doc.competition || "",
+    organisateur: doc.organisateur,
+    lieu: doc.lieu,
+    ville: doc.ville,
+    equipes: doc.equipes || []
+  }));
 
       const nouvellesDonnees = [...rencontres, ...plateaux];
 
