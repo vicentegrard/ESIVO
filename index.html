@@ -8654,7 +8654,8 @@ async function chargerCalendriersFirebase() {
     organisateur: doc.organisateur,
     lieu: doc.lieu,
     ville: doc.ville,
-    equipes: doc.equipes || []
+    equipes: doc.equipes || [],
+    bilanESIVO: doc.bilanESIVO || null
   }));
 
       const nouvellesDonnees = [...rencontres, ...plateaux];
