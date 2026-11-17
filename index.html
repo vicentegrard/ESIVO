@@ -3953,60 +3953,6 @@ const resultatsDemo = [
   ville: "14150 OUISTREHAM"
 },
 ];
-  const plateauxU11Demo = [
-  {
-    date: "2026-10-03",
-    heure: "10h00",
-    organisateur: "US AUNAY S/ODON",
-    lieu: "Stade des Monts d'Aunay 1",
-    ville: "14260 LES MONTS D'AUNAY",
-    equipes: [
-      { nom: "AUNAY S/ODON C", logo: "aunay-odon-c.png" },
-      { nom: "BRETTEVILLE/ODON B", logo: "bretteville-odon.png" },
-      { nom: "ESIVO", logo: "esivo.png" },
-      { nom: "MOUEN", logo: "mouen.png" }
-    ]
-  },
-  {
-    date: "2026-10-10",
-    heure: "10h00",
-    organisateur: "CINGAL",
-    lieu: "Stade du Manoir 1",
-    ville: "14680 BRETTEVILLE-SUR-LAIZE",
-    equipes: [
-      { nom: "CINGAL", logo: "cingal.png" },
-      { nom: "ESIVO", logo: "esivo.png" },
-      { nom: "MOUEN", logo: "mouen.png" },
-      { nom: "INTER ODON C", logo: "inter-odon.png" }
-    ]
-  },
-  {
-    date: "2026-11-07",
-    heure: "10h00",
-    organisateur: "ESIVO",
-    lieu: "Stade Roger Brion",
-    ville: "14320 SAINT-ANDRÉ-SUR-ORNE",
-    equipes: [
-      { nom: "ESIVO", logo: "esivo.png" },
-      { nom: "CORMELLES C", logo: "cormelles.png" },
-      { nom: "MOUEN", logo: "mouen.png" },
-      { nom: "INTER ODON C", logo: "inter-odon.png" }
-    ]
-  },
-  {
-    date: "2026-11-14",
-    heure: "10h00",
-    organisateur: "INTER ODON",
-    lieu: "Stade Municipal",
-    ville: "14930 VIEUX",
-    equipes: [
-      { nom: "INTER ODON C", logo: "inter-odon.png" },
-      { nom: "ESIVO", logo: "esivo.png" },
-      { nom: "CAUMONT B", logo: "caumont.png" },
-      { nom: "AUNAY S/ODON C", logo: "aunay-odon-c.png" }
-    ]
-  }
-];
 
 
   
@@ -4675,14 +4621,24 @@ function afficherResultatsWeekend() {
     type: "resultat"
   }));
 
-  // Ajout des plateaux U11
-  const tousLesEvenements = [
-    ...derniersResultats,
-    ...plateauxU11Demo.map(plateau => ({
+    // Récupération du dernier plateau U11 depuis Firebase
+  const derniersPlateauxU11 = (window.calendriersFirebase || [])
+    .filter(doc => doc.equipe === "U11" && doc.type === "plateau")
+    .sort((a, b) =>
+      b.date.localeCompare(a.date) ||
+      b.heure.localeCompare(a.heure)
+    )
+    .slice(0, 1)
+    .map(plateau => ({
       ...plateau,
       equipe: "U11",
       type: "plateau"
-    }))
+    }));
+
+  // Résultats classiques + dernier plateau U11
+  const tousLesEvenements = [
+    ...derniersResultats,
+    ...derniersPlateauxU11
   ];
 
   // Tri du plus récent au plus ancien
@@ -5205,6 +5161,23 @@ if (estPlateau) {
       <input type="text" id="adminPlateauOrganisateur" placeholder="Nom du club organisateur">
     </div>
 
+    ${equipe === "U11" ? `
+  <div class="form-group">
+    <label>Bilan ESIVO — Victoires</label>
+    <input type="number" id="adminPlateauVictoires" min="0" value="0">
+  </div>
+
+  <div class="form-group">
+    <label>Bilan ESIVO — Matchs nuls</label>
+    <input type="number" id="adminPlateauNuls" min="0" value="0">
+  </div>
+
+  <div class="form-group">
+    <label>Bilan ESIVO — Défaites</label>
+    <input type="number" id="adminPlateauDefaites" min="0" value="0">
+  </div>
+` : ""}
+
     <div class="form-group">
       <label>Lieu</label>
       <input type="text" id="adminPlateauLieu" placeholder="Nom du stade">
@@ -5568,6 +5541,19 @@ async function modifierRencontreAdmin(id, equipe) {
   document.getElementById("adminPlateauOrganisateur").value = match.organisateur || "";
   document.getElementById("adminPlateauLieu").value = match.lieu || "";
   document.getElementById("adminPlateauVille").value = match.ville || "";
+      // Préremplissage du bilan U11
+if (equipe === "U11") {
+  const bilan = match.bilanESIVO || {};
+
+  document.getElementById("adminPlateauVictoires").value =
+    bilan.victoires ?? 0;
+
+  document.getElementById("adminPlateauNuls").value =
+    bilan.nuls ?? 0;
+
+  document.getElementById("adminPlateauDefaites").value =
+    bilan.defaites ?? 0;
+}
 
   const listeEquipes = document.getElementById("adminPlateauListeEquipes");
 
@@ -5756,7 +5742,13 @@ const equipes = Array.from(lignes)
     organisateur: document.getElementById("adminPlateauOrganisateur").value.trim(),
     lieu: document.getElementById("adminPlateauLieu").value.trim(),
     ville: document.getElementById("adminPlateauVille").value.trim(),
-    equipes: equipes
+    equipes: equipes,
+
+bilanESIVO: equipe === "U11" ? {
+  victoires: Number(document.getElementById("adminPlateauVictoires")?.value || 0),
+  nuls: Number(document.getElementById("adminPlateauNuls")?.value || 0),
+  defaites: Number(document.getElementById("adminPlateauDefaites")?.value || 0)
+} : null
   };
 
   if (!plateau.date || !plateau.heure || !plateau.organisateur || equipes.length === 0) {
@@ -5829,7 +5821,13 @@ const equipes = Array.from(lignes)
     organisateur: document.getElementById("adminPlateauOrganisateur").value.trim(),
     lieu: document.getElementById("adminPlateauLieu").value.trim(),
     ville: document.getElementById("adminPlateauVille").value.trim(),
-    equipes: equipes
+    equipes: equipes,
+
+bilanESIVO: equipe === "U11" ? {
+  victoires: Number(document.getElementById("adminPlateauVictoires")?.value || 0),
+  nuls: Number(document.getElementById("adminPlateauNuls")?.value || 0),
+  defaites: Number(document.getElementById("adminPlateauDefaites")?.value || 0)
+} : null
   };
 
   if (
@@ -8422,7 +8420,8 @@ async function chargerCalendriersFirebase() {
       documents.length + " rencontres et plateaux synchronisés avec Firebase."
     );
 
-    afficherRencontresWeekend();
+        afficherRencontresWeekend();
+    afficherResultatsWeekend();
 
   } catch (erreur) {
     console.error(
