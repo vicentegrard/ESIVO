@@ -6040,40 +6040,148 @@ async function chargerEvenementsResultatsAdmin(equipe) {
       return;
     }
 
-    liste.innerHTML = evenements.map(evenement => {
-      const date = evenement.date
-        ? new Date(evenement.date + "T00:00:00").toLocaleDateString("fr-FR")
-        : "Date non renseignée";
+    
+liste.innerHTML = evenements.map(evenement => {
+  const date = evenement.date
+    ? new Date(evenement.date + "T00:00:00").toLocaleDateString("fr-FR")
+    : "Date non renseignée";
 
-      if (evenement.type === "plateau") {
-        return `
-          <div class="content-card" style="margin-bottom:12px;">
-            <h4>Plateau — ${date}</h4>
-            <p>Organisateur : ${evenement.organisateur || "Non renseigné"}</p>
-            <p>Lieu : ${evenement.lieu || "Non renseigné"} ${evenement.ville || ""}</p>
-            <p>Résultat : ${evenement.bilanESIVO ? "Déjà renseigné" : "En attente"}</p>
-          </div>
-        `;
-      }
+  if (evenement.type === "plateau") {
+    const bilan = evenement.bilanESIVO || {};
 
-      return `
-        <div class="content-card" style="margin-bottom:12px;">
-          <h4>Match — ${date}</h4>
-          <p>Adversaire : ${evenement.adversaire || "Non renseigné"}</p>
-          <p>Résultat : ${
-            evenement.resultatEnregistre
-              ? evenement.butsESIVO + " - " + evenement.butsAdversaire
-              : "En attente"
-          }</p>
-        </div>
-      `;
-    }).join("");
+    return `
+      <div class="content-card" style="margin-bottom:12px;">
+        <h4>Plateau — ${date}</h4>
+        <p>Organisateur : ${evenement.organisateur || "Non renseigné"}</p>
+        <p>Lieu : ${evenement.lieu || "Non renseigné"} ${evenement.ville || ""}</p>
+
+        <h4>Bilan ESIVO</h4>
+
+        <label>Victoires</label>
+        <input type="number" min="0" step="1"
+          id="resultat-v-${evenement.id}"
+          value="${bilan.victoires ?? ""}">
+
+        <label>Nuls</label>
+        <input type="number" min="0" step="1"
+          id="resultat-n-${evenement.id}"
+          value="${bilan.nuls ?? ""}">
+
+        <label>Défaites</label>
+        <input type="number" min="0" step="1"
+          id="resultat-d-${evenement.id}"
+          value="${bilan.defaites ?? ""}">
+
+        <button type="button"
+          onclick="enregistrerResultatAdmin('${evenement.id}', 'plateau')">
+          Enregistrer le bilan
+        </button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="content-card" style="margin-bottom:12px;">
+      <h4>Match — ${date}</h4>
+      <p>Adversaire : ${evenement.adversaire || "Non renseigné"}</p>
+
+      <label>Buts ESIVO</label>
+      <input type="number" min="0" step="1"
+        id="resultat-esivo-${evenement.id}"
+        value="${evenement.butsESIVO ?? ""}">
+
+      <label>Buts adversaire</label>
+      <input type="number" min="0" step="1"
+        id="resultat-adverse-${evenement.id}"
+        value="${evenement.butsAdversaire ?? ""}">
+
+      <button type="button"
+        onclick="enregistrerResultatAdmin('${evenement.id}', 'match')">
+        Enregistrer le score
+      </button>
+    </div>
+  `;
+}).join("");
+
 
   } catch (erreur) {
     console.error("Erreur de chargement des résultats :", erreur);
     liste.innerHTML = "<p>Impossible de charger les événements.</p>";
   }
 }
+
+  
+async function enregistrerResultatAdmin(id, type) {
+  const message = document.getElementById("adminResultatsMessage");
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    message.textContent = "Accès refusé.";
+    return;
+  }
+
+  let donnees = {};
+
+  if (type === "match") {
+    const butsESIVO = document.getElementById("resultat-esivo-" + id).value;
+    const butsAdversaire = document.getElementById("resultat-adverse-" + id).value;
+
+    if (butsESIVO === "" || butsAdversaire === "") {
+      message.textContent = "Merci de renseigner les deux scores.";
+      return;
+    }
+
+    donnees = {
+      butsESIVO: Number(butsESIVO),
+      butsAdversaire: Number(butsAdversaire),
+      resultatEnregistre: true
+    };
+
+  } else if (type === "plateau") {
+    const victoires = document.getElementById("resultat-v-" + id).value;
+    const nuls = document.getElementById("resultat-n-" + id).value;
+    const defaites = document.getElementById("resultat-d-" + id).value;
+
+    if (victoires === "" || nuls === "" || defaites === "") {
+      message.textContent = "Merci de renseigner les trois valeurs du bilan.";
+      return;
+    }
+
+    donnees = {
+      bilanESIVO: {
+        victoires: Number(victoires),
+        nuls: Number(nuls),
+        defaites: Number(defaites)
+      },
+      resultatEnregistre: true
+    };
+
+  } else {
+    message.textContent = "Type de résultat inconnu.";
+    return;
+  }
+
+  try {
+    await window.esivoDb
+      .collection("matchs")
+      .doc(id)
+      .update(donnees);
+
+    message.textContent = "Résultat enregistré avec succès !";
+
+    const equipe = document.getElementById("adminResultatsEquipe").value;
+    await chargerEvenementsResultatsAdmin(equipe);
+
+    message.textContent = "Résultat enregistré avec succès !";
+
+    await chargerCalendriersFirebase();
+
+  } catch (erreur) {
+    console.error("Erreur d'enregistrement du résultat :", erreur);
+    message.textContent = "Erreur lors de l'enregistrement du résultat.";
+  }
+}
+
 
   
 async function enregistrerMatchAdmin() {
