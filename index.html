@@ -6464,9 +6464,20 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
   }
 
   if (resultat.tirsAuBut) {
+    const [tabESIVO, tabAdversaire] = resultat.tirsAuBut
+      .split("-")
+      .map(Number);
+
+    if (tabESIVO > tabAdversaire) {
+      return {
+        classe: "match-win",
+        libelle: "QUALIFICATION AUX TIRS AU BUT"
+      };
+    }
+
     return {
-      classe: "match-win",
-      libelle: "QUALIFICATION AUX TIRS AU BUT"
+      classe: "match-loss",
+      libelle: "ÉLIMINATION AUX TIRS AU BUT"
     };
   }
 
