@@ -4159,6 +4159,22 @@ const u13Calendrier = [
   ["2026-12-05","13h30","Départemental 3 U13 à 8","Journée 5",true,"FC VITAL B","fc-vital-b.png","Stade Roger Brion","14320 Saint-André-sur-Orne"]
 ];
 
+  const u13PlateauxCalendrier = [
+  {
+    date: "2026-11-21",
+    heure: "13h",
+    organisateur: "USM BLAINVILLE",
+    lieu: "Stade Gérard Angot",
+    ville: "14112 BIÉVILLE-BEUVILLE",
+    equipes: [
+      { nom: "USM BLAINVILLE B", logo: "usm-blainville-b.png" },
+      { nom: "SAINT-SYLVAIN", logo: "saint-sylvain.png" },
+      { nom: "ESIVO", logo: "esivo.png" },
+      { nom: "TROARN", logo: "troarn.png" }
+    ]
+  }
+];
+
   const u11Calendrier = [
   {
     date: "2026-11-21",
@@ -6515,6 +6531,194 @@ const descriptionsOrganisateurs = {
 };
 
 const calendrier = calendriersEquipes[equipe];
+
+    
+if (equipe === "U13") {
+  const calendrier = u13Calendrier;
+  const plateaux = u13PlateauxCalendrier;
+
+  const dateFr = date => new Date(date + "T12:00:00")
+    .toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+
+  const aujourdHui = new Date();
+  aujourdHui.setHours(0, 0, 0, 0);
+
+  const prochainPlateau = plateaux
+    .filter(p => new Date(p.date + "T12:00:00") >= aujourdHui)
+    .sort((a, b) => a.date.localeCompare(b.date))[0];
+
+  const logoOrganisateur = plateau => {
+    const organisateur = plateau.equipes.find(formation =>
+      formation.nom === plateau.organisateur ||
+      formation.nom.startsWith(plateau.organisateur + " ")
+    );
+
+    return organisateur ? organisateur.logo : "esivo.png";
+  };
+
+  contenu.innerHTML = `
+    <div class="match-center">
+
+      <div class="mc-list-heading">
+        <div>
+          <span class="mc-eyebrow">SAISON 2026 / 2027</span>
+          <h3>Calendrier U13</h3>
+        </div>
+        <span class="mc-count">
+          ${plateaux.length} PLATEAU${plateaux.length > 1 ? "X" : ""}
+          · ${calendrier.length} MATCH${calendrier.length > 1 ? "S" : ""}
+        </span>
+      </div>
+
+      ${prochainPlateau ? `
+        <div class="u11-next-plateau">
+          <div class="u11-next-header">
+            <span>PROCHAIN CHALLENGE U13</span>
+            <span>U13</span>
+          </div>
+
+          <div class="u11-next-main">
+            <div class="u11-next-date">
+              <strong>${dateFr(prochainPlateau.date)}</strong>
+              <span>${prochainPlateau.heure}</span>
+            </div>
+
+            <div class="u11-next-organizer">
+              <img src="logos/${logoOrganisateur(prochainPlateau)}" alt="${prochainPlateau.organisateur}">
+              <div>
+                <small>ORGANISÉ PAR</small>
+                <strong>${prochainPlateau.organisateur}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="u11-next-teams">
+            ${prochainPlateau.equipes.map(formation => `
+              <div>
+                <img src="logos/${formation.logo}" alt="${formation.nom}">
+                <strong>${formation.nom}</strong>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="u11-next-location">
+            <strong>📍 ${prochainPlateau.lieu}</strong>
+            <span>${prochainPlateau.ville}</span>
+          </div>
+        </div>
+      ` : ""}
+
+      <div class="mc-list-heading">
+        <div>
+          <span class="mc-eyebrow">SAISON 2026 / 2027</span>
+          <h3>Les plateaux et rencontres</h3>
+        </div>
+      </div>
+
+      <div class="mc-fixtures">
+
+        ${plateaux.map(plateau => `
+          <article class="mc-fixture mc-fixture-plateau">
+
+            <div class="u11-organizer">
+              <img src="logos/${logoOrganisateur(plateau)}" alt="${plateau.organisateur}">
+
+              <div class="u11-organizer-text">
+                <span>PLATEAU ORGANISÉ PAR</span>
+                <strong>${plateau.organisateur}</strong>
+                <small>Club organisateur</small>
+              </div>
+
+              <span class="u11-category">U13</span>
+            </div>
+
+            <div class="u11-teams-section">
+              <div class="u11-section-title">
+                <strong>Les équipes participantes</strong>
+                <span>${plateau.equipes.length} ÉQUIPES</span>
+              </div>
+
+              <div class="u11-teams-grid">
+                ${plateau.equipes.map(formation => `
+                  <div class="u11-team">
+                    <img src="logos/${formation.logo}" alt="${formation.nom}">
+                    <strong>${formation.nom}</strong>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="u11-event-details">
+              <div>
+                <span>DATE ET HORAIRE</span>
+                <strong>📅 ${dateFr(plateau.date)} · ${plateau.heure}</strong>
+              </div>
+
+              <div>
+                <span>LIEU DU PLATEAU</span>
+                <strong>📍 ${plateau.lieu}</strong>
+                <small>${plateau.ville}</small>
+              </div>
+            </div>
+
+          </article>
+        `).join("")}
+
+        ${calendrier.map(m => {
+          const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = m;
+
+          const dateCourte = new Date(date + "T12:00:00")
+            .toLocaleDateString("fr-FR", {
+              day: "2-digit",
+              month: "short"
+            }).replace(".", "").toUpperCase();
+
+          return `
+            <article class="mc-fixture">
+
+              <div class="mc-date">
+                <strong>${dateCourte}</strong>
+                <span>${heure}</span>
+              </div>
+
+              <div class="mc-fixture-teams">
+                <div class="mc-fixture-team">
+                  <img src="logos/${domicile ? "esivo.png" : logo}" alt="">
+                  <strong>${domicile ? "ESIVO" : adversaire}</strong>
+                </div>
+
+                <span class="mc-fixture-vs">VS</span>
+
+                <div class="mc-fixture-team">
+                  <img src="logos/${domicile ? logo : "esivo.png"}" alt="">
+                  <strong>${domicile ? adversaire : "ESIVO"}</strong>
+                </div>
+              </div>
+
+              <div class="mc-fixture-meta">
+                <span>${competition}</span>
+                <span>${journee}</span>
+                <span class="mc-location">${domicile ? "DOMICILE" : "EXTÉRIEUR"}</span>
+              </div>
+
+              <p class="fixture-venue">📍 ${lieu} · ${ville}</p>
+
+            </article>
+          `;
+        }).join("")}
+
+      </div>
+    </div>
+  `;
+
+  return;
+}
+
 
     const dateFr = date => new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
       weekday: "long", day: "numeric", month: "long", year: "numeric"
