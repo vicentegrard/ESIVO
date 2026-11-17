@@ -5893,11 +5893,16 @@ const equipes = Array.from(lignes)
     heure: document.getElementById("adminPlateauHeure").value,
     organisateur: document.getElementById("adminPlateauOrganisateur").value.trim(),
     lieu: document.getElementById("adminPlateauLieu").value.trim(),
-    ville: document.getElementById("adminPlateauVille").value.trim(),
+        ville: document.getElementById("adminPlateauVille").value.trim(),
     equipes: equipes
-      };
+  };
 
-  if (!plateau.date || !plateau.heure || !plateau.organisateur || equipes.length === 0) {
+  if (
+    !plateau.date ||
+    !plateau.heure ||
+    !plateau.organisateur ||
+    equipes.length === 0
+  ) {
     message.textContent = "Merci de renseigner les informations obligatoires et au moins une équipe.";
     return;
   }
