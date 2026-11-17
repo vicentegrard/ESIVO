@@ -4622,18 +4622,29 @@ function afficherResultatsWeekend() {
   }));
 
     // Récupération du dernier plateau U11 depuis Firebase
-  const derniersPlateauxU11 = (window.calendriersFirebase || [])
-    .filter(doc => doc.equipe === "U11" && doc.type === "plateau")
-    .sort((a, b) =>
-      b.date.localeCompare(a.date) ||
-      b.heure.localeCompare(a.heure)
-    )
-    .slice(0, 1)
-    .map(plateau => ({
-      ...plateau,
-      equipe: "U11",
-      type: "plateau"
-    }));
+  // Récupération du dernier plateau U11 déjà passé
+const aujourdHui = new Date();
+const dateAujourdhui =
+  aujourdHui.getFullYear() + "-" +
+  String(aujourdHui.getMonth() + 1).padStart(2, "0") + "-" +
+  String(aujourdHui.getDate()).padStart(2, "0");
+
+const derniersPlateauxU11 = (window.calendriersFirebase || [])
+  .filter(doc =>
+    doc.equipe === "U11" &&
+    doc.type === "plateau" &&
+    doc.date <= dateAujourdhui
+  )
+  .sort((a, b) =>
+    b.date.localeCompare(a.date) ||
+    (b.heure || "").localeCompare(a.heure || "")
+  )
+  .slice(0, 1)
+  .map(plateau => ({
+    ...plateau,
+    equipe: "U11",
+    type: "plateau"
+  }));
 
   // Résultats classiques + dernier plateau U11
   const tousLesEvenements = [
@@ -4762,14 +4773,41 @@ function afficherResultatsWeekend() {
           PLATEAU U11
         </div>
 
-        <div style="
+                <div style="
+          display:flex;
+          flex-direction:column;
+          align-items:center;
           text-align:center;
+          gap:8px;
           margin:12px 0 20px;
         ">
+          ${(() => {
+            const organisateur = (plateau.equipes || []).find(equipe =>
+              equipe.nom.toUpperCase().includes(
+                plateau.organisateur.toUpperCase()
+              ) ||
+              plateau.organisateur.toUpperCase().includes(
+                equipe.nom.toUpperCase()
+              )
+            );
+
+            return organisateur ? `
+              <img
+                src="logos/${organisateur.logo}"
+                alt="${plateau.organisateur}"
+                style="
+                  width:65px;
+                  height:65px;
+                  object-fit:contain;
+                "
+              >
+            ` : "";
+          })()}
+
           <strong style="
             display:block;
             font-size:18px;
-            margin-bottom:6px;
+            margin-bottom:2px;
           ">
             ${plateau.organisateur}
           </strong>
