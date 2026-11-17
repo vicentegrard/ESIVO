@@ -5999,6 +5999,82 @@ equipes: equipes
   }
 }
 
+
+
+async function chargerEvenementsResultatsAdmin(equipe) {
+  const liste = document.getElementById("adminResultatsListe");
+  const message = document.getElementById("adminResultatsMessage");
+
+  if (!equipe) {
+    liste.innerHTML = "<p>Sélectionne une équipe pour retrouver ses matchs et ses plateaux.</p>";
+    return;
+  }
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    message.textContent = "Accès refusé.";
+    return;
+  }
+
+  liste.innerHTML = "<p>Chargement des événements...</p>";
+  message.textContent = "";
+
+  try {
+    const snapshot = await window.esivoDb
+      .collection("matchs")
+      .where("equipe", "==", equipe)
+      .get();
+
+    const evenements = snapshot.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id
+    }));
+
+    evenements.sort((a, b) => {
+      return (b.date || "").localeCompare(a.date || "");
+    });
+
+    if (evenements.length === 0) {
+      liste.innerHTML = "<p>Aucun match ou plateau trouvé pour cette équipe.</p>";
+      return;
+    }
+
+    liste.innerHTML = evenements.map(evenement => {
+      const date = evenement.date
+        ? new Date(evenement.date + "T00:00:00").toLocaleDateString("fr-FR")
+        : "Date non renseignée";
+
+      if (evenement.type === "plateau") {
+        return `
+          <div class="content-card" style="margin-bottom:12px;">
+            <h4>Plateau — ${date}</h4>
+            <p>Organisateur : ${evenement.organisateur || "Non renseigné"}</p>
+            <p>Lieu : ${evenement.lieu || "Non renseigné"} ${evenement.ville || ""}</p>
+            <p>Résultat : ${evenement.bilanESIVO ? "Déjà renseigné" : "En attente"}</p>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="content-card" style="margin-bottom:12px;">
+          <h4>Match — ${date}</h4>
+          <p>Adversaire : ${evenement.adversaire || "Non renseigné"}</p>
+          <p>Résultat : ${
+            evenement.resultatEnregistre
+              ? evenement.butsESIVO + " - " + evenement.butsAdversaire
+              : "En attente"
+          }</p>
+        </div>
+      `;
+    }).join("");
+
+  } catch (erreur) {
+    console.error("Erreur de chargement des résultats :", erreur);
+    liste.innerHTML = "<p>Impossible de charger les événements.</p>";
+  }
+}
+
   
 async function enregistrerMatchAdmin() {
   const message = document.getElementById("adminMatchMessage");
