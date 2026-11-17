@@ -4989,7 +4989,7 @@ function afficherFormulaireCalendrier(equipe) {
   }
   chargerListeCalendrierAdmin(equipe);
 
-  const equipesPlateaux = ["U7", "U9", "U11", "U13"];
+  const equipesPlateaux = ["U7", "U9", "U11"];
 const estPlateau = equipesPlateaux.includes(equipe);
 const estChallengeU13 = equipe === "U13";
 
@@ -5057,6 +5057,15 @@ if (estPlateau) {
 
 
   conteneur.innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+      <button type="button" onclick="afficherFormulaireCalendrier('U13')">
+        Ajouter un match
+      </button>
+      <button type="button" onclick="afficherFormulaireChallengeU13()">
+        Ajouter un Challenge
+      </button>
+    </div>
+
     <h4>Ajouter un match — ${equipe}</h4>
 
     <div class="form-group">
@@ -5139,6 +5148,68 @@ if (estPlateau) {
 
   apercuLogo.src = "logos/" + selectionLogo.value;
 
+}
+  function afficherFormulaireChallengeU13() {
+  const conteneur = document.getElementById("adminCalendrierFormulaire");
+
+  conteneur.innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+      <button type="button" onclick="afficherFormulaireCalendrier('U13')">
+        Ajouter un match
+      </button>
+      <button type="button" onclick="afficherFormulaireChallengeU13()">
+        Ajouter un Challenge
+      </button>
+    </div>
+
+    <h4>Ajouter un Challenge — U13</h4>
+
+    <div class="form-group">
+      <label>Compétition</label>
+      <input type="text" id="adminPlateauCompetition" value="CHALLENGE U13" readonly>
+    </div>
+
+    <div class="form-group">
+      <label>Date du Challenge</label>
+      <input type="date" id="adminPlateauDate">
+    </div>
+
+    <div class="form-group">
+      <label>Heure</label>
+      <input type="time" id="adminPlateauHeure">
+    </div>
+
+    <div class="form-group">
+      <label>Organisateur</label>
+      <input type="text" id="adminPlateauOrganisateur" placeholder="Nom du club organisateur">
+    </div>
+
+    <div class="form-group">
+      <label>Lieu</label>
+      <input type="text" id="adminPlateauLieu" placeholder="Nom du stade">
+    </div>
+
+    <div class="form-group">
+      <label>Ville</label>
+      <input type="text" id="adminPlateauVille" placeholder="Ville du Challenge">
+    </div>
+
+    <div class="form-group">
+      <label>Équipes participantes</label>
+      <div id="adminPlateauListeEquipes"></div>
+      <button type="button" onclick="ajouterEquipePlateauAdmin()">
+        + Ajouter une équipe
+      </button>
+    </div>
+
+    <button type="button" onclick="enregistrerPlateauAdmin()">
+      Enregistrer le Challenge
+    </button>
+
+    <p id="adminPlateauMessage"></p>
+  `;
+
+  ajouterEquipePlateauAdmin();
 }
 
 
