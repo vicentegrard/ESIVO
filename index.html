@@ -5894,14 +5894,7 @@ const equipes = Array.from(lignes)
     organisateur: document.getElementById("adminPlateauOrganisateur").value.trim(),
     lieu: document.getElementById("adminPlateauLieu").value.trim(),
     ville: document.getElementById("adminPlateauVille").value.trim(),
-    equipes: equipes,
-
-bilanESIVO: equipe === "U11" ? {
-  victoires: Number(document.getElementById("adminPlateauVictoires")?.value || 0),
-  nuls: Number(document.getElementById("adminPlateauNuls")?.value || 0),
-  defaites: Number(document.getElementById("adminPlateauDefaites")?.value || 0)
-} : null
-  };
+    equipes: equipes
 
   if (!plateau.date || !plateau.heure || !plateau.organisateur || equipes.length === 0) {
     message.textContent = "Merci de renseigner les informations obligatoires et au moins une équipe.";
@@ -5975,11 +5968,7 @@ const equipes = Array.from(lignes)
     ville: document.getElementById("adminPlateauVille").value.trim(),
     equipes: equipes,
 
-bilanESIVO: equipe === "U11" ? {
-  victoires: Number(document.getElementById("adminPlateauVictoires")?.value || 0),
-  nuls: Number(document.getElementById("adminPlateauNuls")?.value || 0),
-  defaites: Number(document.getElementById("adminPlateauDefaites")?.value || 0)
-} : null
+equipes: equipes
   };
 
   if (
