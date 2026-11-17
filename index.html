@@ -3953,6 +3953,66 @@ const resultatsDemo = [
   ville: "14150 OUISTREHAM"
 },
 ];
+  
+const plateauxU11Demo = [
+  {
+    date: "2026-10-03",
+    heure: "10:00",
+    organisateur: "AUNAY S/ODON",
+    lieu: "Stade des Monts d'Aunay 1",
+    ville: "14260 LES MONTS D'AUNAY",
+    equipes: [
+      { nom: "AUNAY S/ODON C", logo: "aunay-odon-c.png" },
+      { nom: "BRETTEVILLE/ODON B", logo: "bretteville-odon.png" },
+      { nom: "ESIVO", logo: "esivo.png" },
+      { nom: "MOUEN", logo: "mouen.png" }
+    ],
+    bilan: { victoires: 2, nuls: 0, defaites: 1 }
+  },
+  {
+    date: "2026-10-10",
+    heure: "10:00",
+    organisateur: "CINGAL",
+    lieu: "Stade du Manoir 1",
+    ville: "14680 BRETTEVILLE-SUR-LAIZE",
+    equipes: [
+      { nom: "CINGAL", logo: "cingal.png" },
+      { nom: "ESIVO", logo: "esivo.png" },
+      { nom: "MOUEN", logo: "mouen.png" },
+      { nom: "INTER ODON C", logo: "inter-odon.png" }
+    ],
+    bilan: null
+  },
+  {
+    date: "2026-11-07",
+    heure: "10:00",
+    organisateur: "ESIVO",
+    lieu: "Stade Roger Brion",
+    ville: "14320 SAINT-ANDRÉ-SUR-ORNE",
+    equipes: [
+      { nom: "ESIVO", logo: "esivo.png" },
+      { nom: "CORMELLES C", logo: "cormelles.png" },
+      { nom: "MOUEN", logo: "mouen.png" },
+      { nom: "INTER ODON C", logo: "inter-odon.png" }
+    ],
+    bilan: null
+  },
+  {
+    date: "2026-11-14",
+    heure: "10:00",
+    organisateur: "INTER ODON",
+    lieu: "Stade Municipal",
+    ville: "14930 VIEUX",
+    equipes: [
+      { nom: "INTER ODON C", logo: "inter-odon.png" },
+      { nom: "ESIVO", logo: "esivo.png" },
+      { nom: "CAUMONT B", logo: "caumont.png" },
+      { nom: "AUNAY S/ODON C", logo: "aunay-odon-c.png" }
+    ],
+    bilan: null
+  }
+];
+
 
 
   
@@ -7295,6 +7355,104 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
   }
 
   } else if (page === "Résultats") {
+  
+if (equipe === "U11") {
+  const plateaux = [...plateauxU11Demo].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
+
+  contenu.innerHTML = `
+    <div class="mc-results">
+      <div class="mc-hero">
+        <div class="mc-top">
+          <span>ESIVO · U11</span>
+          <span>SAISON 2026 / 2027</span>
+        </div>
+        <div class="mc-heading">
+          <div>
+            <span class="mc-eyebrow">CATÉGORIE U11</span>
+            <h2>LES PLATEAUX</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="mc-results-list">
+        ${plateaux.map(plateau => `
+          <article class="mc-result-fixture u13-challenge-card">
+
+            <div class="u11-organizer">
+              <img src="logos/${
+                plateau.equipes.find(e => e.nom === plateau.organisateur)?.logo
+                || plateau.equipes.find(e => e.nom.startsWith(plateau.organisateur))?.logo
+                || "esivo.png"
+              }" alt="${plateau.organisateur}">
+              <div class="u11-organizer-text">
+                <span>PLATEAU ORGANISÉ PAR</span>
+                <strong>${plateau.organisateur}</strong>
+                <small>Club organisateur</small>
+              </div>
+              <span class="u11-category">U11</span>
+            </div>
+
+            <div class="u11-teams-section">
+              <div class="u11-section-title">
+                <strong>Les équipes participantes</strong>
+                <span>4 ÉQUIPES</span>
+              </div>
+
+              <div class="u11-teams-grid">
+                ${plateau.equipes.map(formation => `
+                  <div class="u11-team">
+                    <img src="logos/${formation.logo}" alt="${formation.nom}">
+                    <strong>${formation.nom}</strong>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="u13-challenge-results">
+              <div class="u11-section-title">
+                <strong>Résultats de l'ESIVO</strong>
+              </div>
+
+              ${
+                plateau.bilan
+                  ? `
+                    <div class="u13-challenge-match">
+                      <strong> ${plateau.bilan.victoires} victoire(s)</strong>
+                      <strong>${plateau.bilan.nuls} nul(s)</strong>
+                      <strong>${plateau.bilan.defaites} défaite(s)</strong>
+                    </div>
+                  `
+                  : `<p>Aucun résultat enregistré pour ce plateau.</p>`
+              }
+            </div>
+
+            <div class="u11-event-details">
+              <div>
+                <span>DATE ET HORAIRE</span>
+                <strong>📅 ${new Date(plateau.date + "T12:00:00").toLocaleDateString("fr-FR", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric"
+                })} · ${plateau.heure}</strong>
+              </div>
+              <div>
+                <span>LIEU DU PLATEAU</span>
+                <strong>📍 ${plateau.lieu}</strong>
+                <small>${plateau.ville}</small>
+              </div>
+            </div>
+
+          </article>
+        `).join("")}
+      </div>
+    </div>
+  `;
+  return;
+}
+
   const resultats = resultatsDemo
     .filter(resultat => resultat.equipe === equipe)
     .sort((a, b) => new Date(b.date) - new Date(a.date));
