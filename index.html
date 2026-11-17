@@ -4649,8 +4649,8 @@ const convertirDate = date => {
   return null;
 };
 
-const aujourdHui = new Date();
-aujourdHui.setHours(23, 59, 59, 999);
+const dateLimitePlateau = new Date();
+dateLimitePlateau.setHours(23, 59, 59, 999);
 
 const derniersPlateauxU11 = (window.calendriersFirebase || [])
   .filter(doc => {
@@ -4660,7 +4660,7 @@ const derniersPlateauxU11 = (window.calendriersFirebase || [])
       doc.equipe === "U11" &&
       doc.type === "plateau" &&
       datePlateau &&
-      datePlateau <= aujourdHui
+      datePlateau <= dateLimitePlateau
     );
   })
   .sort((a, b) =>
