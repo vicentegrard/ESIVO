@@ -6464,9 +6464,17 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
   }
 
   if (resultat.tirsAuBut) {
-    const [tabESIVO, tabAdversaire] = resultat.tirsAuBut
+    const [tabDomicile, tabExterieur] = resultat.tirsAuBut
       .split("-")
       .map(Number);
+
+    const tabESIVO = resultat.domicile
+      ? tabDomicile
+      : tabExterieur;
+
+    const tabAdversaire = resultat.domicile
+      ? tabExterieur
+      : tabDomicile;
 
     if (tabESIVO > tabAdversaire) {
       return {
