@@ -8854,20 +8854,8 @@ ${anciens
 
     
     if (equipe === "Seniors A") {
-      const classementSeniorsA = [
-        { position: 1, equipe: "LYSTRIENNE", logo: "logos/lystrienne.png", points: 19, joues: 8, victoires: 6, nuls: 1, defaites: 1, forfait: 0, butsPour: 20, butsContre: 6, difference: "+14" },
-        { position: 2, equipe: "TROARN", logo: "logos/troarn.png", points: 17, joues: 8, victoires: 5, nuls: 2, defaites: 1, forfait: 0, butsPour: 17, butsContre: 7, difference: "+10" },
-        { position: 3, equipe: "IFS B", logo: "logos/ifs-b.png", points: 15, joues: 8, victoires: 4, nuls: 3, defaites: 1, forfait: 0, butsPour: 17, butsContre: 8, difference: "+9" },
-        { position: 4, equipe: "THAON BRETTEVILLE B", logo: "logos/thaon-bretteville-b.png", points: 14, joues: 8, victoires: 4, nuls: 2, defaites: 2, forfait: 0, butsPour: 22, butsContre: 16, difference: "+6" },
-        { position: 5, equipe: "ST VIGOR LE GRAND", logo: "logos/st-vigor-le-grand.png", points: 14, joues: 8, victoires: 4, nuls: 2, defaites: 2, forfait: 0, butsPour: 24, butsContre: 8, difference: "+16" },
-        { position: 6, equipe: "ESIVO", logo: "logos/esivo.png", points: 13, joues: 8, victoires: 4, nuls: 1, defaites: 3, forfait: 0, butsPour: 18, butsContre: 20, difference: "-2" },
-        { position: 7, equipe: "INTER ODON", logo: "logos/inter-odon.png", points: 10, joues: 8, victoires: 3, nuls: 1, defaites: 4, forfait: 0, butsPour: 13, butsContre: 10, difference: "+3" },
-        { position: 8, equipe: "AVANT GARDE C", logo: "logos/avant-garde-c.png", points: 10, joues: 8, victoires: 2, nuls: 4, defaites: 2, forfait: 0, butsPour: 11, butsContre: 14, difference: "-3" },
-        { position: 9, equipe: "LE TRONQUAY", logo: "logos/le-tronquay.png", points: 8, joues: 8, victoires: 2, nuls: 2, defaites: 4, forfait: 0, butsPour: 9, butsContre: 20, difference: "-11" },
-        { position: 10, equipe: "TERRE ET MER", logo: "logos/terre-et-mer.png", points: 7, joues: 8, victoires: 1, nuls: 4, defaites: 3, forfait: 0, butsPour: 12, butsContre: 14, difference: "-2" },
-        { position: 11, equipe: "BRETTEVILLE/ODON", logo: "logos/bretteville-odon.png", points: 3, joues: 8, victoires: 0, nuls: 3, defaites: 5, forfait: 0, butsPour: 7, butsContre: 20, difference: "-13" },
-        { position: 12, equipe: "MOUEN", logo: "logos/mouen.png", points: 1, joues: 8, victoires: 0, nuls: 1, defaites: 7, forfait: 0, butsPour: 8, butsContre: 35, difference: "-27" }
-      ];
+      const donneesFirestore = await chargerClassementFirestore(equipe);
+const classementSeniorsA = donneesFirestore.clubs;
 
       contenu.innerHTML = `
         <strong>${page} · ${equipe}</strong>
