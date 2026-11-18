@@ -9425,7 +9425,17 @@ async function chargerClassementAdmin(equipe) {
     data-index="${index}"
     data-field="equipe"
     value="${club.equipe ?? ""}"
+    placeholder="Nom du club"
     style="width:180px; min-width:140px;"
+  >
+
+  <input
+    type="url"
+    data-index="${index}"
+    data-field="logo"
+    value="${club.logo ?? ""}"
+    placeholder="URL du logo"
+    style="width:180px; min-width:140px; margin-top:5px;"
   >
 </td>
                 <td><input type="number" data-index="${index}" data-field="joues" value="${club.joues ?? 0}" style="width:55px;"></td>
@@ -9483,23 +9493,51 @@ function ajouterClubClassementAdmin() {
   const index = tbody.querySelectorAll("tr").length;
   const position = index + 1;
 
-  const champs = [
-    ["equipe", "", "text", 180],
-    ["position", position, "number", 55],
-    ["joues", 0, "number", 55],
-    ["victoires", 0, "number", 55],
-    ["nuls", 0, "number", 55],
-    ["defaites", 0, "number", 55],
-    ["forfait", 0, "number", 55],
-    ["butsPour", 0, "number", 55],
-    ["butsContre", 0, "number", 55],
-    ["difference", 0, "text", 65],
-    ["points", 0, "number", 55]
-  ];
+  
+const champs = [
+  ["position", position, "number", 55],
+  ["joues", 0, "number", 55],
+  ["victoires", 0, "number", 55],
+  ["nuls", 0, "number", 55],
+  ["defaites", 0, "number", 55],
+  ["forfait", 0, "number", 55],
+  ["butsPour", 0, "number", 55],
+  ["butsContre", 0, "number", 55],
+  ["difference", 0, "text", 65],
+  ["points", 0, "number", 55]
+];
 
-  const ligne = document.createElement("tr");
+const ligne = document.createElement("tr");
 
-  ligne.innerHTML = champs.map(([champ, valeur, type, largeur]) => `
+ligne.innerHTML = `
+  <td>
+    <input
+      type="number"
+      data-index="${index}"
+      data-field="position"
+      value="${position}"
+      style="width:55px;"
+    >
+  </td>
+  <td>
+    <input
+      type="text"
+      data-index="${index}"
+      data-field="equipe"
+      value=""
+      placeholder="Nom du club"
+      style="width:180px;"
+    >
+    <input
+      type="url"
+      data-index="${index}"
+      data-field="logo"
+      value=""
+      placeholder="URL du logo"
+      style="width:180px; margin-top:5px;"
+    >
+  </td>
+  ${champs.slice(1).map(([champ, valeur, type, largeur]) => `
     <td>
       <input
         type="${type}"
@@ -9509,7 +9547,9 @@ function ajouterClubClassementAdmin() {
         style="width:${largeur}px;"
       >
     </td>
-  `).join("");
+  `).join("")}
+`;
+
 
   tbody.appendChild(ligne);
 
@@ -9546,6 +9586,7 @@ async function sauvegarderClassementAdmin() {
 
   const champs = [
   "equipe",
+  "logo",
   "position",
   "joues",
   "victoires",
@@ -9587,6 +9628,18 @@ async function sauvegarderClassementAdmin() {
   }
 
   club[champ] = nom;
+  continue;
+}
+
+if (champ === "logo") {
+  const logo = input.value.trim();
+
+  if (logo && !/^https?:\/\/.+/i.test(logo)) {
+    message.textContent = "L'URL du logo doit commencer par https:// ou http://.";
+    return;
+  }
+
+  club[champ] = logo;
   continue;
 }
 
