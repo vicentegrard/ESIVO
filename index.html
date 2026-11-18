@@ -10070,10 +10070,10 @@ async function sauvegarderClassementAdmin() {
     for (const champ of champs) {
       const input = ligne.querySelector(`[data-field="${champ}"]`);
 
-      if (!input || input.value.trim() === "") {
-        message.textContent = "Tous les champs doivent être remplis.";
-        return;
-      }
+      if (!input || (champ !== "logo" && input.value.trim() === "")) {
+  message.textContent = "Tous les champs doivent être remplis.";
+  return;
+}
 
       if (champ === "equipe") {
   const nom = input.value.trim();
