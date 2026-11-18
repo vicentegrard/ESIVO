@@ -7452,6 +7452,42 @@ function showActualite(index) {
   window.scrollTo(0, 0);
 }
 
+async function chargerClassementFirestore(equipe) {
+  if (!window.esivoDb) {
+    throw new Error("Firestore n'est pas initialisé.");
+  }
+
+  const document = await window.esivoDb
+    .collection("classements")
+    .doc(equipe)
+    .get();
+
+  if (!document.exists) {
+    throw new Error("Aucun classement trouvé pour " + equipe);
+  }
+
+  const donnees = document.data();
+
+  if (!Array.isArray(donnees.clubs)) {
+    throw new Error("Les données des clubs sont invalides.");
+  }
+
+  return donnees;
+}
+
+  async function testerLectureClassement() {
+  try {
+    const classement = await chargerClassementFirestore("Seniors A");
+
+    console.log("Lecture Firestore réussie :", classement);
+    console.log("Nombre de clubs :", classement.clubs.length);
+    console.log("Premier club :", classement.clubs[0]);
+
+  } catch (erreur) {
+    console.error("Erreur de lecture :", erreur);
+  }
+}
+  
 async function selectTeam(equipe) {
   if (!Array.isArray(window.calendriersFirebase)) {
     await chargerCalendriersFirebase();
