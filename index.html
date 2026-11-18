@@ -9532,13 +9532,13 @@ async function testerRecuperationClassementAdmin(equipe) {
       </div>
 
       <button
-        type="button"
-        class="btn-primary"
-        style="margin-top:20px;"
-        disabled
-      >
-        Importer ce classement dans Firestore
-      </button>
+  type="button"
+  class="btn-primary"
+  style="margin-top:20px;"
+  onclick="importerClassementFirestore('${equipe}')"
+>
+  Importer ce classement dans Firestore
+</button>
     `;
 
     liste.innerHTML = html;
@@ -9596,6 +9596,78 @@ async function testerRecuperationClassementAdmin(equipe) {
   } catch (erreur) {
     console.error("Erreur de vérification Firestore :", erreur);
     message.textContent = "Erreur : " + erreur.message;
+  }
+}
+
+  
+async function importerClassementFirestore(equipe) {
+  const liste = document.getElementById("adminClassementListe");
+  const message = document.getElementById("adminClassementMessage");
+
+  if (equipe !== "Seniors A") {
+    message.textContent = "Pour le moment, seul Seniors A peut être importé.";
+    return;
+  }
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    message.textContent = "Accès refusé : administrateur non connecté.";
+    return;
+  }
+
+  if (!window.esivoDb) {
+    message.textContent = "Firestore n'est pas initialisé.";
+    return;
+  }
+
+  if (!confirm(
+    "Confirmer l'importation du classement Seniors A dans Firestore ?"
+  )) {
+    return;
+  }
+
+  message.textContent = "Importation de Seniors A en cours...";
+
+  try {
+    const classement = await recupererClassementInitialAdmin(equipe);
+
+    if (!classement.clubs || classement.clubs.length === 0) {
+      throw new Error("Aucun club à importer.");
+    }
+
+    const documentRef = window.esivoDb
+      .collection("classements")
+      .doc(equipe);
+
+    await window.esivoDb.runTransaction(async transaction => {
+      const document = await transaction.get(documentRef);
+
+      if (document.exists) {
+        throw new Error(
+          "Le classement existe déjà dans Firestore. Importation annulée."
+        );
+      }
+
+      transaction.set(documentRef, {
+        equipe: classement.equipe,
+        titre: classement.titre,
+        clubs: classement.clubs,
+        nombreClubs: classement.clubs.length,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+
+    message.textContent =
+      "Importation réussie : " + classement.clubs.length +
+      " clubs Seniors A enregistrés dans Firestore.";
+
+    liste.textContent =
+      "Le classement Seniors A a été importé avec succès.";
+
+  } catch (erreur) {
+    console.error("Erreur d'importation :", erreur);
+    message.textContent = "Importation impossible : " + erreur.message;
   }
 }
 
