@@ -9487,70 +9487,19 @@ async function testerRecuperationClassementAdmin(equipe) {
 
   
 async function recupererClassementInitialAdmin(equipe) {
-  const titrePage = document.querySelector(".page-title h2");
-  const contenu = document.getElementById("teamContent");
+  const clubsInitiaux = classementsInitiauxESIVO[equipe];
 
-  if (!titrePage || !contenu) {
-    throw new Error("Page introuvable.");
+  if (!Array.isArray(clubsInitiaux) || clubsInitiaux.length === 0) {
+    throw new Error("Aucun classement initial trouvé pour " + equipe);
   }
 
-  const ancienTitre = titrePage.textContent;
-  const ancienContenu = contenu.innerHTML;
+  const clubs = JSON.parse(JSON.stringify(clubsInitiaux));
 
-  try {
-    titrePage.textContent = "Classements";
-
-    await selectTeam(equipe);
-
-    const lignes = contenu.querySelectorAll("tbody tr");
-
-    if (!lignes.length) {
-      throw new Error("Aucune donnée trouvée pour " + equipe);
-    }
-
-    const clubs = Array.from(lignes).map(ligne => {
-      const cellules = Array.from(ligne.querySelectorAll("td"));
-
-      const nomCellule = cellules[1];
-      const logo = nomCellule.querySelector("img");
-
-      const club = {
-        position: Number(cellules[0].textContent.trim()),
-        equipe: nomCellule.querySelector("span")?.textContent.trim()
-          || nomCellule.textContent.trim(),
-        logo: logo ? logo.getAttribute("src") : "",
-        points: Number(cellules[2].textContent.trim()),
-        joues: Number(cellules[3].textContent.trim()),
-        victoires: Number(cellules[4].textContent.trim()),
-        nuls: Number(cellules[5].textContent.trim()),
-        defaites: Number(cellules[6].textContent.trim()),
-        forfait: Number(cellules[7].textContent.trim()),
-        butsPour: Number(cellules[8].textContent.trim()),
-        butsContre: Number(cellules[9].textContent.trim()),
-        difference: cellules[10].textContent.trim()
-      };
-
-      if (cellules[11]) {
-        const serie = cellules[11].textContent.trim();
-
-        if (serie && serie !== "undefined") {
-          club.serie = serie;
-        }
-      }
-
-      return club;
-    });
-
-    return {
-      equipe,
-      titre: contenu.querySelector("h3")?.textContent.trim() || "",
-      clubs
-    };
-
-  } finally {
-    titrePage.textContent = ancienTitre;
-    contenu.innerHTML = ancienContenu;
-  }
+  return {
+    equipe,
+    titre: equipe,
+    clubs
+  };
 }
 
   
