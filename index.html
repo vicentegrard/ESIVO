@@ -9604,10 +9604,20 @@ async function importerClassementFirestore(equipe) {
   const liste = document.getElementById("adminClassementListe");
   const message = document.getElementById("adminClassementMessage");
 
-  if (equipe !== "Seniors A") {
-    message.textContent = "Pour le moment, seul Seniors A peut être importé.";
-    return;
-  }
+  const equipesAutorisees = [
+  "Seniors A",
+  "Seniors B",
+  "Seniors C",
+  "Seniors Féminines à 8",
+  "Seniors Vétérans",
+  "U18",
+  "U13"
+];
+
+if (!equipesAutorisees.includes(equipe)) {
+  message.textContent = "Catégorie non autorisée.";
+  return;
+}
 
   const utilisateur = window.esivoAuth.currentUser;
 
