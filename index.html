@@ -7483,10 +7483,19 @@ async function chargerClassementFirestore(equipe) {
     console.log("Nombre de clubs :", classement.clubs.length);
     console.log("Premier club :", classement.clubs[0]);
 
+    alert(
+      "Lecture Firestore réussie !\n" +
+      "Nombre de clubs : " + classement.clubs.length +
+      "\nPremier club : " + classement.clubs[0].equipe
+    );
+
   } catch (erreur) {
     console.error("Erreur de lecture :", erreur);
+    alert("Erreur de lecture Firestore : " + erreur.message);
   }
 }
+
+testerLectureClassement();
   
 async function selectTeam(equipe) {
   if (!Array.isArray(window.calendriersFirebase)) {
