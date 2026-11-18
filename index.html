@@ -4757,15 +4757,37 @@ const derniersPlateaux = ["U7", "U9", "U11", "U13"]
     type: "plateau"
   }));
 
-  // Tri du plus récent au plus ancien
+    
+  // Regroupement des derniers résultats et des derniers plateaux
+  const tousLesEvenements = [
+    ...derniersResultats,
+    ...derniersPlateaux
+  ];
+
+  // Conversion sécurisée des heures
   const convertirHeureEnMinutes = heure => {
+    if (!heure || typeof heure !== "string") return 0;
+
     const [heures, minutes] = heure
       .replace("h", ":")
       .split(":")
       .map(Number);
 
-    return heures * 60 + (minutes || 0);
+    return (heures || 0) * 60 + (minutes || 0);
   };
+
+  // Tri du plus récent au plus ancien
+  tousLesEvenements.sort((a, b) => {
+    const dateA = convertirDate(a.date)?.getTime() || 0;
+    const dateB = convertirDate(b.date)?.getTime() || 0;
+
+    return (
+      dateB - dateA ||
+      convertirHeureEnMinutes(b.heure) -
+        convertirHeureEnMinutes(a.heure)
+    );
+  });
+
 
   tousLesEvenements.sort((a, b) =>
     b.date.localeCompare(a.date) ||
