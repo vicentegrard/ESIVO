@@ -9352,6 +9352,74 @@ const classementU13 = donneesFirestore.clubs;
   }
 }
 
+
+const logosDisponiblesClassementAdmin = [
+  "aftfc.png",
+  "ajs-ouistreham-c.png",
+  "astdv-b.png",
+  "aunay-odon-c.png",
+  "authie.png",
+  "avant-garde-c.png",
+  "baie-de-l-orne.png",
+  "basly.png",
+  "bavent.png",
+  "bourgibus-soliers.png",
+  "bretteville-odon.png",
+  "caen-sud-ouest.png",
+  "caen.png",
+  "cahagnes.png",
+  "campeaux.png",
+  "carpiquet.png",
+  "castelet-st-sylvain.png",
+  "caumont.png",
+  "chemin-vert.png",
+  "cingal.png",
+  "conde-normandie-b.png",
+  "conde-petruvienne.png",
+  "cormelles.png",
+  "courcelles.png",
+  "courseulles.png",
+  "es-barbery.png",
+  "es-portaise.png",
+  "esivo.png",
+  "falaise-c.png",
+  "fc-vital-b.png",
+  "fcb2lc.png",
+  "giberville.png",
+  "hastings.png",
+  "herouville-c.png",
+  "honfleur.png",
+  "ifs-b.png",
+  "inter-odon.png",
+  "js-du-bocage-b.png",
+  "js-fleury.png",
+  "la-graverie-b.png",
+  "le-tourneur.png",
+  "le-tronquay.png",
+  "louvigny.png",
+  "lystrienne.png",
+  "mezidon.png",
+  "mouen.png",
+  "moyaux-b.png",
+  "muance-cagny.png",
+  "potigny.png",
+  "rocquancourt.png",
+  "saint-germain-b.png",
+  "saint-marcel.png",
+  "saint-sylvain.png",
+  "st-cyr-fervaques.png",
+  "st-desir-b.png",
+  "st-vigor-le-grand.png",
+  "terre-et-mer.png",
+  "thaon-bretteville-b.png",
+  "trevieres.png",
+  "troarn.png",
+  "us-gueriniere.png",
+  "us-maisons.png",
+  "usm-blainville-b.png"
+];
+
+  
 async function chargerClassementAdmin(equipe) {
   const liste = document.getElementById("adminClassementListe");
   const message = document.getElementById("adminClassementMessage");
@@ -9429,14 +9497,29 @@ async function chargerClassementAdmin(equipe) {
     style="width:180px; min-width:140px;"
   >
 
-  <input
-    type="url"
-    data-index="${index}"
-    data-field="logo"
-    value="${club.logo ?? ""}"
-    placeholder="URL du logo"
-    style="width:180px; min-width:140px; margin-top:5px;"
-  >
+  <select
+  data-index="${index}"
+  data-field="logo"
+  onchange="actualiserApercuLogoClassementAdmin(this)"
+  style="width:180px; min-width:140px; margin-top:5px;"
+>
+  <option value="">Aucun logo</option>
+
+  ${logosDisponiblesClassementAdmin.map(logo => `
+    <option
+      value="logos/${logo}"
+      ${(club.logo || "").split("/").pop() === logo ? "selected" : ""}
+    >
+      ${logo.replace(".png", "")}
+    </option>
+  `).join("")}
+</select>
+
+<img
+  src="${club.logo || ""}"
+  alt="Aperçu du logo"
+  style="display:${club.logo ? "block" : "none"}; width:45px; height:45px; object-fit:contain; margin-top:6px;"
+>
 </td>
                 <td><input type="number" data-index="${index}" data-field="joues" value="${club.joues ?? 0}" style="width:55px;"></td>
                 <td><input type="number" data-index="${index}" data-field="victoires" value="${club.victoires ?? 0}" style="width:55px;"></td>
@@ -9481,6 +9564,23 @@ async function chargerClassementAdmin(equipe) {
   }
 }
 
+  function actualiserApercuLogoClassementAdmin(select) {
+  const apercu = select.nextElementSibling;
+
+  if (!apercu || apercu.tagName !== "IMG") {
+    return;
+  }
+
+  const logo = select.value;
+
+  if (logo) {
+    apercu.src = logo;
+    apercu.style.display = "block";
+  } else {
+    apercu.removeAttribute("src");
+    apercu.style.display = "none";
+  }
+}
   
 function ajouterClubClassementAdmin() {
   const liste = document.getElementById("adminClassementListe");
@@ -9528,14 +9628,25 @@ ligne.innerHTML = `
       placeholder="Nom du club"
       style="width:180px;"
     >
-    <input
-      type="url"
-      data-index="${index}"
-      data-field="logo"
-      value=""
-      placeholder="URL du logo"
-      style="width:180px; margin-top:5px;"
-    >
+    <select
+  data-index="${index}"
+  data-field="logo"
+  onchange="actualiserApercuLogoClassementAdmin(this)"
+  style="width:180px; margin-top:5px;"
+>
+  <option value="">Aucun logo</option>
+
+  ${logosDisponiblesClassementAdmin.map(logo => `
+    <option value="logos/${logo}">
+      ${logo.replace(".png", "")}
+    </option>
+  `).join("")}
+</select>
+
+<img
+  alt="Aperçu du logo"
+  style="display:none; width:45px; height:45px; object-fit:contain; margin-top:6px;"
+>
   </td>
   ${champs.slice(1).map(([champ, valeur, type, largeur]) => `
     <td>
@@ -9634,8 +9745,13 @@ async function sauvegarderClassementAdmin() {
 if (champ === "logo") {
   const logo = input.value.trim();
 
-  if (logo && !/^https?:\/\/.+/i.test(logo)) {
-    message.textContent = "L'URL du logo doit commencer par https:// ou http://.";
+  if (
+    logo &&
+    !logosDisponiblesClassementAdmin.some(
+      fichier => logo === "logos/" + fichier
+    )
+  ) {
+    message.textContent = "Le logo sélectionné n'est pas autorisé.";
     return;
   }
 
@@ -9718,6 +9834,15 @@ const clubsActualises = modifications.map((modification, index) => ({
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     });
+
+        const documentActualise = await documentRef.get();
+    const donneesActualisees = documentActualise.data();
+
+    liste.dataset.version = String(
+      donneesActualisees.updatedAt?.toMillis?.() ||
+      donneesActualisees.createdAt?.toMillis?.() ||
+      0
+    );
 
     message.textContent =
       "Classement " + equipe + " enregistré avec succès !";
