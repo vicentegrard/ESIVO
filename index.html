@@ -9451,6 +9451,41 @@ ${anciens
 }
 
 
+async function testerRecuperationClassementAdmin(equipe) {
+  const liste = document.getElementById("adminClassementListe");
+  const message = document.getElementById("adminClassementMessage");
+
+  if (!liste || !message) return;
+
+  if (!equipe) {
+    liste.textContent = "Sélectionne un championnat pour commencer.";
+    message.textContent = "";
+    return;
+  }
+
+  liste.textContent = "Récupération du classement en cours...";
+  message.textContent = "";
+
+  try {
+    const classement = await recupererClassementInitialAdmin(equipe);
+
+    const noms = classement.clubs.map(club => club.equipe);
+
+    liste.textContent =
+      "Test réussi pour " + equipe + " : " +
+      classement.clubs.length + " clubs récupérés. " +
+      "Clubs : " + noms.join(", ");
+
+    message.textContent = "Récupération terminée. Aucune donnée n'a été modifiée.";
+
+  } catch (erreur) {
+    console.error("Erreur de récupération du classement :", erreur);
+    liste.textContent = "Échec de la récupération du classement.";
+    message.textContent = erreur.message;
+  }
+}
+
+  
 async function recupererClassementInitialAdmin(equipe) {
   const titrePage = document.querySelector(".page-title h2");
   const contenu = document.getElementById("teamContent");
