@@ -10111,10 +10111,10 @@ if (!Number.isInteger(valeur)) {
   return;
 }
 
-      if (champ !== "difference" && valeur < 0) {
-        message.textContent = "Les valeurs ne peuvent pas être négatives.";
-        return;
-      }
+      if (champ !== "difference" && champ !== "points" && valeur < 0) {
+  message.textContent = "Les valeurs ne peuvent pas être négatives.";
+  return;
+}
 
       if (champ === "position" && valeur < 1) {
         message.textContent = "La position doit être supérieure à zéro.";
