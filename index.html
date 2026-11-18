@@ -7261,7 +7261,7 @@ function showPage(page) {
 
   <div class="form-group">
     <label for="adminClassementEquipe">Choisir une équipe</label>
-    <select id="adminClassementEquipe" onchange="testerRecuperationClassementAdmin(this.value)">
+    <select id="adminClassementEquipe" onchange="chargerClassementAdmin(this.value)">
       <option value="">-- Sélectionner un championnat --</option>
       <option value="U13">U13</option>
       <option value="U18">U18</option>
@@ -9352,7 +9352,92 @@ const classementU13 = donneesFirestore.clubs;
   }
 }
 
+async function chargerClassementAdmin(equipe) {
+  const liste = document.getElementById("adminClassementListe");
+  const message = document.getElementById("adminClassementMessage");
 
+  if (!liste || !message) return;
+
+  if (!equipe) {
+    liste.innerHTML = "<p>Sélectionne un championnat pour commencer.</p>";
+    message.textContent = "";
+    return;
+  }
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    message.textContent = "Accès refusé.";
+    return;
+  }
+
+  liste.textContent = "Chargement du classement...";
+  message.textContent = "";
+
+  try {
+    const documentClassement = await window.esivoDb
+      .collection("classements")
+      .doc(equipe)
+      .get();
+
+    if (!documentClassement.exists) {
+      throw new Error("Aucun classement trouvé pour " + equipe);
+    }
+
+    const classement = documentClassement.data();
+
+    if (!Array.isArray(classement.clubs)) {
+      throw new Error("Les données des clubs sont invalides.");
+    }
+
+    liste.innerHTML = `
+      <h4>${equipe} — ${classement.clubs.length} clubs</h4>
+      <div style="overflow-x:auto;">
+        <table class="admin-table" style="width:100%;">
+          <thead>
+            <tr>
+              <th>Position</th>
+              <th>Club</th>
+              <th>J</th>
+              <th>V</th>
+              <th>N</th>
+              <th>D</th>
+              <th>F</th>
+              <th>BP</th>
+              <th>BC</th>
+              <th>Diff.</th>
+              <th>Pts</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${classement.clubs.map((club, index) => `
+              <tr>
+                <td>${club.position ?? index + 1}</td>
+                <td>${club.equipe ?? ""}</td>
+                <td>${club.joues ?? 0}</td>
+                <td>${club.victoires ?? 0}</td>
+                <td>${club.nuls ?? 0}</td>
+                <td>${club.defaites ?? 0}</td>
+                <td>${club.forfait ?? 0}</td>
+                <td>${club.butsPour ?? 0}</td>
+                <td>${club.butsContre ?? 0}</td>
+                <td>${club.difference ?? 0}</td>
+                <td>${club.points ?? 0}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    message.textContent = "Classement récupéré depuis Firestore.";
+
+  } catch (erreur) {
+    console.error("Erreur de chargement du classement :", erreur);
+    liste.textContent = "Impossible de charger ce classement.";
+    message.textContent = erreur.message;
+  }
+}
 
 async function testerRecuperationClassementAdmin(equipe) {
   const liste = document.getElementById("adminClassementListe");
