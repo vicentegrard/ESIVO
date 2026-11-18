@@ -3407,6 +3407,165 @@ body {
 
   
 /* =====================================
+   ESIVO — GESTION DES CLASSEMENTS
+===================================== */
+
+/* Sélecteur du championnat */
+#adminClassementEquipe {
+  display: block;
+  width: 100%;
+  padding: 13px 15px;
+  background: #22232B;
+  color: #FEFFFE;
+  border: 1px solid #41424D;
+  border-radius: 11px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
+  box-sizing: border-box;
+}
+
+#adminClassementEquipe:focus {
+  border-color: #AA1A24;
+  box-shadow: 0 0 0 3px rgba(170, 26, 36, .20);
+}
+
+#adminClassementEquipe option {
+  background: #22232B;
+  color: #FEFFFE;
+}
+
+/* Zone générale */
+#adminClassementListe {
+  width: 100%;
+  min-width: 0;
+  color: #FEFFFE;
+}
+
+#adminClassementListe h4 {
+  color: #E5BD37;
+  font-size: 17px;
+  margin-bottom: 15px;
+}
+
+/* Conteneur du tableau */
+#adminClassementListe > div {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #41424D;
+  border-radius: 12px;
+  background: #19191D;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Tableau */
+#adminClassementListe .admin-table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+  color: #FEFFFE;
+}
+
+#adminClassementListe .admin-table th {
+  padding: 13px 9px;
+  background: #292C36;
+  color: #E5BD37;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  border-bottom: 2px solid #AA1A24;
+  white-space: nowrap;
+}
+
+#adminClassementListe .admin-table td {
+  padding: 10px 7px;
+  background: #1F2027;
+  border-bottom: 1px solid #383943;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#adminClassementListe .admin-table tr:nth-child(even) td {
+  background: #252630;
+}
+
+/* Champs de saisie */
+#adminClassementListe .admin-table input,
+#adminClassementListe .admin-table select {
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 9px 7px;
+  background: #22232B;
+  color: #FEFFFE;
+  border: 1px solid #41424D;
+  border-radius: 7px;
+  font-size: 13px;
+  outline: none;
+}
+
+#adminClassementListe .admin-table input:focus,
+#adminClassementListe .admin-table select:focus {
+  border-color: #AA1A24;
+  box-shadow: 0 0 0 2px rgba(170, 26, 36, .18);
+}
+
+#adminClassementListe .admin-table select option {
+  background: #22232B;
+  color: #FEFFFE;
+}
+
+/* Boutons du tableau */
+#adminClassementListe .admin-table button {
+  border-radius: 7px;
+  font-weight: 700;
+  transition: opacity .2s ease;
+}
+
+#adminClassementListe .admin-table button:hover {
+  opacity: .8;
+}
+
+/* Boutons d'ajout et de sauvegarde */
+#adminClassementListe > button {
+  margin: 15px 8px 0 0 !important;
+}
+
+/* Message d'information */
+#adminClassementMessage {
+  color: #E5BD37;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+/* Adaptation mobile */
+@media (max-width: 700px) {
+  #adminClassementListe h4 {
+    font-size: 15px;
+  }
+
+  #adminClassementListe .admin-table th {
+    padding: 11px 7px;
+    font-size: 11px;
+  }
+
+  #adminClassementListe .admin-table td {
+    padding: 8px 5px;
+  }
+
+  #adminClassementListe .admin-table input,
+  #adminClassementListe .admin-table select {
+    font-size: 12px;
+  }
+
+  #adminClassementListe > button {
+    display: block;
+    width: 100%;
+    margin: 12px 0 0 !important;
+  }
+}
+
+  
+/* =====================================
    ESIVO — BOUTONS ADMINISTRATION
 ===================================== */
 
