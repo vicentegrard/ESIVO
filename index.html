@@ -9390,6 +9390,12 @@ async function chargerClassementAdmin(equipe) {
       throw new Error("Les données des clubs sont invalides.");
     }
 
+    liste.dataset.version = String(
+  classement.updatedAt?.toMillis?.() ||
+  classement.createdAt?.toMillis?.() ||
+  0
+);
+
     liste.innerHTML = `
       <h4>${equipe} — ${classement.clubs.length} clubs</h4>
       <div style="overflow-x:auto;">
@@ -9409,25 +9415,34 @@ async function chargerClassementAdmin(equipe) {
               <th>Pts</th>
             </tr>
           </thead>
-          <tbody>
+                    <tbody>
             ${classement.clubs.map((club, index) => `
               <tr>
-                <td>${club.position ?? index + 1}</td>
+                <td><input type="number" data-index="${index}" data-field="position" value="${club.position ?? index + 1}" style="width:55px;"></td>
                 <td>${club.equipe ?? ""}</td>
-                <td>${club.joues ?? 0}</td>
-                <td>${club.victoires ?? 0}</td>
-                <td>${club.nuls ?? 0}</td>
-                <td>${club.defaites ?? 0}</td>
-                <td>${club.forfait ?? 0}</td>
-                <td>${club.butsPour ?? 0}</td>
-                <td>${club.butsContre ?? 0}</td>
-                <td>${club.difference ?? 0}</td>
-                <td>${club.points ?? 0}</td>
+                <td><input type="number" data-index="${index}" data-field="joues" value="${club.joues ?? 0}" style="width:55px;"></td>
+                <td><input type="number" data-index="${index}" data-field="victoires" value="${club.victoires ?? 0}" style="width:55px;"></td>
+                <td><input type="number" data-index="${index}" data-field="nuls" value="${club.nuls ?? 0}" style="width:55px;"></td>
+                <td><input type="number" data-index="${index}" data-field="defaites" value="${club.defaites ?? 0}" style="width:55px;"></td>
+                <td><input type="number" data-index="${index}" data-field="forfait" value="${club.forfait ?? 0}" style="width:55px;"></td>
+                <td><input type="number" data-index="${index}" data-field="butsPour" value="${club.butsPour ?? 0}" style="width:55px;"></td>
+                <td><input type="number" data-index="${index}" data-field="butsContre" value="${club.butsContre ?? 0}" style="width:55px;"></td>
+                <td><input type="text" data-index="${index}" data-field="difference" value="${club.difference ?? 0}" style="width:65px;"></td>
+                <td><input type="number" data-index="${index}" data-field="points" value="${club.points ?? 0}" style="width:55px;"></td>
               </tr>
             `).join("")}
           </tbody>
         </table>
-      </div>
+            </div>
+
+      <button
+        type="button"
+        class="btn-primary"
+        style="margin-top:20px;"
+        onclick="sauvegarderClassementAdmin()"
+      >
+        Enregistrer les modifications
+      </button>
     `;
 
     message.textContent = "Classement récupéré depuis Firestore.";
@@ -9438,6 +9453,144 @@ async function chargerClassementAdmin(equipe) {
     message.textContent = erreur.message;
   }
 }
+
+  
+async function sauvegarderClassementAdmin() {
+  const liste = document.getElementById("adminClassementListe");
+  const message = document.getElementById("adminClassementMessage");
+  const select = document.getElementById("adminClassementEquipe");
+
+  const equipe = select?.value;
+
+  if (!equipe || !liste || !message) {
+    return;
+  }
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    message.textContent = "Accès refusé : administrateur non connecté.";
+    return;
+  }
+
+  if (!window.esivoDb) {
+    message.textContent = "Firestore n'est pas initialisé.";
+    return;
+  }
+
+  const champs = [
+    "position",
+    "joues",
+    "victoires",
+    "nuls",
+    "defaites",
+    "forfait",
+    "butsPour",
+    "butsContre",
+    "difference",
+    "points"
+  ];
+
+  const lignes = liste.querySelectorAll("tbody tr");
+
+  if (!lignes.length) {
+    message.textContent = "Aucun classement à enregistrer.";
+    return;
+  }
+
+  const modifications = [];
+
+  for (const ligne of lignes) {
+    const club = {};
+
+    for (const champ of champs) {
+      const input = ligne.querySelector(`[data-field="${champ}"]`);
+
+      if (!input || input.value.trim() === "") {
+        message.textContent = "Tous les champs doivent être remplis.";
+        return;
+      }
+
+      const valeur = Number(input.value);
+
+      if (!Number.isInteger(valeur)) {
+        message.textContent = "Les statistiques doivent être des nombres entiers.";
+        return;
+      }
+
+      if (champ !== "difference" && valeur < 0) {
+        message.textContent = "Les valeurs ne peuvent pas être négatives.";
+        return;
+      }
+
+      if (champ === "position" && valeur < 1) {
+        message.textContent = "La position doit être supérieure à zéro.";
+        return;
+      }
+
+      club[champ] = valeur;
+    }
+
+    modifications.push(club);
+  }
+
+  if (!confirm(
+    "Confirmer l'enregistrement des modifications du classement " +
+    equipe + " dans Firestore ?"
+  )) {
+    return;
+  }
+
+  message.textContent = "Enregistrement en cours...";
+
+  try {
+    const documentRef = window.esivoDb
+      .collection("classements")
+      .doc(equipe);
+
+    await window.esivoDb.runTransaction(async transaction => {
+      const document = await transaction.get(documentRef);
+
+      if (!document.exists) {
+        throw new Error("Le classement n'existe plus dans Firestore.");
+      }
+
+      const donnees = document.data();
+
+if (!Array.isArray(donnees.clubs) ||
+    donnees.clubs.length !== modifications.length) {
+  throw new Error("Le nombre de clubs a changé. Recharge le classement.");
+}
+
+if (liste.dataset.version !== String(
+  donnees.updatedAt?.toMillis?.() || donnees.createdAt?.toMillis?.() || 0
+)) {
+  throw new Error(
+    "Le classement a été modifié depuis son chargement. Recharge-le avant d'enregistrer."
+  );
+}
+
+      const clubsActualises = donnees.clubs.map((club, index) => ({
+        ...club,
+        ...modifications[index]
+      }));
+
+      transaction.update(documentRef, {
+        clubs: clubsActualises,
+        nombreClubs: clubsActualises.length,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+
+    message.textContent =
+      "Classement " + equipe + " enregistré avec succès !";
+
+  } catch (erreur) {
+    console.error("Erreur de sauvegarde du classement :", erreur);
+    message.textContent = "Échec de l'enregistrement : " + erreur.message;
+  }
+}
+
 
 async function testerRecuperationClassementAdmin(equipe) {
   const liste = document.getElementById("adminClassementListe");
