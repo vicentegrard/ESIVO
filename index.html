@@ -9419,7 +9419,15 @@ async function chargerClassementAdmin(equipe) {
             ${classement.clubs.map((club, index) => `
               <tr>
                 <td><input type="number" data-index="${index}" data-field="position" value="${club.position ?? index + 1}" style="width:55px;"></td>
-                <td>${club.equipe ?? ""}</td>
+                <td>
+  <input
+    type="text"
+    data-index="${index}"
+    data-field="equipe"
+    value="${club.equipe ?? ""}"
+    style="width:180px; min-width:140px;"
+  >
+</td>
                 <td><input type="number" data-index="${index}" data-field="joues" value="${club.joues ?? 0}" style="width:55px;"></td>
                 <td><input type="number" data-index="${index}" data-field="victoires" value="${club.victoires ?? 0}" style="width:55px;"></td>
                 <td><input type="number" data-index="${index}" data-field="nuls" value="${club.nuls ?? 0}" style="width:55px;"></td>
@@ -9479,17 +9487,18 @@ async function sauvegarderClassementAdmin() {
   }
 
   const champs = [
-    "position",
-    "joues",
-    "victoires",
-    "nuls",
-    "defaites",
-    "forfait",
-    "butsPour",
-    "butsContre",
-    "difference",
-    "points"
-  ];
+  "equipe",
+  "position",
+  "joues",
+  "victoires",
+  "nuls",
+  "defaites",
+  "forfait",
+  "butsPour",
+  "butsContre",
+  "difference",
+  "points"
+];
 
   const lignes = liste.querySelectorAll("tbody tr");
 
@@ -9511,12 +9520,24 @@ async function sauvegarderClassementAdmin() {
         return;
       }
 
-      const valeur = Number(input.value);
+      if (champ === "equipe") {
+  const nom = input.value.trim();
 
-      if (!Number.isInteger(valeur)) {
-        message.textContent = "Les statistiques doivent être des nombres entiers.";
-        return;
-      }
+  if (!nom) {
+    message.textContent = "Le nom d'un club ne peut pas être vide.";
+    return;
+  }
+
+  club[champ] = nom;
+  continue;
+}
+
+const valeur = Number(input.value);
+
+if (!Number.isInteger(valeur)) {
+  message.textContent = "Les statistiques doivent être des nombres entiers.";
+  return;
+}
 
       if (champ !== "difference" && valeur < 0) {
         message.textContent = "Les valeurs ne peuvent pas être négatives.";
