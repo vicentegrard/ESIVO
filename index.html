@@ -7255,10 +7255,30 @@ function showPage(page) {
   <p id="adminResultatsMessage"></p>
 </div>
 
-        <div class="content-card">
-          <h3>🏆 Gestion des classements</h3>
-          <p>Mettre à jour les classements des catégories concernées.</p>
-        </div>
+        <div class="content-card" style="margin-top:20px;">
+  <h3>🏆 Gestion des classements</h3>
+  <p>Gérer les classements des championnats de l'ESIVO.</p>
+
+  <div class="form-group">
+    <label for="adminClassementEquipe">Choisir une équipe</label>
+    <select id="adminClassementEquipe" onchange="chargerClassementAdmin(this.value)">
+      <option value="">-- Sélectionner un championnat --</option>
+      <option value="U13">U13</option>
+      <option value="U18">U18</option>
+      <option value="Seniors A">Seniors A</option>
+      <option value="Seniors B">Seniors B</option>
+      <option value="Seniors C">Seniors C</option>
+      <option value="Seniors Vétérans">Seniors Vétérans</option>
+      <option value="Seniors Féminines à 8">Seniors Féminines à 8</option>
+    </select>
+  </div>
+
+  <div id="adminClassementListe" style="margin-top:20px;">
+    <p>Sélectionne un championnat pour commencer.</p>
+  </div>
+
+  <p id="adminClassementMessage"></p>
+</div>
 
         <div class="content-card">
           <h3>📰 Gestion des actualités</h3>
