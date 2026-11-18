@@ -7472,7 +7472,11 @@ async function chargerClassementFirestore(equipe) {
     throw new Error("Les données des clubs sont invalides.");
   }
 
-  return donnees;
+  donnees.clubs.sort((a, b) => {
+  return Number(a.position) - Number(b.position);
+});
+
+return donnees;
 }
   
 async function selectTeam(equipe) {
