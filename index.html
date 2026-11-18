@@ -4662,24 +4662,49 @@ function afficherResultatsWeekend() {
   const conteneur = document.getElementById("weekendResults");
   if (!conteneur) return;
 
-  // Récupération du dernier résultat de chaque équipe
-  const derniersResultats = Object.values(
-    resultatsDemo
-      .slice()
-      .sort((a, b) =>
-        b.date.localeCompare(a.date) ||
-        b.heure.localeCompare(a.heure)
-      )
-      .reduce((groupes, resultat) => {
-        if (!groupes[resultat.equipe]) {
-          groupes[resultat.equipe] = resultat;
-        }
-        return groupes;
-      }, {})
-  ).map(resultat => ({
-    ...resultat,
-    type: "resultat"
-  }));
+  // Résultats historiques + résultats enregistrés dans Firebase
+const resultatsFusionnes = [
+  ...resultatsDemo,
+  ...(window.calendriersFirebase || []).filter(resultat =>
+    resultat.type === "match" &&
+    resultat.resultatEnregistre === true
+  )
+];
+
+// Firebase prend la priorité pour un match déjà présent dans les anciens résultats
+const resultatsParMatch = new Map();
+
+resultatsFusionnes.forEach(resultat => {
+  const cle = [
+    resultat.equipe,
+    resultat.date,
+    (resultat.adversaire || "").trim().toUpperCase()
+  ].join("|");
+
+  const existant = resultatsParMatch.get(cle);
+
+  if (!existant || resultat.resultatEnregistre === true) {
+    resultatsParMatch.set(cle, resultat);
+  }
+});
+
+// Dernier résultat de chaque équipe
+const derniersResultats = Object.values(
+  [...resultatsParMatch.values()]
+    .sort((a, b) =>
+      b.date.localeCompare(a.date) ||
+      (b.heure || "").localeCompare(a.heure || "")
+    )
+    .reduce((groupes, resultat) => {
+      if (!groupes[resultat.equipe]) {
+        groupes[resultat.equipe] = resultat;
+      }
+      return groupes;
+    }, {})
+).map(resultat => ({
+  ...resultat,
+  type: "resultat"
+}));
 
     // Récupération du dernier plateau U11 depuis Firebase
   // Récupération du dernier plateau U11 déjà passé
@@ -4712,32 +4737,37 @@ const convertirDate = date => {
 const dateLimitePlateau = new Date();
 dateLimitePlateau.setHours(23, 59, 59, 999);
 
-const derniersPlateauxU11 = (window.calendriersFirebase || [])
-  .filter(doc => {
-    const datePlateau = convertirDate(doc.date);
+// Dernier plateau avec résultat enregistré pour chaque catégorie
+const derniersPlateaux = ["U7", "U9", "U11", "U13"]
+  .map(equipe => {
+    return (window.calendriersFirebase || [])
+      .filter(doc => {
+        const datePlateau = convertirDate(doc.date);
 
-    return (
-      doc.equipe === "U11" &&
-      doc.type === "plateau" &&
-      datePlateau &&
-      datePlateau <= dateLimitePlateau
-    );
+        return (
+          doc.equipe === equipe &&
+          doc.type === "plateau" &&
+          doc.resultatEnregistre === true &&
+          !!doc.bilanESIVO &&
+          datePlateau &&
+          datePlateau <= dateLimitePlateau
+        );
+      })
+      .sort((a, b) =>
+        convertirDate(b.date) - convertirDate(a.date)
+      )[0];
   })
-  .sort((a, b) =>
-    convertirDate(b.date) - convertirDate(a.date)
-  )
-  .slice(0, 1)
+  .filter(Boolean)
   .map(plateau => ({
     ...plateau,
-    equipe: "U11",
     type: "plateau"
   }));
 
   // Résultats classiques + dernier plateau U11
   const tousLesEvenements = [
-    ...derniersResultats,
-    ...derniersPlateauxU11
-  ];
+  ...derniersResultats,
+  ...derniersPlateaux
+];
 
   // Tri du plus récent au plus ancien
   const convertirHeureEnMinutes = heure => {
@@ -4857,7 +4887,7 @@ const derniersPlateauxU11 = (window.calendriersFirebase || [])
       <div class="weekend-match home-next-match home-result-card">
 
         <div class="mc-eyebrow">
-          PLATEAU U11
+          PLATEAU ${plateau.equipe}
         </div>
 
                 <div style="
@@ -4915,7 +4945,7 @@ const derniersPlateauxU11 = (window.calendriersFirebase || [])
           align-items:start;
           margin:15px 0 20px;
         ">
-          ${plateau.equipes.map(equipe => `
+          ${(plateau.equipes || []).map(equipe => `
             <div style="
               display:flex;
               flex-direction:column;
@@ -4976,7 +5006,7 @@ const derniersPlateauxU11 = (window.calendriersFirebase || [])
           <strong>
             ${afficherDate(plateau.date)} · ${plateau.heure}
           </strong>
-          <span>⚽ Plateau U11 · 4 équipes</span>
+          <span>⚽ Plateau ${plateau.equipe} · ${(plateau.equipes || []).length} équipes</span>
           <span>
             📍 ${plateau.lieu} · ${plateau.ville}
           </span>
@@ -6914,13 +6944,13 @@ const descriptionsOrganisateurs = {
     <strong>${plateau.organisateur}</strong>
     <small>${descriptionsOrganisateurs[plateau.organisateur] || "Club organisateur"}</small>
   </div>
-  <span class="u11-category">U11</span>
+  <span class="u11-category">${plateau.equipe}</span>
 </div>
 
   <div class="u11-teams-section">
     <div class="u11-section-title">
       <strong>Les équipes participantes</strong>
-      <span>4 ÉQUIPES</span>
+      <span>${(plateau.equipes || []).length} ÉQUIPES</span>
     </div>
 
     <div class="u11-teams-grid">
@@ -7587,7 +7617,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
 
   } else if (page === "Résultats") {
   
-if (["U7", "U9", "U11", "U13"].includes(equipe)) {
+if (["U7", "U9", "U11"].includes(equipe)) {
   const plateaux = (window.calendriersFirebase || [])
     .filter(plateau =>
       plateau.equipe === equipe &&
@@ -7627,13 +7657,13 @@ if (["U7", "U9", "U11", "U13"].includes(equipe)) {
                 <strong>${plateau.organisateur}</strong>
                 <small>Club organisateur</small>
               </div>
-              <span class="u11-category">U11</span>
+              <span class="u11-category">${equipe}</span>
             </div>
 
             <div class="u11-teams-section">
               <div class="u11-section-title">
                 <strong>Les équipes participantes</strong>
-                <span>4 ÉQUIPES</span>
+                <span>${(plateau.equipes || []).length} ÉQUIPES</span>
               </div>
 
               <div class="u11-teams-grid">
@@ -7695,13 +7725,38 @@ if (["U7", "U9", "U11", "U13"].includes(equipe)) {
   return;
 }
 
-  const resultats = (window.calendriersFirebase || [])
-    .filter(resultat =>
-      resultat.equipe === equipe &&
-      resultat.type === "match" &&
-      resultat.resultatEnregistre === true
-    )
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  // Résultats historiques conservés + résultats enregistrés dans Firebase
+const resultatsFusionnes = [
+  ...resultatsDemo.filter(resultat => resultat.equipe === equipe),
+  ...(window.calendriersFirebase || []).filter(resultat =>
+    resultat.equipe === equipe &&
+    resultat.type === "match" &&
+    resultat.resultatEnregistre === true
+  )
+];
+
+// Firebase remplace l'ancien résultat lorsqu'il s'agit du même match
+const resultatsParMatch = new Map();
+
+resultatsFusionnes.forEach(resultat => {
+  const cle = [
+    resultat.equipe,
+    resultat.date,
+    (resultat.adversaire || "").trim().toUpperCase()
+  ].join("|");
+
+  const existant = resultatsParMatch.get(cle);
+
+  if (!existant || resultat.resultatEnregistre === true) {
+    resultatsParMatch.set(cle, resultat);
+  }
+});
+
+const resultats = [...resultatsParMatch.values()]
+  .sort((a, b) =>
+    b.date.localeCompare(a.date) ||
+    (b.heure || "").localeCompare(a.heure || "")
+  );
 
   if (resultats.length === 0) {
     contenu.innerHTML = `
@@ -7883,7 +7938,7 @@ ${anciens
           <div class="u11-teams-section">
             <div class="u11-section-title">
               <strong>Les équipes participantes</strong>
-              <span>4 ÉQUIPES</span>
+              <span>${(plateau.equipes || []).length} ÉQUIPES</span>
             </div>
 
             <div class="u11-teams-grid">
