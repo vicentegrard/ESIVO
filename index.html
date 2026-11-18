@@ -9450,26 +9450,24 @@ ${anciens
   }
 }
 
+
 async function recupererClassementInitialAdmin(equipe) {
   const titrePage = document.querySelector(".page-title h2");
+  const contenu = document.getElementById("teamContent");
 
-  if (!titrePage) {
+  if (!titrePage || !contenu) {
     throw new Error("Page introuvable.");
   }
 
   const ancienTitre = titrePage.textContent;
-  const conteneurTemporaire = document.createElement("div");
-
-  conteneurTemporaire.id = "teamContent";
-  conteneurTemporaire.style.display = "none";
-  document.body.appendChild(contenurTemporaire);
+  const ancienContenu = contenu.innerHTML;
 
   try {
     titrePage.textContent = "Classements";
 
     await selectTeam(equipe);
 
-    const lignes = conteneurTemporaire.querySelectorAll("tbody tr");
+    const lignes = contenu.querySelectorAll("tbody tr");
 
     if (!lignes.length) {
       throw new Error("Aucune donnée trouvée pour " + equipe);
@@ -9510,15 +9508,16 @@ async function recupererClassementInitialAdmin(equipe) {
 
     return {
       equipe,
-      titre: conteneurTemporaire.querySelector("h3")?.textContent.trim() || "",
+      titre: contenu.querySelector("h3")?.textContent.trim() || "",
       clubs
     };
 
   } finally {
     titrePage.textContent = ancienTitre;
-    conteneurTemporaire.remove();
+    contenu.innerHTML = ancienContenu;
   }
 }
+
   
   async function connecterAdmin() {
   const email = document.getElementById("adminEmail").value;
