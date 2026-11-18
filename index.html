@@ -4734,40 +4734,28 @@ const convertirDate = date => {
   return null;
 };
 
-const dateLimitePlateau = new Date();
-dateLimitePlateau.setHours(23, 59, 59, 999);
-
 // Dernier plateau avec résultat enregistré pour chaque catégorie
 const derniersPlateaux = ["U7", "U9", "U11", "U13"]
   .map(equipe => {
     return (window.calendriersFirebase || [])
-      .filter(doc => {
-        const datePlateau = convertirDate(doc.date);
+      .filter(doc =>
+        doc.equipe === equipe &&
+        doc.type === "plateau" &&
+        doc.resultatEnregistre === true &&
+        !!doc.bilanESIVO
+      )
+      .sort((a, b) => {
+        const dateA = convertirDate(a.date)?.getTime() || 0;
+        const dateB = convertirDate(b.date)?.getTime() || 0;
 
-        return (
-          doc.equipe === equipe &&
-          doc.type === "plateau" &&
-          doc.resultatEnregistre === true &&
-          !!doc.bilanESIVO &&
-          datePlateau &&
-          datePlateau <= dateLimitePlateau
-        );
-      })
-      .sort((a, b) =>
-        convertirDate(b.date) - convertirDate(a.date)
-      )[0];
+        return dateB - dateA;
+      })[0];
   })
   .filter(Boolean)
   .map(plateau => ({
     ...plateau,
     type: "plateau"
   }));
-
-  // Résultats classiques + dernier plateau U11
-  const tousLesEvenements = [
-  ...derniersResultats,
-  ...derniersPlateaux
-];
 
   // Tri du plus récent au plus ancien
   const convertirHeureEnMinutes = heure => {
@@ -5575,10 +5563,14 @@ async function chargerListeCalendrierAdmin(equipe) {
       .where("equipe", "==", equipe)
       .get();
 
-    const documents = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const documents = snapshot.docs
+  .map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }))
+  .filter(item =>
+    !(item.type === "match" && item.resultatEnregistre === true)
+  );
 
     documents.sort((a, b) =>
       ((a.date || "") + " " + (a.heure || ""))
@@ -5674,10 +5666,27 @@ async function supprimerRencontreAdmin(id, equipe) {
   }
 
   try {
-    await window.esivoDb
-      .collection("matchs")
-      .doc(id)
-      .delete();
+    const documentRef = window.esivoDb
+  .collection("matchs")
+  .doc(id);
+
+const documentMatch = await documentRef.get();
+
+if (!documentMatch.exists) {
+  alert("Cette rencontre n'existe plus.");
+  return;
+}
+
+const evenement = documentMatch.data();
+
+if (evenement.resultatEnregistre === true) {
+  alert(
+    "Ce résultat est déjà enregistré. La rencontre ne peut pas être supprimée depuis la gestion du calendrier afin de conserver son résultat."
+  );
+  return;
+}
+
+await documentRef.delete();
 
     await chargerListeCalendrierAdmin(equipe);
     await chargerCalendriersFirebase();
@@ -8903,8 +8912,22 @@ async function chargerCalendriersFirebase() {
 
     for (const [nomEquipe, calendrier] of Object.entries(equipesCalendriers)) {
       const rencontres = documents
-        .filter(doc => doc.equipe === nomEquipe && doc.type === "match")
-        .map(doc => [
+  .filter(doc =>
+    doc.equipe === nomEquipe &&
+    doc.type === "match" &&
+    doc.resultatEnregistre !== true
+  )
+  .map(doc => [
+    doc.date,
+    doc.heure,
+    doc.competition,
+    doc.journee,
+    doc.domicile,
+    doc.adversaire,
+    doc.logo,
+    doc.lieu,
+    doc.ville
+  ]);
           doc.date,
           doc.heure,
           doc.competition,
