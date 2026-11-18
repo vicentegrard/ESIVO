@@ -9845,12 +9845,6 @@ if (!Array.isArray(donnees.clubs)) {
   throw new Error("Les données des clubs sont invalides.");
 }
 
-if (modifications.length < donnees.clubs.length) {
-  throw new Error(
-    "La suppression de clubs n'est pas encore disponible."
-  );
-}
-
 if (liste.dataset.version !== String(
   donnees.updatedAt?.toMillis?.() || donnees.createdAt?.toMillis?.() || 0
 )) {
