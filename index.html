@@ -9451,6 +9451,15 @@ async function chargerClassementAdmin(equipe) {
       >
         Enregistrer les modifications
       </button>
+
+      <button
+  type="button"
+  class="btn-secondary"
+  style="margin-top:20px; margin-left:10px;"
+  onclick="ajouterClubClassementAdmin()"
+>
+  + Ajouter un club
+</button>
     `;
 
     message.textContent = "Classement récupéré depuis Firestore.";
@@ -9459,6 +9468,55 @@ async function chargerClassementAdmin(equipe) {
     console.error("Erreur de chargement du classement :", erreur);
     liste.textContent = "Impossible de charger ce classement.";
     message.textContent = erreur.message;
+  }
+}
+
+  
+function ajouterClubClassementAdmin() {
+  const liste = document.getElementById("adminClassementListe");
+  const tbody = liste?.querySelector("tbody");
+
+  if (!tbody) {
+    return;
+  }
+
+  const index = tbody.querySelectorAll("tr").length;
+  const position = index + 1;
+
+  const champs = [
+    ["equipe", "", "text", 180],
+    ["position", position, "number", 55],
+    ["joues", 0, "number", 55],
+    ["victoires", 0, "number", 55],
+    ["nuls", 0, "number", 55],
+    ["defaites", 0, "number", 55],
+    ["forfait", 0, "number", 55],
+    ["butsPour", 0, "number", 55],
+    ["butsContre", 0, "number", 55],
+    ["difference", 0, "text", 65],
+    ["points", 0, "number", 55]
+  ];
+
+  const ligne = document.createElement("tr");
+
+  ligne.innerHTML = champs.map(([champ, valeur, type, largeur]) => `
+    <td>
+      <input
+        type="${type}"
+        data-index="${index}"
+        data-field="${champ}"
+        value="${valeur}"
+        style="width:${largeur}px;"
+      >
+    </td>
+  `).join("");
+
+  tbody.appendChild(ligne);
+
+  const message = document.getElementById("adminClassementMessage");
+
+  if (message) {
+    message.textContent = "Nouveau club ajouté au tableau. Renseigne son nom.";
   }
 }
 
@@ -9578,9 +9636,14 @@ if (!Number.isInteger(valeur)) {
 
       const donnees = document.data();
 
-if (!Array.isArray(donnees.clubs) ||
-    donnees.clubs.length !== modifications.length) {
-  throw new Error("Le nombre de clubs a changé. Recharge le classement.");
+if (!Array.isArray(donnees.clubs)) {
+  throw new Error("Les données des clubs sont invalides.");
+}
+
+if (modifications.length < donnees.clubs.length) {
+  throw new Error(
+    "La suppression de clubs n'est pas encore disponible."
+  );
 }
 
 if (liste.dataset.version !== String(
@@ -9591,10 +9654,10 @@ if (liste.dataset.version !== String(
   );
 }
 
-      const clubsActualises = donnees.clubs.map((club, index) => ({
-        ...club,
-        ...modifications[index]
-      }));
+const clubsActualises = modifications.map((modification, index) => ({
+  ...(donnees.clubs[index] || { logo: "" }),
+  ...modification
+}));
 
       transaction.update(documentRef, {
         clubs: clubsActualises,
