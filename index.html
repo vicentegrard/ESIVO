@@ -9520,6 +9520,13 @@ async function chargerClassementAdmin(equipe) {
   alt="Aperçu du logo"
   style="display:${club.logo ? "block" : "none"}; width:45px; height:45px; object-fit:contain; margin-top:6px;"
 >
+<button
+  type="button"
+  onclick="supprimerClubClassementAdmin(this)"
+  style="margin-top:8px; background:#AA1A24; color:white; border:none; padding:7px 12px; border-radius:5px; cursor:pointer;"
+>
+  Supprimer
+</button>
 </td>
                 <td><input type="number" data-index="${index}" data-field="joues" value="${club.joues ?? 0}" style="width:55px;"></td>
                 <td><input type="number" data-index="${index}" data-field="victoires" value="${club.victoires ?? 0}" style="width:55px;"></td>
@@ -9581,6 +9588,28 @@ async function chargerClassementAdmin(equipe) {
     apercu.style.display = "none";
   }
 }
+
+function supprimerClubClassementAdmin(bouton) {
+  const ligne = bouton.closest("tr");
+
+  if (!ligne) {
+    return;
+  }
+
+  const nomClub =
+    ligne.querySelector('[data-field="equipe"]')?.value.trim() ||
+    "ce club";
+
+  const confirmation = confirm(
+    "Voulez-vous vraiment supprimer " + nomClub + " du classement ?\n\nLa suppression sera effective après avoir enregistré les modifications."
+  );
+
+  if (!confirmation) {
+    return;
+  }
+
+  ligne.remove();
+}  
   
 function ajouterClubClassementAdmin() {
   const liste = document.getElementById("adminClassementListe");
@@ -9647,6 +9676,13 @@ ligne.innerHTML = `
   alt="Aperçu du logo"
   style="display:none; width:45px; height:45px; object-fit:contain; margin-top:6px;"
 >
+<button
+  type="button"
+  onclick="supprimerClubClassementAdmin(this)"
+  style="margin-top:8px; background:#AA1A24; color:white; border:none; padding:7px 12px; border-radius:5px; cursor:pointer;"
+>
+  Supprimer
+</button>
   </td>
   ${champs.slice(1).map(([champ, valeur, type, largeur]) => `
     <td>
