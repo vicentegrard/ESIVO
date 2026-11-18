@@ -6133,10 +6133,17 @@ liste.innerHTML = evenements.map(evenement => {
           id="resultat-d-${evenement.id}"
           value="${bilan.defaites ?? ""}">
 
-        <button type="button"
+                <button type="button"
           onclick="enregistrerResultatAdmin('${evenement.id}', 'plateau')">
           Enregistrer le bilan
         </button>
+
+        ${evenement.resultatEnregistre === true ? `
+          <button type="button"
+            onclick="supprimerResultatAdmin('${evenement.id}', 'plateau')">
+            Supprimer le résultat
+          </button>
+        ` : ""}
       </div>
     `;
   }
@@ -6156,10 +6163,17 @@ liste.innerHTML = evenements.map(evenement => {
         id="resultat-adverse-${evenement.id}"
         value="${evenement.butsAdversaire ?? ""}">
 
-      <button type="button"
+            <button type="button"
         onclick="enregistrerResultatAdmin('${evenement.id}', 'match')">
         Enregistrer le score
       </button>
+
+      ${evenement.resultatEnregistre === true ? `
+        <button type="button"
+          onclick="supprimerResultatAdmin('${evenement.id}', 'match')">
+          Supprimer le résultat
+        </button>
+      ` : ""}
     </div>
   `;
 }).join("");
@@ -6242,6 +6256,59 @@ async function enregistrerResultatAdmin(id, type) {
     message.textContent = "Erreur lors de l'enregistrement du résultat.";
   }
 }
+
+  
+async function supprimerResultatAdmin(id, type) {
+  const message = document.getElementById("adminResultatsMessage");
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    message.textContent = "Accès refusé.";
+    return;
+  }
+
+  if (type !== "match" && type !== "plateau") {
+    message.textContent = "Type de résultat inconnu.";
+    return;
+  }
+
+  const confirmation = window.confirm(
+    "Voulez-vous vraiment supprimer ce résultat ?\n\n" +
+    "L'événement restera dans le calendrier, mais son résultat sera effacé."
+  );
+
+  if (!confirmation) return;
+
+  try {
+    const donnees = {
+      resultatEnregistre: false
+    };
+
+    if (type === "match") {
+      donnees.butsESIVO = null;
+      donnees.butsAdversaire = null;
+    } else {
+      donnees.bilanESIVO = null;
+    }
+
+    await window.esivoDb
+      .collection("matchs")
+      .doc(id)
+      .update(donnees);
+
+    const equipe = document.getElementById("adminResultatsEquipe").value;
+
+    await chargerCalendriersFirebase();
+    await chargerEvenementsResultatsAdmin(equipe);
+
+    message.textContent = "Le résultat a bien été supprimé.";
+
+  } catch (erreur) {
+    console.error("Erreur de suppression du résultat :", erreur);
+    message.textContent = "Impossible de supprimer ce résultat.";
+  }
+}
+
 
 
   
