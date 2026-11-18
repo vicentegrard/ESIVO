@@ -8,6 +8,402 @@
 <meta name="theme-color" content="#AA1A24">
 <title>ESIVO | Application officielle</title>
 
+
+  /* ==========================================
+   ADMINISTRATION — GESTION DES RÉSULTATS
+========================================== */
+
+.admin-resultat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.admin-resultat-card .admin-resultat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-resultat-card .admin-resultat-statut {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(229, 189, 55, 0.12);
+    color: #E5BD37;
+}
+
+.admin-resultat-card .admin-resultat-statut.enregistre {
+    background: rgba(50, 180, 110, 0.12);
+    color: #55D68B;
+}
+
+.admin-resultat-card .admin-resultat-score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    padding: 18px;
+    background: #19191D;
+    border-radius: 12px;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.admin-resultat-card .admin-resultat-equipe {
+    font-size: 14px;
+    text-align: center;
+    color: #fff;
+}
+
+.admin-resultat-card .admin-resultat-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-resultat-card button {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.admin-resultat-card .admin-resultat-modifier,
+.admin-resultat-card .admin-resultat-enregistrer {
+    background: #AA1A24;
+    color: #fff;
+}
+
+.admin-resultat-card .admin-resultat-annuler {
+    background: #35353D;
+    color: #fff;
+}
+
+.admin-resultat-card .admin-resultat-supprimer {
+    background: transparent;
+    border: 1px solid #AA1A24;
+    color: #E56B73;
+}
+
+.admin-resultat-card input,
+.admin-resultat-card select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #44444D;
+    border-radius: 8px;
+    background: #22232B;
+    color: #fff;
+    font-size: 15px;
+}
+
+.admin-resultat-card input:focus,
+.admin-resultat-card select:focus {
+    outline: none;
+    border-color: #AA1A24;
+}
+
+.admin-resultat-editor[hidden] {
+    display: none !important;
+}
+
+.admin-resultat-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.admin-resultat-bilan {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+@media (max-width: 600px) {
+    .admin-resultat-card .admin-resultat-score {
+        gap: 10px;
+        font-size: 20px;
+    }
+
+    .admin-resultat-card .admin-resultat-actions {
+        flex-direction: column;
+    }
+
+    .admin-resultat-card .admin-resultat-actions button {
+        width: 100%;
+    }
+
+    .admin-resultat-bilan {
+        gap: 6px;
+    }
+}
+
+/* ==========================================
+   ADMINISTRATION — CARTES DES RÉSULTATS
+========================================== */
+
+.admin-resultat-card {
+    padding: 20px;
+    gap: 18px;
+}
+
+.admin-resultat-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.admin-resultat-card-top h4 {
+    margin: 6px 0 0;
+    color: #fff;
+    font-size: 17px;
+}
+
+.admin-resultat-type {
+    color: #E5BD37;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.admin-resultat-status {
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(229, 189, 55, 0.12);
+    color: #E5BD37;
+}
+
+.admin-resultat-status.is-saved {
+    background: rgba(65, 190, 120, 0.13);
+    color: #55D68B;
+}
+
+.admin-resultat-status.is-pending {
+    background: rgba(229, 189, 55, 0.12);
+    color: #E5BD37;
+}
+
+.admin-resultat-meta {
+    margin: 0;
+    color: #B9B9C1;
+    font-size: 13px;
+}
+
+.admin-resultat-display,
+.admin-resultat-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.admin-resultat-display h5,
+.admin-resultat-editor h5 {
+    margin: 0;
+    color: #fff;
+    font-size: 15px;
+}
+
+.admin-score-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 22px 15px;
+    background: #19191D;
+    border: 1px solid #303039;
+    border-radius: 12px;
+}
+
+.admin-score-display > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-score-display span {
+    color: #B9B9C1;
+    font-size: 12px;
+    text-align: center;
+}
+
+.admin-score-display strong {
+    color: #fff;
+    font-size: 32px;
+    font-weight: 900;
+}
+
+.admin-score-display > b {
+    color: #E5BD37;
+    font-size: 20px;
+}
+
+.admin-bilan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.admin-bilan-grid > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 18px 8px;
+    background: #19191D;
+    border: 1px solid #303039;
+    border-radius: 10px;
+}
+
+.admin-bilan-grid strong {
+    color: #fff;
+    font-size: 25px;
+    font-weight: 900;
+}
+
+.admin-bilan-grid span {
+    color: #B9B9C1;
+    font-size: 11px;
+    text-align: center;
+}
+
+.admin-resultat-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.admin-resultat-fields .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+}
+
+.admin-resultat-fields label {
+    color: #D5D5DA;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-resultat-fields input {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 11px 13px;
+    background: #22232B;
+    border: 1px solid #44444D;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 15px;
+}
+
+.admin-resultat-fields input:focus {
+    outline: none;
+    border-color: #AA1A24;
+}
+
+.admin-resultat-card .admin-resultat-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-resultat-card .admin-resultat-actions button {
+    min-height: 40px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.admin-resultat-card .admin-btn-primary {
+    background: #AA1A24;
+    color: #fff;
+    border: 1px solid #AA1A24;
+}
+
+.admin-resultat-card .admin-btn-primary:hover {
+    background: #80131B;
+    border-color: #80131B;
+}
+
+.admin-resultat-card .admin-btn-secondary {
+    background: #35353D;
+    color: #fff;
+    border: 1px solid #484851;
+}
+
+.admin-resultat-card .admin-btn-secondary:hover {
+    background: #45454F;
+}
+
+.admin-resultat-card .admin-btn-danger {
+    background: transparent;
+    color: #E56B73;
+    border: 1px solid #AA1A24;
+}
+
+.admin-resultat-card .admin-btn-danger:hover {
+    background: rgba(170, 26, 36, 0.12);
+}
+
+.admin-resultat-editor[hidden],
+.admin-resultat-display[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 600px) {
+    .admin-resultat-card {
+        padding: 15px;
+    }
+
+    .admin-resultat-card-top {
+        align-items: flex-start;
+    }
+
+    .admin-resultat-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-resultat-card .admin-resultat-actions {
+        flex-direction: column;
+    }
+
+    .admin-resultat-card .admin-resultat-actions button {
+        width: 100%;
+    }
+
+    .admin-score-display {
+        gap: 12px;
+        padding: 18px 10px;
+    }
+
+    .admin-score-display strong {
+        font-size: 27px;
+    }
+
+    .admin-bilan-grid {
+        gap: 7px;
+    }
+
+    .admin-bilan-grid > div {
+        padding: 14px 5px;
+    }
+}
+  
 <style>
 :root {
   --red: #AA1A24;
@@ -6066,8 +6462,10 @@ async function chargerEvenementsResultatsAdmin(equipe) {
   const liste = document.getElementById("adminResultatsListe");
   const message = document.getElementById("adminResultatsMessage");
 
+  if (!liste || !message) return;
+
   if (!equipe) {
-    liste.innerHTML = "<p>Sélectionne une équipe pour retrouver ses matchs et ses plateaux.</p>";
+    liste.innerHTML = '<p>Sélectionne une équipe pour retrouver ses matchs et ses plateaux.</p>';
     return;
   }
 
@@ -6092,96 +6490,208 @@ async function chargerEvenementsResultatsAdmin(equipe) {
       id: doc.id
     }));
 
-    evenements.sort((a, b) => {
-      return (b.date || "").localeCompare(a.date || "");
-    });
+    evenements.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
     if (evenements.length === 0) {
       liste.innerHTML = "<p>Aucun match ou plateau trouvé pour cette équipe.</p>";
       return;
     }
 
-    
-liste.innerHTML = evenements.map(evenement => {
-  const date = evenement.date
-    ? new Date(evenement.date + "T00:00:00").toLocaleDateString("fr-FR")
-    : "Date non renseignée";
+    liste.innerHTML = evenements.map(evenement => {
+      const date = evenement.date
+        ? new Date(evenement.date + "T00:00:00").toLocaleDateString("fr-FR", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+          })
+        : "Date non renseignée";
 
-  if (evenement.type === "plateau") {
-    const bilan = evenement.bilanESIVO || {};
+      const enregistre = evenement.resultatEnregistre === true;
 
-    return `
-      <div class="content-card" style="margin-bottom:12px;">
-        <h4>Plateau — ${date}</h4>
-        <p>Organisateur : ${evenement.organisateur || "Non renseigné"}</p>
-        <p>Lieu : ${evenement.lieu || "Non renseigné"} ${evenement.ville || ""}</p>
+      if (evenement.type === "plateau") {
+        const bilan = evenement.bilanESIVO || {};
+        const complet =
+          bilan.victoires !== undefined &&
+          bilan.nuls !== undefined &&
+          bilan.defaites !== undefined;
 
-        <h4>Bilan ESIVO</h4>
+        return `
+          <article class="content-card admin-resultat-card" id="resultat-carte-${evenement.id}">
+            <div class="admin-resultat-card-top">
+              <div>
+                <span class="admin-resultat-type">${equipe === "U13" ? "CHALLENGE U13" : "PLATEAU"}</span>
+                <h4>${date}</h4>
+              </div>
+              <span class="admin-resultat-status ${enregistre ? "is-saved" : "is-pending"}">
+                ${enregistre ? "Résultat enregistré" : "À renseigner"}
+              </span>
+            </div>
 
-        <label>Victoires</label>
-        <input type="number" min="0" step="1"
-          id="resultat-v-${evenement.id}"
-          value="${bilan.victoires ?? ""}">
+            <p class="admin-resultat-meta"><strong>Organisateur :</strong> ${evenement.organisateur || "Non renseigné"}</p>
+            <p class="admin-resultat-meta"><strong>Lieu :</strong> ${evenement.lieu || "Non renseigné"} ${evenement.ville || ""}</p>
 
-        <label>Nuls</label>
-        <input type="number" min="0" step="1"
-          id="resultat-n-${evenement.id}"
-          value="${bilan.nuls ?? ""}">
+            ${enregistre && complet ? `
+              <div class="admin-resultat-display" id="resultat-affichage-${evenement.id}">
+                <h5>Bilan ESIVO</h5>
+                <div class="admin-bilan-grid">
+                  <div><strong>${bilan.victoires}</strong><span>Victoires</span></div>
+                  <div><strong>${bilan.nuls}</strong><span>Matchs nuls</span></div>
+                  <div><strong>${bilan.defaites}</strong><span>Défaites</span></div>
+                </div>
+                <div class="admin-resultat-actions">
+                  <button type="button" class="admin-btn-primary"
+                    onclick="modifierResultatAdmin('${evenement.id}')">
+                    Modifier
+                  </button>
+                  <button type="button" class="admin-btn-danger"
+                    onclick="supprimerResultatAdmin('${evenement.id}', 'plateau')">
+                    Supprimer le résultat
+                  </button>
+                </div>
+              </div>
+            ` : ""}
 
-        <label>Défaites</label>
-        <input type="number" min="0" step="1"
-          id="resultat-d-${evenement.id}"
-          value="${bilan.defaites ?? ""}">
+            <div class="admin-resultat-editor" id="resultat-edition-${evenement.id}" ${enregistre && complet ? "hidden" : ""}>
+              <h5>Bilan ESIVO</h5>
+              <div class="admin-resultat-fields">
+                <div class="form-group">
+                  <label for="resultat-v-${evenement.id}">Victoires</label>
+                  <input type="number" min="0" step="1"
+                    id="resultat-v-${evenement.id}"
+                    value="${bilan.victoires ?? ""}">
+                </div>
+                <div class="form-group">
+                  <label for="resultat-n-${evenement.id}">Matchs nuls</label>
+                  <input type="number" min="0" step="1"
+                    id="resultat-n-${evenement.id}"
+                    value="${bilan.nuls ?? ""}">
+                </div>
+                <div class="form-group">
+                  <label for="resultat-d-${evenement.id}">Défaites</label>
+                  <input type="number" min="0" step="1"
+                    id="resultat-d-${evenement.id}"
+                    value="${bilan.defaites ?? ""}">
+                </div>
+              </div>
+              <div class="admin-resultat-actions">
+                <button type="button" class="admin-btn-primary"
+                  onclick="enregistrerResultatAdmin('${evenement.id}', 'plateau')">
+                  Enregistrer le bilan
+                </button>
+                ${enregistre ? `
+                  <button type="button" class="admin-btn-secondary"
+                    onclick="annulerModificationResultatAdmin()">
+                    Annuler
+                  </button>
+                ` : ""}
+              </div>
+            </div>
+          </article>
+        `;
+      }
 
-                <button type="button"
-          onclick="enregistrerResultatAdmin('${evenement.id}', 'plateau')">
-          Enregistrer le bilan
-        </button>
+      const aUnScore =
+        evenement.butsESIVO !== undefined &&
+        evenement.butsESIVO !== null &&
+        evenement.butsAdversaire !== undefined &&
+        evenement.butsAdversaire !== null;
 
-        ${evenement.resultatEnregistre === true ? `
-          <button type="button"
-            onclick="supprimerResultatAdmin('${evenement.id}', 'plateau')">
-            Supprimer le résultat
-          </button>
-        ` : ""}
-      </div>
-    `;
-  }
+      return `
+        <article class="content-card admin-resultat-card" id="resultat-carte-${evenement.id}">
+          <div class="admin-resultat-card-top">
+            <div>
+              <span class="admin-resultat-type">MATCH</span>
+              <h4>${date}</h4>
+            </div>
+            <span class="admin-resultat-status ${enregistre ? "is-saved" : "is-pending"}">
+              ${enregistre ? "Résultat enregistré" : "À renseigner"}
+            </span>
+          </div>
 
-  return `
-    <div class="content-card" style="margin-bottom:12px;">
-      <h4>Match — ${date}</h4>
-      <p>Adversaire : ${evenement.adversaire || "Non renseigné"}</p>
+          <p class="admin-resultat-meta"><strong>Adversaire :</strong> ${evenement.adversaire || "Non renseigné"}</p>
 
-      <label>Buts ESIVO</label>
-      <input type="number" min="0" step="1"
-        id="resultat-esivo-${evenement.id}"
-        value="${evenement.butsESIVO ?? ""}">
+          ${enregistre && aUnScore ? `
+            <div class="admin-resultat-display" id="resultat-affichage-${evenement.id}">
+              <div class="admin-score-display">
+                <div>
+                  <span>ESIVO</span>
+                  <strong>${evenement.butsESIVO}</strong>
+                </div>
+                <b>—</b>
+                <div>
+                  <span>${evenement.adversaire || "Adversaire"}</span>
+                  <strong>${evenement.butsAdversaire}</strong>
+                </div>
+              </div>
+              <div class="admin-resultat-actions">
+                <button type="button" class="admin-btn-primary"
+                  onclick="modifierResultatAdmin('${evenement.id}')">
+                  Modifier
+                </button>
+                <button type="button" class="admin-btn-danger"
+                  onclick="supprimerResultatAdmin('${evenement.id}', 'match')">
+                  Supprimer le résultat
+                </button>
+              </div>
+            </div>
+          ` : ""}
 
-      <label>Buts adversaire</label>
-      <input type="number" min="0" step="1"
-        id="resultat-adverse-${evenement.id}"
-        value="${evenement.butsAdversaire ?? ""}">
-
-            <button type="button"
-        onclick="enregistrerResultatAdmin('${evenement.id}', 'match')">
-        Enregistrer le score
-      </button>
-
-      ${evenement.resultatEnregistre === true ? `
-        <button type="button"
-          onclick="supprimerResultatAdmin('${evenement.id}', 'match')">
-          Supprimer le résultat
-        </button>
-      ` : ""}
-    </div>
-  `;
-}).join("");
-
+          <div class="admin-resultat-editor" id="resultat-edition-${evenement.id}" ${enregistre && aUnScore ? "hidden" : ""}>
+            <div class="admin-resultat-fields">
+              <div class="form-group">
+                <label for="resultat-esivo-${evenement.id}">Buts ESIVO</label>
+                <input type="number" min="0" step="1"
+                  id="resultat-esivo-${evenement.id}"
+                  value="${evenement.butsESIVO ?? ""}">
+              </div>
+              <div class="form-group">
+                <label for="resultat-adverse-${evenement.id}">Buts adversaire</label>
+                <input type="number" min="0" step="1"
+                  id="resultat-adverse-${evenement.id}"
+                  value="${evenement.butsAdversaire ?? ""}">
+              </div>
+            </div>
+            <div class="admin-resultat-actions">
+              <button type="button" class="admin-btn-primary"
+                onclick="enregistrerResultatAdmin('${evenement.id}', 'match')">
+                Enregistrer le score
+              </button>
+              ${enregistre ? `
+                <button type="button" class="admin-btn-secondary"
+                  onclick="annulerModificationResultatAdmin()">
+                  Annuler
+                </button>
+              ` : ""}
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
 
   } catch (erreur) {
     console.error("Erreur de chargement des résultats :", erreur);
     liste.innerHTML = "<p>Impossible de charger les événements.</p>";
+  }
+}
+
+  function modifierResultatAdmin(id) {
+  const affichage = document.getElementById("resultat-affichage-" + id);
+  const edition = document.getElementById("resultat-edition-" + id);
+
+  if (affichage && edition) {
+    affichage.hidden = true;
+    edition.hidden = false;
+
+    const premierChamp = edition.querySelector("input");
+    if (premierChamp) premierChamp.focus();
+  }
+}
+
+async function annulerModificationResultatAdmin() {
+  const equipe = document.getElementById("adminResultatsEquipe")?.value;
+
+  if (equipe) {
+    await chargerEvenementsResultatsAdmin(equipe);
   }
 }
 
