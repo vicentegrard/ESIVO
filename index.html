@@ -6810,7 +6810,11 @@ function showActualite(index) {
   window.scrollTo(0, 0);
 }
 
-function selectTeam(equipe) {
+async function selectTeam(equipe) {
+  if (!Array.isArray(window.calendriersFirebase)) {
+    await chargerCalendriersFirebase();
+  }
+
   const page = document.querySelector(".page-title h2").textContent;
   const contenu = document.getElementById("teamContent");
 
@@ -7583,21 +7587,26 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
 
   } else if (page === "Résultats") {
   
-if (equipe === "U11") {
-  const plateaux = [...plateauxU11Demo].sort(
-    (a, b) => new Date(b.date) - new Date(a.date)
-  );
+if (["U7", "U9", "U11", "U13"].includes(equipe)) {
+  const plateaux = (window.calendriersFirebase || [])
+    .filter(plateau =>
+      plateau.equipe === equipe &&
+      plateau.type === "plateau" &&
+      plateau.resultatEnregistre === true &&
+      plateau.bilanESIVO
+    )
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   contenu.innerHTML = `
     <div class="mc-results">
       <div class="mc-hero">
         <div class="mc-top">
-          <span>ESIVO · U11</span>
+          <span>ESIVO · ${equipe}</span>
           <span>SAISON 2026 / 2027</span>
         </div>
         <div class="mc-heading">
           <div>
-            <span class="mc-eyebrow">CATÉGORIE U11</span>
+            <span class="mc-eyebrow">CATÉGORIE ${equipe}</span>
             <h2>LES PLATEAUX</h2>
           </div>
         </div>
@@ -7643,17 +7652,17 @@ if (equipe === "U11") {
               </div>
 
               ${
-                plateau.bilan
+                plateau.bilanESIVO
                   ? `
                     <div class="u13-challenge-match">
   <strong class="match-win">
-    ${plateau.bilan.victoires} victoire(s)
+    ${plateau.bilanESIVO.victoires} victoire(s)
   </strong>
   <strong>
-    ${plateau.bilan.nuls} nul(s)
+    ${plateau.bilanESIVO.nuls} nul(s)
   </strong>
   <strong class="match-loss">
-    ${plateau.bilan.defaites} défaite(s)
+    ${plateau.bilanESIVO.defaites} défaite(s)
   </strong>
 </div>
                   `
@@ -7686,8 +7695,12 @@ if (equipe === "U11") {
   return;
 }
 
-  const resultats = resultatsDemo
-    .filter(resultat => resultat.equipe === equipe)
+  const resultats = (window.calendriersFirebase || [])
+    .filter(resultat =>
+      resultat.equipe === equipe &&
+      resultat.type === "match" &&
+      resultat.resultatEnregistre === true
+    )
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   if (resultats.length === 0) {
