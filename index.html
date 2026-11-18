@@ -7273,6 +7273,14 @@ function showPage(page) {
     </select>
   </div>
 
+<button
+  type="button"
+  class="btn-primary"
+  style="margin-top:15px;"
+  onclick="testerExistenceClassementFirestore()"
+>
+  Vérifier les documents Firestore
+</button>
   <div id="adminClassementListe" style="margin-top:20px;">
     <p>Sélectionne un championnat pour commencer.</p>
   </div>
@@ -9545,6 +9553,51 @@ async function testerRecuperationClassementAdmin(equipe) {
   }
 }
 
+  async function verifierExistenceClassementFirestore(equipe) {
+  if (!window.esivoDb) {
+    throw new Error("Firestore n'est pas initialisé.");
+  }
+
+  const document = await window.esivoDb
+    .collection("classements")
+    .doc(equipe)
+    .get();
+
+  return document.exists;
+}
+
+  async function testerExistenceClassementFirestore() {
+  const message = document.getElementById("adminClassementMessage");
+
+  if (!message) return;
+
+  message.textContent = "Vérification de Firestore en cours...";
+
+  const equipes = [
+    "Seniors A",
+    "Seniors B",
+    "Seniors C",
+    "Seniors Féminines à 8",
+    "Seniors Vétérans",
+    "U18",
+    "U13"
+  ];
+
+  try {
+    const resultats = [];
+
+    for (const equipe of equipes) {
+      const existe = await verifierExistenceClassementFirestore(equipe);
+      resultats.push(equipe + " : " + (existe ? "document déjà présent" : "document absent"));
+    }
+
+    message.textContent = resultats.join(" | ");
+
+  } catch (erreur) {
+    console.error("Erreur de vérification Firestore :", erreur);
+    message.textContent = "Erreur : " + erreur.message;
+  }
+}
 
   
 
