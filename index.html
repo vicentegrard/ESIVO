@@ -3258,303 +3258,150 @@ body {
 }
 
 
+
 /* =====================================
    ESIVO — GESTION DES CLASSEMENTS
 ===================================== */
 
 #adminClassementEquipe {
-  display: block;
-  width: 100%;
-  padding: 13px 15px;
-  background: #22232B;
-  color: #FEFFFE;
-  border: 1px solid #41424D;
-  border-radius: 11px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color .2s ease, box-shadow .2s ease;
-}
-
-#adminClassementEquipe:focus {
-  border-color: #AA1A24;
-  box-shadow: 0 0 0 3px rgba(170, 26, 36, .20);
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 13px 15px !important;
+  background-color: #22232B !important;
+  color: #FEFFFE !important;
+  border: 1px solid #41424D !important;
+  border-radius: 11px !important;
+  font-size: 14px !important;
+  color-scheme: dark;
 }
 
 #adminClassementEquipe option {
-  background: #22232B;
-  color: #FEFFFE;
+  background: #22232B !important;
+  color: #FEFFFE !important;
 }
 
 #adminClassementListe {
   width: 100%;
   min-width: 0;
-  color: #FEFFFE;
+  color: #FEFFFE !important;
 }
 
 #adminClassementListe h4 {
-  color: #E5BD37;
+  color: #E5BD37 !important;
   font-size: 17px;
   margin-bottom: 15px;
 }
 
 #adminClassementListe > div {
   width: 100%;
-  overflow-x: auto;
-  border: 1px solid #41424D;
+  overflow-x: auto !important;
+  border: 1px solid #41424D !important;
   border-radius: 12px;
-  background: #19191D;
-}
-
-#adminClassementListe .admin-table {
-  width: 100%;
-  min-width: 850px;
-  border-collapse: collapse;
-  color: #FEFFFE;
-}
-
-#adminClassementListe .admin-table th {
-  padding: 13px 9px;
-  background: #292C36;
-  color: #E5BD37;
-  font-size: 12px;
-  font-weight: 800;
-  text-align: center;
-  border-bottom: 2px solid #AA1A24;
-  white-space: nowrap;
-}
-
-#adminClassementListe .admin-table td {
-  padding: 10px 7px;
-  background: #1F2027;
-  border-bottom: 1px solid #383943;
-  text-align: center;
-  vertical-align: middle;
-}
-
-#adminClassementListe .admin-table tr:nth-child(even) td {
-  background: #252630;
-}
-
-#adminClassementListe .admin-table input,
-#adminClassementListe .admin-table select {
-  max-width: 100%;
-  box-sizing: border-box;
-  padding: 9px 7px;
-  background: #22232B;
-  color: #FEFFFE;
-  border: 1px solid #41424D;
-  border-radius: 7px;
-  font-size: 13px;
-  outline: none;
-}
-
-#adminClassementListe .admin-table input:focus,
-#adminClassementListe .admin-table select:focus {
-  border-color: #AA1A24;
-  box-shadow: 0 0 0 2px rgba(170, 26, 36, .18);
-}
-
-#adminClassementListe .admin-table select option {
-  background: #22232B;
-  color: #FEFFFE;
-}
-
-#adminClassementListe .admin-table button {
-  border-radius: 7px;
-  font-weight: 700;
-  transition: opacity .2s ease;
-}
-
-#adminClassementListe .admin-table button:hover {
-  opacity: .8;
-}
-
-#adminClassementListe > button {
-  margin: 15px 8px 0 0 !important;
-}
-
-#adminClassementMessage {
-  color: #E5BD37;
-  font-size: 13px;
-  margin-top: 12px;
-}
-
-@media (max-width: 700px) {
-  #adminClassementListe h4 {
-    font-size: 15px;
-  }
-
-  #adminClassementListe .admin-table th {
-    padding: 11px 7px;
-    font-size: 11px;
-  }
-
-  #adminClassementListe .admin-table td {
-    padding: 8px 5px;
-  }
-
-  #adminClassementListe .admin-table input,
-  #adminClassementListe .admin-table select {
-    font-size: 12px;
-  }
-
-  #adminClassementListe > button {
-    display: block;
-    width: 100%;
-    margin: 12px 0 0 !important;
-  }
-}
-
-  
-/* =====================================
-   ESIVO — GESTION DES CLASSEMENTS
-===================================== */
-
-/* Sélecteur du championnat */
-#adminClassementEquipe {
-  display: block;
-  width: 100%;
-  padding: 13px 15px;
-  background: #22232B;
-  color: #FEFFFE;
-  border: 1px solid #41424D;
-  border-radius: 11px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color .2s ease, box-shadow .2s ease;
-  box-sizing: border-box;
-}
-
-#adminClassementEquipe:focus {
-  border-color: #AA1A24;
-  box-shadow: 0 0 0 3px rgba(170, 26, 36, .20);
-}
-
-#adminClassementEquipe option {
-  background: #22232B;
-  color: #FEFFFE;
-}
-
-/* Zone générale */
-#adminClassementListe {
-  width: 100%;
-  min-width: 0;
-  color: #FEFFFE;
-}
-
-#adminClassementListe h4 {
-  color: #E5BD37;
-  font-size: 17px;
-  margin-bottom: 15px;
-}
-
-/* Conteneur du tableau */
-#adminClassementListe > div {
-  width: 100%;
-  overflow-x: auto;
-  border: 1px solid #41424D;
-  border-radius: 12px;
-  background: #19191D;
+  background: #19191D !important;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Tableau */
-#adminClassementListe .admin-table {
-  width: 100%;
-  min-width: 850px;
-  border-collapse: collapse;
-  color: #FEFFFE;
+#adminClassementListe table.admin-table {
+  width: 100% !important;
+  min-width: 850px !important;
+  border-collapse: collapse !important;
+  color: #FEFFFE !important;
+  background: #19191D !important;
 }
 
-#adminClassementListe .admin-table th {
-  padding: 13px 9px;
-  background: #292C36;
-  color: #E5BD37;
+#adminClassementListe table.admin-table th {
+  padding: 13px 9px !important;
+  background: #292C36 !important;
+  color: #E5BD37 !important;
   font-size: 12px;
   font-weight: 800;
   text-align: center;
-  border-bottom: 2px solid #AA1A24;
+  border-bottom: 2px solid #AA1A24 !important;
   white-space: nowrap;
 }
 
-#adminClassementListe .admin-table td {
-  padding: 10px 7px;
-  background: #1F2027;
-  border-bottom: 1px solid #383943;
+#adminClassementListe table.admin-table td {
+  padding: 10px 7px !important;
+  background: #1F2027 !important;
+  color: #FEFFFE !important;
+  border-bottom: 1px solid #383943 !important;
   text-align: center;
   vertical-align: middle;
 }
 
-#adminClassementListe .admin-table tr:nth-child(even) td {
-  background: #252630;
+#adminClassementListe table.admin-table tbody tr:nth-child(even) td {
+  background: #252630 !important;
 }
 
-/* Champs de saisie */
-#adminClassementListe .admin-table input,
-#adminClassementListe .admin-table select {
-  max-width: 100%;
-  box-sizing: border-box;
-  padding: 9px 7px;
-  background: #22232B;
-  color: #FEFFFE;
-  border: 1px solid #41424D;
-  border-radius: 7px;
-  font-size: 13px;
-  outline: none;
+/* Champs : fond sombre forcé */
+#adminClassementListe table.admin-table input,
+#adminClassementListe table.admin-table select {
+  box-sizing: border-box !important;
+  background: #22232B !important;
+  background-color: #22232B !important;
+  color: #FEFFFE !important;
+  border: 1px solid #555663 !important;
+  border-radius: 7px !important;
+  padding: 9px 7px !important;
+  font-size: 13px !important;
+  color-scheme: dark;
+  opacity: 1 !important;
 }
 
-#adminClassementListe .admin-table input:focus,
-#adminClassementListe .admin-table select:focus {
-  border-color: #AA1A24;
-  box-shadow: 0 0 0 2px rgba(170, 26, 36, .18);
+#adminClassementListe table.admin-table input::placeholder {
+  color: #92929D !important;
 }
 
-#adminClassementListe .admin-table select option {
-  background: #22232B;
-  color: #FEFFFE;
+#adminClassementListe table.admin-table input:focus,
+#adminClassementListe table.admin-table select:focus {
+  border-color: #AA1A24 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(170, 26, 36, .25) !important;
 }
 
-/* Boutons du tableau */
-#adminClassementListe .admin-table button {
+#adminClassementListe table.admin-table select option {
+  background: #22232B !important;
+  color: #FEFFFE !important;
+}
+
+#adminClassementListe table.admin-table button {
   border-radius: 7px;
   font-weight: 700;
-  transition: opacity .2s ease;
+  cursor: pointer;
 }
 
-#adminClassementListe .admin-table button:hover {
+#adminClassementListe table.admin-table button:hover {
   opacity: .8;
 }
 
-/* Boutons d'ajout et de sauvegarde */
 #adminClassementListe > button {
   margin: 15px 8px 0 0 !important;
 }
 
-/* Message d'information */
 #adminClassementMessage {
-  color: #E5BD37;
+  color: #E5BD37 !important;
   font-size: 13px;
   margin-top: 12px;
 }
 
-/* Adaptation mobile */
 @media (max-width: 700px) {
   #adminClassementListe h4 {
     font-size: 15px;
   }
 
-  #adminClassementListe .admin-table th {
-    padding: 11px 7px;
+  #adminClassementListe table.admin-table th {
+    padding: 11px 7px !important;
     font-size: 11px;
   }
 
-  #adminClassementListe .admin-table td {
-    padding: 8px 5px;
+  #adminClassementListe table.admin-table td {
+    padding: 8px 5px !important;
   }
 
-  #adminClassementListe .admin-table input,
-  #adminClassementListe .admin-table select {
-    font-size: 12px;
+  #adminClassementListe table.admin-table input,
+  #adminClassementListe table.admin-table select {
+    font-size: 12px !important;
   }
 
   #adminClassementListe > button {
@@ -3563,6 +3410,7 @@ body {
     margin: 12px 0 0 !important;
   }
 }
+
 
   
 /* =====================================
