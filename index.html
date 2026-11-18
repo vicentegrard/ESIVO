@@ -9640,7 +9640,7 @@ async function recupererClassementInitialAdmin(equipe) {
         position: Number(cellules[0].textContent.trim()),
         equipe: nomCellule.querySelector("span")?.textContent.trim()
           || nomCellule.textContent.trim(),
-        logo: logo ? logo.getAttribute("src") : "",
+        logo: logo ? logo.src : "",
         points: Number(cellules[2].textContent.trim()),
         joues: Number(cellules[3].textContent.trim()),
         victoires: Number(cellules[4].textContent.trim()),
