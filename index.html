@@ -5347,44 +5347,6 @@ const derniersPlateaux = ["U7", "U9", "U11", "U13"]
           </span>
         </div>
 
-        <div style="
-          display:grid;
-          grid-template-columns:repeat(4,minmax(0,1fr));
-          gap:8px;
-          text-align:center;
-          align-items:start;
-          margin:15px 0 20px;
-        ">
-          ${(plateau.equipes || []).map(equipe => `
-            <div style="
-              display:flex;
-              flex-direction:column;
-              align-items:center;
-              gap:7px;
-              min-width:0;
-            ">
-              <img
-                src="logos/${equipe.logo}"
-                alt="${equipe.nom}"
-                style="
-                  width:55px;
-                  height:55px;
-                  object-fit:contain;
-                  max-width:100%;
-                "
-              >
-
-              <strong style="
-                font-size:11px;
-                line-height:1.3;
-                overflow-wrap:anywhere;
-              ">
-                ${equipe.nom}
-              </strong>
-            </div>
-          `).join("")}
-        </div>
-
 
        ${plateau.bilanESIVO ? `
          <div style="
@@ -5416,7 +5378,9 @@ const derniersPlateaux = ["U7", "U9", "U11", "U13"]
           <strong>
             ${afficherDate(plateau.date)} · ${plateau.heure}
           </strong>
-          <span>⚽ Plateau ${plateau.equipe} · ${(plateau.equipes || []).length} équipes</span>
+          <span>
+  ⚽ ${plateau.equipe === "U13" ? "Challenge U13" : "Plateau " + plateau.equipe}
+</span>
           <span>
             📍 ${plateau.lieu} · ${plateau.ville}
           </span>
