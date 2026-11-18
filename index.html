@@ -9451,6 +9451,7 @@ ${anciens
 }
 
 
+
 async function testerRecuperationClassementAdmin(equipe) {
   const liste = document.getElementById("adminClassementListe");
   const message = document.getElementById("adminClassementMessage");
@@ -9469,14 +9470,71 @@ async function testerRecuperationClassementAdmin(equipe) {
   try {
     const classement = await recupererClassementInitialAdmin(equipe);
 
-    const noms = classement.clubs.map(club => club.equipe);
+    if (!classement.clubs || classement.clubs.length === 0) {
+      liste.textContent = "Aucun club trouvé pour ce championnat.";
+      return;
+    }
 
-    liste.textContent =
-      "Test réussi pour " + equipe + " : " +
-      classement.clubs.length + " clubs récupérés. " +
-      "Clubs : " + noms.join(", ");
+    let html = `
+      <h4 style="margin-bottom:15px;">
+        ${equipe} — ${classement.clubs.length} clubs
+      </h4>
 
-    message.textContent = "Récupération terminée. Aucune donnée n'a été modifiée.";
+      <div style="overflow-x:auto;">
+        <table class="admin-table" style="width:100%;">
+          <thead>
+            <tr>
+              <th>Position</th>
+              <th>Club</th>
+              <th>J</th>
+              <th>G</th>
+              <th>N</th>
+              <th>P</th>
+              <th>BP</th>
+              <th>BC</th>
+              <th>Diff.</th>
+              <th>Pts</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    classement.clubs.forEach((club, index) => {
+      html += `
+        <tr>
+          <td>${club.position ?? index + 1}</td>
+          <td>${club.equipe}</td>
+          <td>${club.j ?? 0}</td>
+          <td>${club.g ?? 0}</td>
+          <td>${club.n ?? 0}</td>
+          <td>${club.p ?? 0}</td>
+          <td>${club.bp ?? 0}</td>
+          <td>${club.bc ?? 0}</td>
+          <td>${club.diff ?? 0}</td>
+          <td>${club.pts ?? 0}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+
+      <button
+        type="button"
+        class="btn-primary"
+        style="margin-top:20px;"
+        disabled
+      >
+        Importer ce classement dans Firestore
+      </button>
+    `;
+
+    liste.innerHTML = html;
+
+    message.textContent =
+      "Récupération réussie. Aucune donnée n'a été modifiée.";
 
   } catch (erreur) {
     console.error("Erreur de récupération du classement :", erreur);
@@ -9484,6 +9542,7 @@ async function testerRecuperationClassementAdmin(equipe) {
     message.textContent = erreur.message;
   }
 }
+
 
   
 
