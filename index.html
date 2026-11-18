@@ -9486,21 +9486,80 @@ async function testerRecuperationClassementAdmin(equipe) {
 }
 
   
+
 async function recupererClassementInitialAdmin(equipe) {
-  const clubsInitiaux = classementsInitiauxESIVO[equipe];
+  const ancienCalendriers = window.calendriersFirebase;
+  const reinitialiserCalendriers = !Array.isArray(ancienCalendriers);
 
-  if (!Array.isArray(clubsInitiaux) || clubsInitiaux.length === 0) {
-    throw new Error("Aucun classement initial trouvé pour " + equipe);
+  const zone = document.createElement("div");
+  zone.style.display = "none";
+
+  zone.innerHTML = `
+    <div class="page-title">
+      <h2>Classements</h2>
+    </div>
+    <div id="teamContent"></div>
+  `;
+
+  document.body.insertBefore(zone, document.body.firstChild);
+
+  try {
+    if (reinitialiserCalendriers) {
+      window.calendriersFirebase = [];
+    }
+
+    await selectTeam(equipe);
+
+    const contenu = zone.querySelector("#teamContent");
+    const lignes = contenu.querySelectorAll("tbody tr");
+
+    if (!lignes.length) {
+      throw new Error("Aucune donnée trouvée pour " + equipe);
+    }
+
+    const clubs = Array.from(lignes).map(ligne => {
+      const cellules = Array.from(ligne.querySelectorAll("td"));
+      const nomCellule = cellules[1];
+      const logo = nomCellule.querySelector("img");
+
+      const club = {
+        position: Number(cellules[0].textContent.trim()),
+        equipe: nomCellule.querySelector("span")?.textContent.trim()
+          || nomCellule.textContent.trim(),
+        logo: logo ? logo.getAttribute("src") : "",
+        points: Number(cellules[2].textContent.trim()),
+        joues: Number(cellules[3].textContent.trim()),
+        victoires: Number(cellules[4].textContent.trim()),
+        nuls: Number(cellules[5].textContent.trim()),
+        defaites: Number(cellules[6].textContent.trim()),
+        forfait: Number(cellules[7].textContent.trim()),
+        butsPour: Number(cellules[8].textContent.trim()),
+        butsContre: Number(cellules[9].textContent.trim()),
+        difference: cellules[10].textContent.trim()
+      };
+
+      if (cellules[11]) {
+        club.serie = cellules[11].textContent.trim();
+      }
+
+      return club;
+    });
+
+    return {
+      equipe,
+      titre: contenu.querySelector("h3")?.textContent.trim() || equipe,
+      clubs
+    };
+
+  } finally {
+    zone.remove();
+
+    if (reinitialiserCalendriers) {
+      window.calendriersFirebase = ancienCalendriers;
+    }
   }
-
-  const clubs = JSON.parse(JSON.stringify(clubsInitiaux));
-
-  return {
-    equipe,
-    titre: equipe,
-    clubs
-  };
 }
+
 
   
   async function connecterAdmin() {
