@@ -3633,6 +3633,45 @@ body {
 </div>
   </div>
 </header>
+  <div id="notificationPanel" style="
+  display:none;
+  position:fixed;
+  top:85px;
+  right:20px;
+  width:360px;
+  max-width:calc(100vw - 30px);
+  max-height:70vh;
+  overflow-y:auto;
+  background:#19191F;
+  border:1px solid #41414B;
+  border-radius:14px;
+  padding:18px;
+  z-index:9999;
+  box-shadow:0 10px 35px rgba(0,0,0,0.45);
+  color:#fff;
+">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+    <h3 style="margin:0;">🔔 Notifications</h3>
+    <button onclick="fermerNotifications()" style="background:none; border:none; color:#aaa; font-size:22px; cursor:pointer;">×</button>
+  </div>
+
+  <button onclick="toutMarquerCommeLu()" style="
+    width:100%;
+    padding:9px;
+    margin-bottom:15px;
+    background:#292930;
+    border:1px solid #444;
+    border-radius:8px;
+    color:#E5BD37;
+    cursor:pointer;
+  ">
+    Tout marquer comme lu
+  </button>
+
+  <div id="notificationList">
+    <p style="color:#aaa; text-align:center;">Aucune notification pour le moment.</p>
+  </div>
+</div>
 
 <main id="app">
 
@@ -10618,6 +10657,25 @@ chargerCalendriersFirebase();
 afficherRencontresWeekend();
 afficherResultatsWeekend();
 
+  function ouvrirNotifications() {
+  const panneau = document.getElementById("notificationPanel");
+
+  if (panneau) {
+    panneau.style.display = "block";
+  }
+}
+
+function fermerNotifications() {
+  const panneau = document.getElementById("notificationPanel");
+
+  if (panneau) {
+    panneau.style.display = "none";
+  }
+}
+
+function toutMarquerCommeLu() {
+  // Le fonctionnement sera ajouté avec la gestion des notifications.
+}
 </script>
 
 </body>
