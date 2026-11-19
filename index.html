@@ -6962,6 +6962,54 @@ async function annulerModificationResultatAdmin() {
 }
 
   
+async function synchroniserNotificationResultat(id) {
+  const matchRef = window.esivoDb.collection("matchs").doc(id);
+  const matchDoc = await matchRef.get();
+
+  if (!matchDoc.exists) return;
+
+  const match = matchDoc.data();
+
+  if (
+    match.type !== "match" ||
+    match.resultatEnregistre !== true
+  ) return;
+
+  const notificationId = "resultat_" + id;
+
+  const notificationRef = window.esivoDb
+    .collection("notifications")
+    .doc(notificationId);
+
+  const notificationExistante = await notificationRef.get();
+
+  const date = match.date
+    ? new Date(match.date + "T00:00:00").toLocaleDateString("fr-FR")
+    : "";
+
+  const donneesNotification = {
+    titre: "Résultat – " + match.equipe,
+    message:
+      "ESIVO " + match.butsESIVO +
+      " - " + (match.adversaire || "Adversaire") +
+      " " + match.butsAdversaire +
+      (date ? " | " + date : ""),
+    categorie: "Résultats",
+    publie: true,
+    typeAutomatique: "resultat",
+    matchId: id,
+    dateModification: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  if (!notificationExistante.exists) {
+    donneesNotification.dateCreation =
+      firebase.firestore.FieldValue.serverTimestamp();
+  }
+
+  await notificationRef.set(donneesNotification, { merge: true });
+}
+
+  
 async function enregistrerResultatAdmin(id, type) {
   const message = document.getElementById("adminResultatsMessage");
   const utilisateur = window.esivoAuth.currentUser;
@@ -7013,10 +7061,14 @@ async function enregistrerResultatAdmin(id, type) {
   }
 
   try {
-    await window.esivoDb
+        await window.esivoDb
       .collection("matchs")
       .doc(id)
       .update(donnees);
+
+    if (type === "match") {
+      await synchroniserNotificationResultat(id);
+    }
 
     message.textContent = "Résultat enregistré avec succès !";
 
