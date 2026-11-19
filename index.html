@@ -10829,7 +10829,12 @@ let notificationsESIVO = [];
     });
 
     return {
-  id: `jour_match_${dateDuJour}_${equipe.replace(/[^a-zA-Z0-9]/g, "_")}`,
+  id: `jour_match_${dateDuJour}_${equipe.replace(/[^a-zA-Z0-9]/g, "_")}_${evenements.map(e => [
+  e.type,
+  e.heure,
+  e.adversaire || e.organisateur || "",
+  e.lieu || ""
+].join("_")).join("__").replace(/[^a-zA-Z0-9]/g, "_")}`,
   titre: `Jour de match – ${equipe}`,
   message: details.join(" • "),
   evenements: evenements.map(evenement => {
@@ -10982,8 +10987,16 @@ contenu.appendChild(message);
   `;
 
   const logo = document.createElement("img");
-  logo.src = evenement.logo || "";
-  logo.alt = "";
+
+const cheminLogo = evenement.logo || "";
+
+logo.src = cheminLogo
+  ? (cheminLogo.startsWith("http")
+      ? cheminLogo
+      : "logos/" + cheminLogo.replace(/^logos\//, ""))
+  : "";
+
+logo.alt = "";
   logo.style.cssText = `
     width:30px;
     height:30px;
