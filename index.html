@@ -10901,7 +10901,15 @@ async function enregistrerNotificationAdmin() {
   const message = document.getElementById("adminNotificationMessage")?.value.trim();
   const categorie = document.getElementById("adminNotificationCategorie")?.value;
   const publie = document.getElementById("adminNotificationPublie")?.checked;
+    const etaitEnModification = Boolean(notificationEnCoursEdition);
   const retour = document.getElementById("adminNotificationMessageRetour");
+    retour.style.cssText = `
+    display: block;
+    margin-top: 15px;
+    color: #55D68B;
+    font-size: 13px;
+    font-weight: 700;
+  `;
 
   if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
     retour.textContent = "Accès refusé.";
@@ -10930,7 +10938,6 @@ async function enregistrerNotificationAdmin() {
         .doc(notificationEnCoursEdition)
         .update(donnees);
 
-      retour.textContent = "Notification modifiée avec succès.";
     } else {
       await window.esivoDb
         .collection("notifications")
@@ -10939,7 +10946,6 @@ async function enregistrerNotificationAdmin() {
           dateCreation: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-      retour.textContent = "Notification enregistrée avec succès.";
     }
 
     notificationEnCoursEdition = null;
@@ -10956,6 +10962,10 @@ async function enregistrerNotificationAdmin() {
     if (bouton) bouton.textContent = "Publier la notification";
 
     await chargerNotificationsAdmin();
+
+    retour.textContent = etaitEnModification
+      ? "Notification modifiée avec succès."
+      : "Notification enregistrée avec succès.";
 
   } catch (erreur) {
     console.error("Erreur notification :", erreur);
