@@ -10686,6 +10686,9 @@ async function chargerCalendriersFirebase() {
 }));
 
     window.calendriersFirebase = documents;
+    
+    genererNotificationsJourMatch();
+    afficherNotifications();
 
     const equipesCalendriers = {
       "U7": u7Calendrier,
@@ -10784,6 +10787,58 @@ function fermerNotifications() {
 
 
 let notificationsESIVO = [];
+  let notificationsJourMatchLocales = [];
+  function genererNotificationsJourMatch() {
+  const calendrier = window.calendriersFirebase || [];
+
+  const maintenant = new Date();
+  const annee = maintenant.getFullYear();
+  const mois = String(maintenant.getMonth() + 1).padStart(2, "0");
+  const jour = String(maintenant.getDate()).padStart(2, "0");
+  const dateDuJour = `${annee}-${mois}-${jour}`;
+
+  const evenementsDuJour = calendrier.filter(evenement =>
+    evenement.date === dateDuJour &&
+    (
+      (evenement.type === "match" && evenement.resultatEnregistre !== true) ||
+      evenement.type === "plateau"
+    )
+  );
+
+  const equipes = {};
+
+  evenementsDuJour.forEach(evenement => {
+    const equipe = evenement.equipe || "ESIVO";
+
+    if (!equipes[equipe]) {
+      equipes[equipe] = [];
+    }
+
+    equipes[equipe].push(evenement);
+  });
+
+  notificationsJourMatchLocales = Object.entries(equipes).map(([equipe, evenements]) => {
+    const details = evenements.map(evenement => {
+      const heure = evenement.heure ? ` à ${evenement.heure}` : "";
+
+      if (evenement.type === "plateau") {
+        return `Plateau${evenement.organisateur ? " organisé par " + evenement.organisateur : ""}${heure}`;
+      }
+
+      return `Match contre ${evenement.adversaire || "un adversaire"}${heure}`;
+    });
+
+    return {
+      id: `jour_match_${dateDuJour}_${equipe.replace(/[^a-zA-Z0-9]/g, "_")}`,
+      titre: `Jour de match – ${equipe}`,
+      message: details.join(" • "),
+      publie: true,
+      dateJour: dateDuJour,
+      dateCreation: Date.now(),
+      typeAutomatique: "jour_match"
+    };
+  });
+}
 
 const NOTIFICATIONS_LUES_KEY = "esivo_notifications_lues";
 
@@ -10826,9 +10881,21 @@ function afficherNotifications() {
 
   const lues = recupererNotificationsLues();
 
-  const notifications = notificationsESIVO.filter(notification =>
-    notification.publie !== false
-  );
+  const notifications = [
+  ...notificationsESIVO,
+  ...notificationsJourMatchLocales
+].filter(notification =>
+  notification.publie !== false &&
+  (
+    notification.typeAutomatique !== "jour_match" ||
+    notification.dateJour ===
+      `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`
+  )
+).sort((a, b) => {
+  const dateA = a.dateCreation?.toMillis?.() || Number(a.dateCreation) || 0;
+  const dateB = b.dateCreation?.toMillis?.() || Number(b.dateCreation) || 0;
+  return dateB - dateA;
+});
 
   const nonLues = notifications.filter(notification =>
     !lues.includes(notification.id)
@@ -10890,9 +10957,15 @@ function afficherNotifications() {
 }
 
 function toutMarquerCommeLu() {
-  const ids = notificationsESIVO
+  const ids = [
+  ...notificationsESIVO
     .filter(notification => notification.publie !== false)
-    .map(notification => notification.id);
+    .map(notification => notification.id),
+
+  ...notificationsJourMatchLocales
+    .filter(notification => notification.publie !== false)
+    .map(notification => notification.id)
+];
 
   enregistrerNotificationsLues([
     ...new Set([...recupererNotificationsLues(), ...ids])
