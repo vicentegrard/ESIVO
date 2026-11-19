@@ -10673,9 +10673,127 @@ function fermerNotifications() {
   }
 }
 
-function toutMarquerCommeLu() {
-  // Le fonctionnement sera ajouté avec la gestion des notifications.
+
+let notificationsESIVO = [];
+
+const NOTIFICATIONS_LUES_KEY = "esivo_notifications_lues";
+
+function recupererNotificationsLues() {
+  try {
+    return JSON.parse(localStorage.getItem(NOTIFICATIONS_LUES_KEY)) || [];
+  } catch {
+    return [];
+  }
 }
+
+function enregistrerNotificationsLues(ids) {
+  localStorage.setItem(NOTIFICATIONS_LUES_KEY, JSON.stringify(ids));
+}
+
+function chargerNotifications() {
+  window.esivoDb.collection("notifications").onSnapshot(snapshot => {
+    notificationsESIVO = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    notificationsESIVO.sort((a, b) => {
+      const dateA = a.dateCreation?.toMillis?.() || 0;
+      const dateB = b.dateCreation?.toMillis?.() || 0;
+      return dateB - dateA;
+    });
+
+    afficherNotifications();
+  }, erreur => {
+    console.error("Erreur de chargement des notifications :", erreur);
+  });
+}
+
+function afficherNotifications() {
+  const liste = document.getElementById("notificationList");
+  const badge = document.getElementById("notificationBadge");
+
+  if (!liste || !badge) return;
+
+  const lues = recupererNotificationsLues();
+
+  const notifications = notificationsESIVO.filter(notification =>
+    notification.publie !== false
+  );
+
+  const nonLues = notifications.filter(notification =>
+    !lues.includes(notification.id)
+  );
+
+  badge.textContent = nonLues.length;
+  badge.style.display = nonLues.length > 0 ? "flex" : "none";
+
+  liste.innerHTML = "";
+
+  if (notifications.length === 0) {
+    liste.innerHTML = '<p style="color:#aaa;text-align:center;">Aucune notification pour le moment.</p>';
+    return;
+  }
+
+  notifications.forEach(notification => {
+    const estLue = lues.includes(notification.id);
+    const carte = document.createElement("div");
+
+    carte.style.cssText = `
+      padding:12px;
+      margin-bottom:10px;
+      border-radius:9px;
+      background:${estLue ? "#202027" : "#302329"};
+      border:1px solid ${estLue ? "#383840" : "#AA1A24"};
+      cursor:pointer;
+    `;
+
+    const titre = document.createElement("strong");
+    titre.textContent = notification.titre || "Notification ESIVO";
+    titre.style.display = "block";
+    titre.style.marginBottom = "6px";
+    titre.style.color = estLue ? "#bbb" : "#fff";
+
+    const message = document.createElement("p");
+    message.textContent = notification.message || "";
+    message.style.cssText = "margin:0;color:#ccc;font-size:13px;";
+
+    const statut = document.createElement("small");
+    statut.textContent = estLue ? "Lue" : "Non lue";
+    statut.style.cssText = `
+      display:block;
+      margin-top:8px;
+      color:${estLue ? "#888" : "#E5BD37"};
+      font-size:11px;
+    `;
+
+    carte.append(titre, message, statut);
+
+    carte.onclick = () => {
+      if (!estLue) {
+        enregistrerNotificationsLues([...lues, notification.id]);
+        afficherNotifications();
+      }
+    };
+
+    liste.appendChild(carte);
+  });
+}
+
+function toutMarquerCommeLu() {
+  const ids = notificationsESIVO
+    .filter(notification => notification.publie !== false)
+    .map(notification => notification.id);
+
+  enregistrerNotificationsLues([
+    ...new Set([...recupererNotificationsLues(), ...ids])
+  ]);
+
+  afficherNotifications();
+}
+
+chargerNotifications();
+
 </script>
 
 </body>
