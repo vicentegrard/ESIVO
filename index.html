@@ -3618,7 +3618,19 @@ body {
         <p>Entente Sportive Intercommunale Vallée de l'Orne</p>
       </div>
     </div>
-    <div class="header-label">OFFICIEL</div>
+    <div style="display:flex; align-items:center; gap:12px;">
+  <button id="notificationBell"
+          onclick="ouvrirNotifications()"
+          aria-label="Ouvrir les notifications"
+          style="position:relative; background:#292930; border:1px solid #555; color:#fff; border-radius:50%; width:42px; height:42px; font-size:20px; cursor:pointer;">
+    🔔
+    <span id="notificationBadge"
+          style="display:none; position:absolute; top:-5px; right:-5px; background:#AA1A24; color:white; border-radius:50%; min-width:18px; height:18px; font-size:11px; font-weight:bold; align-items:center; justify-content:center; padding:0 3px;">
+      0
+    </span>
+  </button>
+  <div class="header-label">OFFICIEL</div>
+</div>
   </div>
 </header>
 
@@ -3716,12 +3728,6 @@ body {
       <span class="emoji">📞</span>
       <strong>Contacts</strong>
       <small>Les responsables</small>
-    </button>
-
-    <button class="quick-card" onclick="showPage('Notifications')">
-      <span class="emoji">🔔</span>
-      <strong>Notifications</strong>
-      <small>Les informations</small>
     </button>
 
     <button class="quick-card" onclick="showPage('Administration')">
