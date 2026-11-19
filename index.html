@@ -10958,6 +10958,16 @@ titre.style.cssText = `
 `;
 
 contenu.appendChild(titre);
+    const message = document.createElement("p");
+message.textContent = notification.message || "";
+message.style.cssText = `
+  margin:0;
+  color:#ccc;
+  font-size:12px;
+  overflow-wrap:anywhere;
+`;
+
+contenu.appendChild(message);
 
 (notification.evenements || []).forEach(evenement => {
   const ligne = document.createElement("div");
