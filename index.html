@@ -10829,14 +10829,30 @@ let notificationsESIVO = [];
     });
 
     return {
-      id: `jour_match_${dateDuJour}_${equipe.replace(/[^a-zA-Z0-9]/g, "_")}`,
-      titre: `Jour de match – ${equipe}`,
-      message: details.join(" • "),
-      publie: true,
-      dateJour: dateDuJour,
-      dateCreation: Date.now(),
-      typeAutomatique: "jour_match"
+  id: `jour_match_${dateDuJour}_${equipe.replace(/[^a-zA-Z0-9]/g, "_")}`,
+  titre: `Jour de match – ${equipe}`,
+  message: details.join(" • "),
+  evenements: evenements.map(evenement => {
+    const equipeOrganisatrice = (evenement.equipes || []).find(formation =>
+      formation.nom === evenement.organisateur ||
+      formation.nom.startsWith((evenement.organisateur || "") + " ")
+    );
+
+    return {
+      type: evenement.type,
+      adversaire: evenement.adversaire || evenement.organisateur || "Plateau",
+      logo: evenement.logo || equipeOrganisatrice?.logo || "",
+      heure: evenement.heure || "",
+      lieu: evenement.lieu || "",
+      ville: evenement.ville || "",
+      domicile: evenement.domicile
     };
+  }),
+  publie: true,
+  dateJour: dateDuJour,
+  dateCreation: Date.now(),
+  typeAutomatique: "jour_match"
+};
   });
 }
 
@@ -10924,15 +10940,83 @@ function afficherNotifications() {
       cursor:pointer;
     `;
 
-    const titre = document.createElement("strong");
-    titre.textContent = notification.titre || "Notification ESIVO";
-    titre.style.display = "block";
-    titre.style.marginBottom = "6px";
-    titre.style.color = estLue ? "#bbb" : "#fff";
+    const contenu = document.createElement("div");
+contenu.style.cssText = `
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-width:0;
+`;
 
-    const message = document.createElement("p");
-    message.textContent = notification.message || "";
-    message.style.cssText = "margin:0;color:#ccc;font-size:13px;";
+const titre = document.createElement("strong");
+titre.textContent = notification.titre || "Notification ESIVO";
+titre.style.cssText = `
+  display:block;
+  color:${estLue ? "#bbb" : "#fff"};
+  font-size:14px;
+  overflow-wrap:anywhere;
+`;
+
+contenu.appendChild(titre);
+
+(notification.evenements || []).forEach(evenement => {
+  const ligne = document.createElement("div");
+  ligne.style.cssText = `
+    display:flex;
+    align-items:center;
+    gap:9px;
+    min-width:0;
+    padding:7px;
+    border-radius:7px;
+    background:#202027;
+  `;
+
+  const logo = document.createElement("img");
+  logo.src = evenement.logo || "";
+  logo.alt = "";
+  logo.style.cssText = `
+    width:30px;
+    height:30px;
+    object-fit:contain;
+    flex-shrink:0;
+    ${logo.src ? "" : "display:none;"}
+  `;
+
+  const texte = document.createElement("div");
+  texte.style.cssText = "flex:1;min-width:0;";
+
+  const adversaire = document.createElement("strong");
+  adversaire.textContent = evenement.type === "plateau"
+    ? `Plateau${evenement.adversaire && evenement.adversaire !== "Plateau" ? " – " + evenement.adversaire : ""}`
+    : `Match contre ${evenement.adversaire}`;
+
+  adversaire.style.cssText = `
+    display:block;
+    color:#fff;
+    font-size:12px;
+    overflow-wrap:anywhere;
+  `;
+
+  const infos = [
+    evenement.heure,
+    [evenement.lieu, evenement.ville].filter(Boolean).join(", ")
+  ].filter(Boolean);
+
+  const details = document.createElement("p");
+  details.textContent = infos.join(" • ");
+  details.style.cssText = `
+    margin:4px 0 0;
+    color:#E5BD37;
+    font-size:11px;
+    overflow-wrap:anywhere;
+  `;
+
+  texte.append(adversaire);
+  if (infos.length) texte.appendChild(details);
+
+  ligne.append(logo, texte);
+  contenu.appendChild(ligne);
+});
 
     const statut = document.createElement("small");
     statut.textContent = estLue ? "Lue" : "Non lue";
@@ -10943,7 +11027,7 @@ function afficherNotifications() {
       font-size:11px;
     `;
 
-    carte.append(titre, message, statut);
+    carte.append(contenu, statut);
 
     carte.onclick = () => {
       if (!estLue) {
