@@ -6988,18 +6988,26 @@ async function synchroniserNotificationResultat(id) {
     : "";
 
   const donneesNotification = {
-    titre: "Résultat – " + match.equipe,
-    message:
-      "ESIVO " + match.butsESIVO +
-      " - " + (match.adversaire || "Adversaire") +
-      " " + match.butsAdversaire +
-      (date ? " | " + date : ""),
-    categorie: "Résultats",
-    publie: true,
-    typeAutomatique: "resultat",
-    matchId: id,
-    dateModification: firebase.firestore.FieldValue.serverTimestamp()
-  };
+  titre: "Résultat – " + match.equipe,
+  message: "",
+  categorie: "Résultats",
+  publie: true,
+  typeAutomatique: "resultat",
+  matchId: id,
+  equipe: match.equipe,
+  adversaire: match.adversaire || "Adversaire",
+  logoAdversaire: match.logo || "",
+  butsESIVO: match.butsESIVO,
+  butsAdversaire: match.butsAdversaire,
+  statutResultat:
+    match.butsESIVO > match.butsAdversaire
+      ? "Victoire"
+      : match.butsESIVO < match.butsAdversaire
+        ? "Défaite"
+        : "Match nul",
+  dateMatch: date,
+  dateModification: firebase.firestore.FieldValue.serverTimestamp()
+};
 
   if (!notificationExistante.exists) {
     donneesNotification.dateCreation =
@@ -10977,8 +10985,86 @@ message.style.cssText = `
   overflow-wrap:anywhere;
 `;
 
-contenu.appendChild(message);
+if (notification.message) {
+  contenu.appendChild(message);
+}
 
+// Affichage spécifique des notifications de résultats
+if (notification.typeAutomatique === "resultat") {
+  const resultat = document.createElement("div");
+
+  resultat.style.cssText = `
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    border-radius:9px;
+    background:linear-gradient(135deg, #19191F, #25232A);
+    border:1px solid #383840;
+  `;
+
+  const logoAdverse = document.createElement("img");
+  const cheminLogo = notification.logoAdversaire || "";
+
+  logoAdverse.src = cheminLogo
+    ? (cheminLogo.startsWith("http")
+        ? cheminLogo
+        : "logos/" + cheminLogo.replace(/^logos\//, ""))
+    : "";
+
+  logoAdverse.alt = "";
+  logoAdverse.style.cssText = `
+    width:42px;
+    height:42px;
+    object-fit:contain;
+    padding:3px;
+    border-radius:7px;
+    background:#FFFFFF;
+    flex-shrink:0;
+    ${logoAdverse.src ? "" : "display:none;"}
+  `;
+
+  const informations = document.createElement("div");
+  informations.style.cssText = `
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    min-width:0;
+  `;
+
+  const statut = document.createElement("strong");
+  statut.textContent = notification.statutResultat;
+
+  const couleurStatut =
+    notification.statutResultat === "Victoire"
+      ? "#16C784"
+      : notification.statutResultat === "Défaite"
+        ? "#F04444"
+        : "#E5BD37";
+
+  statut.style.cssText = `
+    color:${couleurStatut};
+    font-size:13px;
+    font-weight:800;
+    text-transform:uppercase;
+  `;
+
+  const score = document.createElement("strong");
+  score.textContent =
+    `${notification.butsESIVO} – ${notification.butsAdversaire}`;
+
+  score.style.cssText = `
+    color:${couleurStatut};
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:1px;
+  `;
+
+  informations.append(statut, score);
+  resultat.append(logoAdverse, informations);
+  contenu.appendChild(resultat);
+}
+    
 (notification.evenements || []).forEach(evenement => {
     const ligne = document.createElement("div");
   ligne.style.cssText = `
