@@ -7588,10 +7588,61 @@ function showPage(page) {
           <p>Ajouter et modifier les événements du club.</p>
         </div>
 
-        <div class="content-card">
-          <h3>🔔 Gestion des notifications</h3>
-          <p>Préparer les annonces importantes destinées aux membres.</p>
-        </div>
+        
+<div class="content-card" style="margin-top:20px;">
+  <h3>🔔 Gestion des notifications</h3>
+  <p>Créer et gérer les annonces destinées aux membres de l'ESIVO.</p>
+
+  <div class="form-group">
+    <label for="adminNotificationTitre">Titre de la notification</label>
+    <input
+      type="text"
+      id="adminNotificationTitre"
+      placeholder="Ex : Information importante"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="adminNotificationMessage">Message</label>
+    <textarea
+      id="adminNotificationMessage"
+      rows="4"
+      placeholder="Rédige ton message..."
+    ></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="adminNotificationCategorie">Catégorie</label>
+    <select id="adminNotificationCategorie">
+      <option value="Vie du club">Vie du club</option>
+      <option value="Information importante">Information importante</option>
+      <option value="Vie sportive">Vie sportive</option>
+      <option value="Événement">Événement</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>
+      <input type="checkbox" id="adminNotificationPublie" checked>
+      Publier immédiatement
+    </label>
+  </div>
+
+  <button
+    type="button"
+    class="btn-primary"
+    onclick="enregistrerNotificationAdmin()"
+  >
+    Publier la notification
+  </button>
+
+  <p id="adminNotificationMessageRetour"></p>
+
+  <div id="adminNotificationsListe" style="margin-top:25px;">
+    <p>Chargement des notifications...</p>
+  </div>
+</div>
+
       `;
     } else {
       html += `
@@ -10792,6 +10843,48 @@ function toutMarquerCommeLu() {
   afficherNotifications();
 }
 
+  async function enregistrerNotificationAdmin() {
+  const titre = document.getElementById("adminNotificationTitre")?.value.trim();
+  const message = document.getElementById("adminNotificationMessage")?.value.trim();
+  const categorie = document.getElementById("adminNotificationCategorie")?.value;
+  const publie = document.getElementById("adminNotificationPublie")?.checked;
+  const retour = document.getElementById("adminNotificationMessageRetour");
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    retour.textContent = "Accès refusé.";
+    return;
+  }
+
+  if (!titre || !message) {
+    retour.textContent = "Merci de renseigner le titre et le message.";
+    return;
+  }
+
+  retour.textContent = "Enregistrement en cours...";
+
+  try {
+    await window.esivoDb.collection("notifications").add({
+      titre: titre,
+      message: message,
+      categorie: categorie,
+      publie: publie,
+      dateCreation: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    document.getElementById("adminNotificationTitre").value = "";
+    document.getElementById("adminNotificationMessage").value = "";
+    document.getElementById("adminNotificationCategorie").value = "Vie du club";
+    document.getElementById("adminNotificationPublie").checked = true;
+
+    retour.textContent = "Notification enregistrée avec succès !";
+
+  } catch (erreur) {
+    console.error("Erreur d'enregistrement de la notification :", erreur);
+    retour.textContent = "Erreur lors de l'enregistrement : " + erreur.message;
+  }
+}
 chargerNotifications();
 
 </script>
