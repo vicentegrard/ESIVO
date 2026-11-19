@@ -7680,6 +7680,12 @@ function showPage(page) {
   }
 
   app.innerHTML = html;
+  if (
+  page === "Administration" &&
+  window.esivoAuth.currentUser?.uid === ADMIN_UID
+) {
+  chargerNotificationsAdmin();
+}
     const galleryFilters = document.querySelectorAll(".gallery-filter");
   const galleryCards = document.querySelectorAll(".gallery-grid .content-card");
 
@@ -10886,6 +10892,244 @@ function toutMarquerCommeLu() {
   }
 }
 chargerNotifications();
+  
+let notificationEnCoursEdition = null;
+
+async function enregistrerNotificationAdmin() {
+  const utilisateur = window.esivoAuth.currentUser;
+  const titre = document.getElementById("adminNotificationTitre")?.value.trim();
+  const message = document.getElementById("adminNotificationMessage")?.value.trim();
+  const categorie = document.getElementById("adminNotificationCategorie")?.value;
+  const publie = document.getElementById("adminNotificationPublie")?.checked;
+  const retour = document.getElementById("adminNotificationMessageRetour");
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    retour.textContent = "Accès refusé.";
+    return;
+  }
+
+  if (!titre || !message) {
+    retour.textContent = "Merci de renseigner le titre et le message.";
+    return;
+  }
+
+  retour.textContent = "Enregistrement en cours...";
+
+  const donnees = {
+    titre,
+    message,
+    categorie,
+    publie,
+    dateModification: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    if (notificationEnCoursEdition) {
+      await window.esivoDb
+        .collection("notifications")
+        .doc(notificationEnCoursEdition)
+        .update(donnees);
+
+      retour.textContent = "Notification modifiée avec succès.";
+    } else {
+      await window.esivoDb
+        .collection("notifications")
+        .add({
+          ...donnees,
+          dateCreation: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+      retour.textContent = "Notification enregistrée avec succès.";
+    }
+
+    notificationEnCoursEdition = null;
+
+    document.getElementById("adminNotificationTitre").value = "";
+    document.getElementById("adminNotificationMessage").value = "";
+    document.getElementById("adminNotificationCategorie").value = "Vie du club";
+    document.getElementById("adminNotificationPublie").checked = true;
+
+    const bouton = document.querySelector(
+      'button[onclick="enregistrerNotificationAdmin()"]'
+    );
+
+    if (bouton) bouton.textContent = "Publier la notification";
+
+    await chargerNotificationsAdmin();
+
+  } catch (erreur) {
+    console.error("Erreur notification :", erreur);
+    retour.textContent = "Erreur lors de l'enregistrement.";
+  }
+}
+
+
+async function chargerNotificationsAdmin() {
+  const liste = document.getElementById("adminNotificationsListe");
+  if (!liste) return;
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    liste.textContent = "Accès refusé.";
+    return;
+  }
+
+  liste.textContent = "Chargement des notifications...";
+
+  try {
+    const snapshot = await window.esivoDb
+      .collection("notifications")
+      .get();
+
+    const notifications = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    notifications.sort((a, b) =>
+      (b.dateCreation?.toMillis?.() || 0) -
+      (a.dateCreation?.toMillis?.() || 0)
+    );
+
+    liste.innerHTML = "";
+
+    if (notifications.length === 0) {
+      liste.textContent = "Aucune notification enregistrée.";
+      return;
+    }
+
+    notifications.forEach(notification => {
+      const carte = document.createElement("div");
+      carte.style.cssText = `
+        background:#22232B;
+        border:1px solid #41424D;
+        border-radius:10px;
+        padding:15px;
+        margin-bottom:12px;
+      `;
+
+      const titre = document.createElement("strong");
+      titre.textContent = notification.titre || "Sans titre";
+      titre.style.cssText = "display:block;color:#fff;margin-bottom:7px;";
+
+      const categorie = document.createElement("small");
+      categorie.textContent = notification.categorie || "Sans catégorie";
+      categorie.style.color = "#E5BD37";
+
+      const message = document.createElement("p");
+      message.textContent = notification.message || "";
+      message.style.cssText = "color:#ccc;font-size:13px;";
+
+      const statut = document.createElement("p");
+      statut.textContent = notification.publie === false
+        ? "Brouillon — non publiée"
+        : "Publiée";
+      statut.style.color = notification.publie === false ? "#E5BD37" : "#55D68B";
+
+      const actions = document.createElement("div");
+      actions.style.cssText = "display:flex;flex-wrap:wrap;gap:8px;";
+
+      const boutonModifier = document.createElement("button");
+      boutonModifier.type = "button";
+      boutonModifier.textContent = "Modifier";
+      boutonModifier.onclick = () => modifierNotificationAdmin(notification.id);
+
+      const boutonPublication = document.createElement("button");
+      boutonPublication.type = "button";
+      boutonPublication.textContent = notification.publie === false
+        ? "Publier"
+        : "Dépublier";
+      boutonPublication.onclick = () =>
+        changerPublicationNotification(notification.id, notification.publie !== false);
+
+      const boutonSupprimer = document.createElement("button");
+      boutonSupprimer.type = "button";
+      boutonSupprimer.textContent = "Supprimer";
+      boutonSupprimer.style.color = "#E56B73";
+      boutonSupprimer.onclick = () => supprimerNotificationAdmin(notification.id);
+
+      actions.append(boutonModifier, boutonPublication, boutonSupprimer);
+      carte.append(titre, categorie, message, statut, actions);
+      liste.appendChild(carte);
+    });
+
+  } catch (erreur) {
+    console.error("Erreur de chargement :", erreur);
+    liste.textContent = "Impossible de charger les notifications.";
+  }
+}
+
+
+function modifierNotificationAdmin(id) {
+  const notification = notificationsESIVO.find(item => item.id === id);
+
+  if (!notification) {
+    alert("Notification introuvable.");
+    return;
+  }
+
+  notificationEnCoursEdition = id;
+
+  document.getElementById("adminNotificationTitre").value = notification.titre || "";
+  document.getElementById("adminNotificationMessage").value = notification.message || "";
+  document.getElementById("adminNotificationCategorie").value =
+    notification.categorie || "Vie du club";
+  document.getElementById("adminNotificationPublie").checked =
+    notification.publie !== false;
+
+  const bouton = document.querySelector(
+    'button[onclick="enregistrerNotificationAdmin()"]'
+  );
+
+  if (bouton) bouton.textContent = "Enregistrer les modifications";
+
+  document.getElementById("adminNotificationMessageRetour").textContent =
+    "Modification en cours.";
+
+  document.getElementById("adminNotificationTitre").scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
+
+async function changerPublicationNotification(id, actuellementPubliee) {
+  try {
+    await window.esivoDb
+      .collection("notifications")
+      .doc(id)
+      .update({
+        publie: !actuellementPubliee,
+        dateModification: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+    await chargerNotificationsAdmin();
+
+  } catch (erreur) {
+    console.error("Erreur de publication :", erreur);
+    alert("Impossible de modifier la publication.");
+  }
+}
+
+
+async function supprimerNotificationAdmin(id) {
+  if (!confirm("Veux-tu vraiment supprimer cette notification ?")) return;
+
+  try {
+    await window.esivoDb
+      .collection("notifications")
+      .doc(id)
+      .delete();
+
+    await chargerNotificationsAdmin();
+
+  } catch (erreur) {
+    console.error("Erreur de suppression :", erreur);
+    alert("Impossible de supprimer cette notification.");
+  }
+}
+
 
 </script>
 
