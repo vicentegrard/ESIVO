@@ -6970,10 +6970,11 @@ async function synchroniserNotificationResultat(id) {
 
   const match = matchDoc.data();
 
-  if (
-    match.type !== "match" ||
-    match.resultatEnregistre !== true
-  ) return;
+  if (match.resultatEnregistre !== true) return;
+
+  const estPlateau = match.type === "plateau";
+
+  if (match.type !== "match" && !estPlateau) return;
 
   const notificationId = "resultat_" + id;
 
@@ -6987,27 +6988,53 @@ async function synchroniserNotificationResultat(id) {
     ? new Date(match.date + "T00:00:00").toLocaleDateString("fr-FR")
     : "";
 
+  let logoAdversaire = "";
+
+  if (estPlateau) {
+    const organisateur = (match.equipes || []).find(equipe =>
+      equipe.nom === match.organisateur ||
+      equipe.nom.startsWith((match.organisateur || "") + " ") ||
+      (match.organisateur || "").startsWith(equipe.nom + " ")
+    );
+
+    logoAdversaire = organisateur?.logo || "";
+  } else {
+    logoAdversaire = match.logo || "";
+  }
+
   const donneesNotification = {
-  titre: "Résultat – " + match.equipe,
-  message: "",
-  categorie: "Résultats",
-  publie: true,
-  typeAutomatique: "resultat",
-  matchId: id,
-  equipe: match.equipe,
-  adversaire: match.adversaire || "Adversaire",
-  logoAdversaire: match.logo || "",
-  butsESIVO: match.butsESIVO,
-  butsAdversaire: match.butsAdversaire,
-  statutResultat:
-    match.butsESIVO > match.butsAdversaire
-      ? "Victoire"
-      : match.butsESIVO < match.butsAdversaire
-        ? "Défaite"
-        : "Match nul",
-  dateMatch: date,
-  dateModification: firebase.firestore.FieldValue.serverTimestamp()
-};
+    titre: estPlateau
+      ? (match.equipe === "U13" ? "Challenge U13" : "Plateau " + match.equipe)
+      : "Résultat – " + match.equipe,
+
+    message: "",
+    categorie: "Résultats",
+    publie: true,
+    typeAutomatique: estPlateau ? "resultat_plateau" : "resultat",
+    matchId: id,
+    equipe: match.equipe,
+    logoAdversaire: logoAdversaire,
+    dateMatch: date,
+
+    ...(estPlateau ? {
+      organisateur: match.organisateur || "Organisateur",
+      victoires: match.bilanESIVO.victoires,
+      nuls: match.bilanESIVO.nuls,
+      defaites: match.bilanESIVO.defaites
+    } : {
+      adversaire: match.adversaire || "Adversaire",
+      butsESIVO: match.butsESIVO,
+      butsAdversaire: match.butsAdversaire,
+      statutResultat:
+        match.butsESIVO > match.butsAdversaire
+          ? "Victoire"
+          : match.butsESIVO < match.butsAdversaire
+            ? "Défaite"
+            : "Match nul"
+    }),
+
+    dateModification: firebase.firestore.FieldValue.serverTimestamp()
+  };
 
   if (!notificationExistante.exists) {
     donneesNotification.dateCreation =
@@ -7074,9 +7101,7 @@ async function enregistrerResultatAdmin(id, type) {
       .doc(id)
       .update(donnees);
 
-    if (type === "match") {
-      await synchroniserNotificationResultat(id);
-    }
+    await synchroniserNotificationResultat(id);
 
     message.textContent = "Résultat enregistré avec succès !";
 
@@ -10885,10 +10910,22 @@ function enregistrerNotificationsLues(ids) {
 
 function chargerNotifications() {
   window.esivoDb.collection("notifications").onSnapshot(snapshot => {
-    notificationsESIVO = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    notificationsESIVO = snapshot.docs.map(doc => {
+  const donnees = doc.data();
+
+  const estNotificationResultat =
+    donnees.typeAutomatique === "resultat" ||
+    donnees.typeAutomatique === "resultat_plateau";
+
+  const versionResultat = donnees.dateModification?.toMillis?.() || 0;
+
+  return {
+    ...donnees,
+    id: estNotificationResultat
+      ? `${doc.id}_${versionResultat}`
+      : doc.id
+  };
+});
 
     notificationsESIVO.sort((a, b) => {
       const dateA = a.dateCreation?.toMillis?.() || 0;
@@ -11062,6 +11099,75 @@ if (notification.typeAutomatique === "resultat") {
 
   informations.append(statut, score);
   resultat.append(logoAdverse, informations);
+  contenu.appendChild(resultat);
+}
+
+// Affichage spécifique des résultats de plateaux
+if (notification.typeAutomatique === "resultat_plateau") {
+  const resultat = document.createElement("div");
+
+  resultat.style.cssText = `
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    border-radius:9px;
+    background:linear-gradient(135deg, #19191F, #25232A);
+    border:1px solid #383840;
+  `;
+
+  const logoOrganisateur = document.createElement("img");
+  const cheminLogo = notification.logoAdversaire || "";
+
+  logoOrganisateur.src = cheminLogo
+    ? (cheminLogo.startsWith("http")
+        ? cheminLogo
+        : "logos/" + cheminLogo.replace(/^logos\//, ""))
+    : "";
+
+  logoOrganisateur.alt = "";
+  logoOrganisateur.style.cssText = `
+    width:42px;
+    height:42px;
+    object-fit:contain;
+    padding:3px;
+    border-radius:7px;
+    background:#FFFFFF;
+    flex-shrink:0;
+    ${logoOrganisateur.src ? "" : "display:none;"}
+  `;
+
+  const informations = document.createElement("div");
+
+  informations.style.cssText = `
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    min-width:0;
+  `;
+
+  const organisateur = document.createElement("strong");
+  organisateur.textContent = notification.organisateur || "Organisateur";
+
+  organisateur.style.cssText = `
+    color:#fff;
+    font-size:13px;
+    font-weight:800;
+  `;
+
+  const bilan = document.createElement("strong");
+  bilan.textContent =
+    `${notification.victoires} victoires, ${notification.nuls} nul${notification.nuls > 1 ? "s" : ""}, ${notification.defaites} défaite${notification.defaites > 1 ? "s" : ""}`;
+
+  bilan.style.cssText = `
+    color:#E5BD37;
+    font-size:12px;
+    font-weight:700;
+    line-height:1.5;
+  `;
+
+  informations.append(organisateur, bilan);
+  resultat.append(logoOrganisateur, informations);
   contenu.appendChild(resultat);
 }
     
