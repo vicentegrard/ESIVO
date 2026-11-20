@@ -7909,10 +7909,10 @@ function showPage(page) {
           </button>
 
         </div>
-      `;
-
-    
-<div class="content-card" style="text-align:center; padding:30px 20px;">
+            `;
+    } else {
+      html += `
+        <div class="content-card" style="text-align:center; padding:30px 20px;">
   <div style="font-size:48px; margin-bottom:15px;">👤</div>
   <h3>Ton espace personnel ESIVO</h3>
   <p style="color:#aaa; line-height:1.6; margin:12px 0 22px;">
@@ -7961,22 +7961,7 @@ function showPage(page) {
     </button>
   </div>
 
-  <p id="compteMessage" style="margin-top:18px; color:#E5BD37;"></p>
-</div>
-</escape>
-
-          <div style="font-size:48px; margin-bottom:15px;">👤</div>
-          <h3>Ton espace personnel ESIVO</h3>
-          <p style="color:#aaa; line-height:1.6; margin:12px 0 22px;">
-            Connecte-toi pour créer ton profil, participer aux discussions
-            et retrouver tes pronostics.
-          </p>
-
-          <button class="btn-primary" style="width:100%; max-width:320px;" onclick="connecterAvecGoogle()">
-            Continuer avec Google
-          </button>
-
-          <p id="compteMessage" style="margin-top:15px; color:#E5BD37;"></p>
+    <p id="compteMessage" style="margin-top:18px; color:#E5BD37;"></p>
         </div>
       `;
     }
