@@ -7832,43 +7832,85 @@ function showPage(page) {
     const utilisateur = window.esivoAuth.currentUser;
 
     if (utilisateur) {
+      
+      const pseudo = utilisateur.displayName || "Supporter ESIVO";
+      const pseudoSecurise = pseudo.replace(/[&<>"']/g, caractere => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[caractere]);
+
+      const dateInscription = utilisateur.metadata?.creationTime
+        ? new Date(utilisateur.metadata.creationTime).toLocaleDateString("fr-FR", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+          })
+        : "Date indisponible";
+
       html += `
         <div class="content-card" style="text-align:center; padding:30px 20px;">
-          <img
-  src="${utilisateur.photoURL || 'https://ui-avatars.com/api/?name=ESIVO&background=AA1A24&color=fff&size=128'}"
-  alt="Photo de profil"
-  style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:3px solid #AA1A24;"
->
-          <h3>Bienvenue sur ton espace ESIVO</h3>
-          <p style="color:#aaa; margin-top:10px;">
-  Connecté avec ${utilisateur.email || "ton compte"}.
-</p>
 
-<div style="margin-top:25px; text-align:left;">
-  <label for="pseudoCompte" style="display:block; margin-bottom:8px; font-weight:bold;">
-    Ton pseudonyme
-  </label>
+          <div style="margin-bottom:20px;">
+            <img
+              src="${utilisateur.photoURL || 'https://ui-avatars.com/api/?name=ESIVO&background=AA1A24&color=fff&size=128'}"
+              alt="Photo de profil"
+              style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #AA1A24; box-shadow:0 0 15px rgba(170,26,36,0.35);"
+            >
+          </div>
 
-  <input
-    type="text"
-    id="pseudoCompte"
-    maxlength="20"
-    value="${utilisateur.displayName || ""}"
-    placeholder="Choisis ton pseudonyme"
-    style="width:100%; padding:13px; border-radius:8px; border:1px solid #444; background:#19191D; color:white;"
-  >
+          <h2 style="font-size:24px; margin-bottom:8px;">
+            ${pseudoSecurise}
+          </h2>
 
-  <p id="pseudoMessage" style="color:#E5BD37; font-size:13px; margin-top:8px;"></p>
+          <span style="display:inline-block; background:rgba(170,26,36,0.18); color:#E5BD37; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:bold; letter-spacing:1px;">
+            MEMBRE ESIVO
+          </span>
 
-  <button class="btn-primary" style="width:100%; margin-top:12px;" onclick="enregistrerPseudo()">
-    Enregistrer mon pseudonyme
-  </button>
-</div>
-          <button class="btn-primary" style="margin-top:20px;" onclick="deconnecterCompte()">
+          <p style="color:#aaa; margin-top:18px; font-size:14px;">
+            ${utilisateur.email || "Adresse e-mail non disponible"}
+          </p>
+
+          <p style="color:#888; font-size:13px; margin-top:8px;">
+            Membre depuis le ${dateInscription}
+          </p>
+
+          <div style="margin-top:30px; text-align:left; border-top:1px solid #383943; padding-top:22px;">
+
+            <h3 style="margin-bottom:18px; color:#E5BD37;">
+              Personnaliser mon profil
+            </h3>
+
+            <label for="pseudoCompte" style="display:block; margin-bottom:8px; font-weight:bold;">
+              Ton pseudonyme
+            </label>
+
+            <input
+              type="text"
+              id="pseudoCompte"
+              maxlength="20"
+              value="${pseudoSecurise}"
+              placeholder="Choisis ton pseudonyme"
+              style="width:100%; padding:13px; border-radius:8px; border:1px solid #444; background:#19191D; color:white; box-sizing:border-box;"
+            >
+
+            <p id="pseudoMessage" style="color:#E5BD37; font-size:13px; margin-top:8px;"></p>
+
+            <button class="btn-primary" style="width:100%; margin-top:12px;" onclick="enregistrerPseudo()">
+              Enregistrer mon pseudonyme
+            </button>
+
+          </div>
+
+          <button class="btn-primary" style="margin-top:25px; width:100%; background:#383943;" onclick="deconnecterCompte()">
             Se déconnecter
           </button>
+
         </div>
       `;
+
     } else {
       html += `
         <div class="content-card" style="text-align:center; padding:30px 20px;">
