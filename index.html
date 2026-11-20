@@ -3603,6 +3603,99 @@ body {
     margin: 12px 0 0 !important;
   }
 }
+
+/* =====================================
+   GESTION DES NOTIFICATIONS — ESIVO
+===================================== */
+
+#adminNotificationTitre,
+#adminNotificationMessage,
+#adminNotificationCategorie {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  box-sizing: border-box;
+  margin-top: 8px;
+  padding: 12px 14px;
+
+  background: #19191F;
+  color: #FFFFFF;
+
+  border: 1px solid #41424D;
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#adminNotificationTitre::placeholder,
+#adminNotificationMessage::placeholder {
+  color: #92929D;
+}
+
+#adminNotificationTitre:focus,
+#adminNotificationMessage:focus,
+#adminNotificationCategorie:focus {
+  outline: none;
+  border-color: #AA1A24;
+  box-shadow: 0 0 0 2px rgba(170, 26, 36, 0.2);
+}
+
+#adminNotificationMessage {
+  min-height: 120px;
+  resize: vertical;
+}
+
+#adminNotificationCategorie {
+  cursor: pointer;
+}
+
+#adminNotificationCategorie option {
+  background: #19191F;
+  color: #FFFFFF;
+}
+
+#adminNotificationPublie {
+  accent-color: #AA1A24;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+button[onclick="enregistrerNotificationAdmin()"] {
+  margin-top: 14px;
+  padding: 11px 18px;
+  background: #AA1A24;
+  color: #FFFFFF;
+  border: 1px solid #AA1A24;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+button[onclick="enregistrerNotificationAdmin()"]:hover {
+  background: #87151D;
+  transform: translateY(-1px);
+}
+
+/* Adaptation mobile */
+@media (max-width: 600px) {
+  #adminNotificationTitre,
+  #adminNotificationMessage,
+  #adminNotificationCategorie {
+    width: 100%;
+    max-width: 100%;
+    font-size: 14px;
+  }
+
+  button[onclick="enregistrerNotificationAdmin()"] {
+    width: 100%;
+    padding: 13px;
+  }
+}
   
 </style>
 </head>
