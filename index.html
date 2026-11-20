@@ -10812,6 +10812,11 @@ async function deconnecterAdmin() {
   showPage("Administration");
 }
 
+  async function deconnecterCompte() {
+  await window.esivoAuth.signOut();
+  showPage("Mon compte");
+}
+
   
 async function connecterAvecGoogle() {
   const message = document.getElementById("compteMessage");
