@@ -11046,8 +11046,8 @@ async function connecterAvecEmail() {
         erreur.code === "auth/wrong-password" ||
         erreur.code === "auth/invalid-credential") {
       message.textContent = "Adresse e-mail ou mot de passe incorrect.";
-    } else {
-      message.textContent = "Impossible de te connecter. Réessaie.";
+        } else {
+      message.textContent = "Erreur : " + erreur.code;
     }
   }
 }
