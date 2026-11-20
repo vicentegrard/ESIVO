@@ -7834,7 +7834,11 @@ function showPage(page) {
     if (utilisateur) {
       html += `
         <div class="content-card" style="text-align:center; padding:30px 20px;">
-          <div style="font-size:48px; margin-bottom:15px;">👤</div>
+          <img
+  src="${utilisateur.photoURL || 'https://ui-avatars.com/api/?name=ESIVO&background=AA1A24&color=fff&size=128'}"
+  alt="Photo de profil"
+  style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:3px solid #AA1A24;"
+>
           <h3>Bienvenue sur ton espace ESIVO</h3>
           <p style="color:#aaa; margin-top:10px;">
   Connecté avec ${utilisateur.email || "ton compte"}.
