@@ -3609,8 +3609,7 @@ body {
 ===================================== */
 
 #adminNotificationTitre,
-#adminNotificationMessage,
-#adminNotificationCategorie {
+#adminNotificationMessage {
   display: block;
   width: 100%;
   max-width: 560px;
@@ -3684,8 +3683,7 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
 /* Adaptation mobile */
 @media (max-width: 600px) {
   #adminNotificationTitre,
-  #adminNotificationMessage,
-  #adminNotificationCategorie {
+#adminNotificationMessage {
     width: 100%;
     max-width: 100%;
     font-size: 14px;
@@ -7790,16 +7788,6 @@ function showPage(page) {
   </div>
 
   <div class="form-group">
-    <label for="adminNotificationCategorie">Catégorie</label>
-    <select id="adminNotificationCategorie">
-      <option value="Vie du club">Vie du club</option>
-      <option value="Information importante">Information importante</option>
-      <option value="Vie sportive">Vie sportive</option>
-      <option value="Événement">Événement</option>
-    </select>
-  </div>
-
-  <div class="form-group">
     <label>
       <input type="checkbox" id="adminNotificationPublie" checked>
       Publier immédiatement
@@ -11386,7 +11374,6 @@ function toutMarquerCommeLu() {
   async function enregistrerNotificationAdmin() {
   const titre = document.getElementById("adminNotificationTitre")?.value.trim();
   const message = document.getElementById("adminNotificationMessage")?.value.trim();
-  const categorie = document.getElementById("adminNotificationCategorie")?.value;
   const publie = document.getElementById("adminNotificationPublie")?.checked;
   const retour = document.getElementById("adminNotificationMessageRetour");
 
@@ -11415,7 +11402,6 @@ function toutMarquerCommeLu() {
 
     document.getElementById("adminNotificationTitre").value = "";
     document.getElementById("adminNotificationMessage").value = "";
-    document.getElementById("adminNotificationCategorie").value = "Vie du club";
     document.getElementById("adminNotificationPublie").checked = true;
 
     retour.textContent = "Notification enregistrée avec succès !";
@@ -11433,7 +11419,7 @@ async function enregistrerNotificationAdmin() {
   const utilisateur = window.esivoAuth.currentUser;
   const titre = document.getElementById("adminNotificationTitre")?.value.trim();
   const message = document.getElementById("adminNotificationMessage")?.value.trim();
-  const categorie = document.getElementById("adminNotificationCategorie")?.value;
+  
   const publie = document.getElementById("adminNotificationPublie")?.checked;
     const etaitEnModification = Boolean(notificationEnCoursEdition);
   const retour = document.getElementById("adminNotificationMessageRetour");
@@ -11460,7 +11446,6 @@ async function enregistrerNotificationAdmin() {
   const donnees = {
     titre,
     message,
-    categorie,
     publie,
     dateModification: firebase.firestore.FieldValue.serverTimestamp()
   };
@@ -11486,7 +11471,6 @@ async function enregistrerNotificationAdmin() {
 
     document.getElementById("adminNotificationTitre").value = "";
     document.getElementById("adminNotificationMessage").value = "";
-    document.getElementById("adminNotificationCategorie").value = "Vie du club";
     document.getElementById("adminNotificationPublie").checked = true;
 
     const bouton = document.querySelector(
@@ -11617,8 +11601,6 @@ function modifierNotificationAdmin(id) {
 
   document.getElementById("adminNotificationTitre").value = notification.titre || "";
   document.getElementById("adminNotificationMessage").value = notification.message || "";
-  document.getElementById("adminNotificationCategorie").value =
-    notification.categorie || "Vie du club";
   document.getElementById("adminNotificationPublie").checked =
     notification.publie !== false;
 
