@@ -7850,16 +7850,54 @@ function showPage(page) {
           })
         : "Date indisponible";
 
+      const photoProfilParDefaut = utilisateur.photoURL ||
+  "https://ui-avatars.com/api/?name=ESIVO&background=AA1A24&color=fff&size=128";
+
+window.esivoDb.collection("membres").doc(utilisateur.uid).get()
+  .then(doc => {
+    if (doc.exists && doc.data().photoDataUrl) {
+      const image = document.getElementById("photoProfilAffichee");
+      if (image) {
+        image.src = doc.data().photoDataUrl;
+      }
+    }
+  })
+  .catch(erreur => {
+    console.error("Erreur lors du chargement de la photo :", erreur);
+  });
+
       html += `
         <div class="content-card" style="text-align:center; padding:30px 20px;">
 
           <div style="margin-bottom:20px;">
             <img
+            id="photoProfilAffichee"
               src="${utilisateur.photoURL || 'https://ui-avatars.com/api/?name=ESIVO&background=AA1A24&color=fff&size=128'}"
               alt="Photo de profil"
               style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #AA1A24; box-shadow:0 0 15px rgba(170,26,36,0.35);"
             >
           </div>
+
+          <input
+  type="file"
+  id="photoProfilInput"
+  accept="image/*"
+  style="display:none;"
+  onchange="enregistrerPhotoProfil(event)"
+>
+
+<button
+  type="button"
+  class="btn-primary"
+  style="margin-top:5px; margin-bottom:20px;"
+  onclick="document.getElementById('photoProfilInput').click()"
+>
+  📷 Modifier ma photo
+  <p
+  id="photoMessage"
+  style="font-size:13px; margin-top:8px; color:#E5BD37;"
+></p>
+</button>
 
           <h2 style="font-size:24px; margin-bottom:8px;">
             ${pseudoSecurise}
@@ -10944,6 +10982,99 @@ async function deconnecterAdmin() {
   } catch (erreur) {
     console.error("Erreur lors de l'enregistrement du pseudonyme :", erreur);
     message.textContent = "Impossible d'enregistrer ton pseudonyme. Réessaie.";
+  }
+}
+
+  
+async function enregistrerPhotoProfil(event) {
+  const utilisateur = window.esivoAuth.currentUser;
+  const fichier = event.target.files?.[0];
+  const message = document.getElementById("photoMessage");
+  const imageAffichee = document.getElementById("photoProfilAffichee");
+
+  if (!utilisateur || !fichier) return;
+
+  if (!fichier.type.startsWith("image/")) {
+    message.textContent = "Choisis un fichier image.";
+    return;
+  }
+
+  if (fichier.size > 10 * 1024 * 1024) {
+    message.textContent = "Choisis une image de moins de 10 Mo.";
+    event.target.value = "";
+    return;
+  }
+
+  message.style.color = "#E5BD37";
+  message.textContent = "Préparation de ta photo...";
+
+  const urlTemporaire = URL.createObjectURL(fichier);
+  const image = new Image();
+
+  try {
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = reject;
+      image.src = urlTemporaire;
+    });
+
+    let photoDataUrl = null;
+
+    for (const tailleMax of [512, 384, 256]) {
+      const ratio = Math.min(
+        1,
+        tailleMax / Math.max(image.naturalWidth, image.naturalHeight)
+      );
+
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * ratio));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * ratio));
+
+      const contexte = canvas.getContext("2d");
+      contexte.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+      for (const qualite of [0.82, 0.7, 0.58, 0.48]) {
+        const candidate = canvas.toDataURL("image/jpeg", qualite);
+
+        if (candidate.length <= 650000) {
+          photoDataUrl = candidate;
+          break;
+        }
+      }
+
+      if (photoDataUrl) break;
+    }
+
+    if (!photoDataUrl) {
+      throw new Error("image-too-large");
+    }
+
+    const pseudo = (utilisateur.displayName || "Supporter ESIVO").trim().slice(0, 20);
+
+    await window.esivoDb.collection("membres").doc(utilisateur.uid).set({
+      pseudo: pseudo.length >= 2 ? pseudo : "Supporter ESIVO",
+      photoDataUrl: photoDataUrl,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    if (imageAffichee) {
+      imageAffichee.src = photoDataUrl;
+    }
+
+    message.style.color = "#4CAF50";
+    message.textContent = "Ta photo de profil a bien été enregistrée !";
+
+  } catch (erreur) {
+    console.error("Erreur lors de l'enregistrement de la photo :", erreur);
+
+    message.style.color = "#E5BD37";
+    message.textContent = erreur.message === "image-too-large"
+      ? "Essaie une autre photo, plus facile à compresser."
+      : "Impossible d'enregistrer ta photo. Réessaie.";
+
+  } finally {
+    URL.revokeObjectURL(urlTemporaire);
+    event.target.value = "";
   }
 }
 
