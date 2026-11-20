@@ -7837,8 +7837,29 @@ function showPage(page) {
           <div style="font-size:48px; margin-bottom:15px;">👤</div>
           <h3>Bienvenue sur ton espace ESIVO</h3>
           <p style="color:#aaa; margin-top:10px;">
-            Connecté avec ${utilisateur.displayName || utilisateur.email || "ton compte"}.
-          </p>
+  Connecté avec ${utilisateur.email || "ton compte"}.
+</p>
+
+<div style="margin-top:25px; text-align:left;">
+  <label for="pseudoCompte" style="display:block; margin-bottom:8px; font-weight:bold;">
+    Ton pseudonyme
+  </label>
+
+  <input
+    type="text"
+    id="pseudoCompte"
+    maxlength="20"
+    value="${utilisateur.displayName || ""}"
+    placeholder="Choisis ton pseudonyme"
+    style="width:100%; padding:13px; border-radius:8px; border:1px solid #444; background:#19191D; color:white;"
+  >
+
+  <p id="pseudoMessage" style="color:#E5BD37; font-size:13px; margin-top:8px;"></p>
+
+  <button class="btn-primary" style="width:100%; margin-top:12px;" onclick="enregistrerPseudo()">
+    Enregistrer mon pseudonyme
+  </button>
+</div>
           <button class="btn-primary" style="margin-top:20px;" onclick="deconnecterCompte()">
             Se déconnecter
           </button>
@@ -10815,6 +10836,32 @@ async function deconnecterAdmin() {
   async function deconnecterCompte() {
   await window.esivoAuth.signOut();
   showPage("Mon compte");
+}
+
+  async function enregistrerPseudo() {
+  const utilisateur = window.esivoAuth.currentUser;
+  const champ = document.getElementById("pseudoCompte");
+  const message = document.getElementById("pseudoMessage");
+
+  if (!utilisateur) return;
+
+  const pseudo = champ.value.trim();
+
+  if (pseudo.length < 2 || pseudo.length > 20) {
+    message.textContent = "Ton pseudonyme doit contenir entre 2 et 20 caractères.";
+    return;
+  }
+
+  try {
+    await utilisateur.updateProfile({
+      displayName: pseudo
+    });
+
+    showPage("Mon compte");
+  } catch (erreur) {
+    console.error("Erreur lors de l'enregistrement du pseudonyme :", erreur);
+    message.textContent = "Impossible d'enregistrer ton pseudonyme. Réessaie.";
+  }
 }
 
   
