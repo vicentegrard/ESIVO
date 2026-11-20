@@ -3874,13 +3874,14 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
     <button class="active" onclick="home()"><span>🏠</span>Accueil</button>
     <button onclick="showPage('Calendrier')"><span>📅</span>Matchs</button>
     <button onclick="ouvrirNotifications()">
-  <span>🔔</span>Notifications
-  <i id="notificationBadgeBottom"
-     style="display:none; position:absolute; top:3px; right:calc(50% - 19px); background:#AA1A24; color:white; border-radius:50%; min-width:16px; height:16px; font-size:10px; font-weight:bold; font-style:normal; align-items:center; justify-content:center; padding:0 2px;">
-    0
-  </i>
-</button>
+      <span>🔔</span>Notifications
+      <i id="notificationBadgeBottom"
+         style="display:none; position:absolute; top:3px; right:calc(50% - 19px); background:#AA1A24; color:white; border-radius:50%; min-width:16px; height:16px; font-size:10px; font-weight:bold; font-style:normal; align-items:center; justify-content:center; padding:0 2px;">
+        0
+      </i>
+    </button>
     <button onclick="showPage('Contacts')"><span>📞</span>Contacts</button>
+    <button onclick="showPage('Mon compte')"><span>👤</span>Compte</button>
   </div>
 </nav>
 
@@ -7825,6 +7826,24 @@ function showPage(page) {
         </div>
       `;
     }
+  
+  } else if (page === "Mon compte") {
+    html += `
+      <div class="content-card" style="text-align:center; padding:30px 20px;">
+        <div style="font-size:48px; margin-bottom:15px;">👤</div>
+        <h3>Bienvenue dans ton espace personnel</h3>
+        <p style="color:#aaa; line-height:1.6; margin-top:12px;">
+          Connecte-toi pour créer ton profil ESIVO, participer aux discussions
+          et retrouver tes pronostics.
+        </p>
+        <div style="margin-top:25px; padding:18px; background:#19191D; border-radius:12px;">
+          <p style="font-weight:bold; margin-bottom:8px;">Ton compte ESIVO</p>
+          <p style="color:#aaa; font-size:14px;">
+            La connexion et la création de profil arrivent prochainement.
+          </p>
+        </div>
+      </div>
+    `;
   } else {
     html += `
       <div class="content-card">
@@ -7833,6 +7852,7 @@ function showPage(page) {
       </div>
     `;
   }
+
 
   app.innerHTML = html;
   if (
