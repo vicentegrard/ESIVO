@@ -3818,6 +3818,83 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
 }
   
 </style>
+  
+<style>
+/* CONNEXION MEMBRE — STYLE DARK PREMIUM ESIVO */
+
+#app .content-card input#compteEmail,
+#app .content-card input#compteMotDePasse {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  margin-top: 7px;
+  background: #22232B;
+  color: #FEFFFE;
+  border: 1px solid #44444D;
+  border-radius: 8px;
+  font-family: 'Champions', Arial, sans-serif;
+  font-size: 14px;
+}
+
+#app .content-card input#compteEmail:focus,
+#app .content-card input#compteMotDePasse:focus {
+  outline: none;
+  border-color: #AA1A24;
+  box-shadow: 0 0 0 3px rgba(170, 26, 36, .20);
+}
+
+#app .content-card input#compteEmail::placeholder,
+#app .content-card input#compteMotDePasse::placeholder {
+  color: #92929D;
+}
+
+#app .content-card button[onclick="connecterAvecGoogle()"],
+#app .content-card button[onclick="connecterAvecEmail()"] {
+  background: #AA1A24 !important;
+  color: #fff !important;
+  border: 1px solid #AA1A24 !important;
+  border-radius: 8px;
+  min-height: 46px;
+  font-family: 'Champions', Arial, sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+
+#app .content-card button[onclick="inscrireAvecEmail()"] {
+  background: #292B32 !important;
+  color: #fff !important;
+  border: 1px solid #AA1A24 !important;
+  border-radius: 8px;
+  min-height: 46px;
+  font-family: 'Champions', Arial, sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#app .content-card button[onclick="connecterAvecGoogle()"]:hover,
+#app .content-card button[onclick="connecterAvecEmail()"]:hover {
+  background: #80131B !important;
+}
+
+#app .content-card button[onclick="inscrireAvecEmail()"]:hover {
+  background: #383943 !important;
+}
+
+@media (max-width: 600px) {
+  #app .content-card input#compteEmail,
+  #app .content-card input#compteMotDePasse {
+    width: 100%;
+  }
+
+  #app .content-card button[onclick="connecterAvecGoogle()"] {
+    width: 100%;
+  }
+}
+</style>
+
 </head>
 
 <body>
