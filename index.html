@@ -10853,11 +10853,12 @@ async function deconnecterAdmin() {
   }
 
   try {
-    await utilisateur.updateProfile({
+        await utilisateur.updateProfile({
       displayName: pseudo
     });
 
-    showPage("Mon compte");
+    message.textContent = "Ton pseudonyme a bien été enregistré !";
+    message.style.color = "#4CAF50";
   } catch (erreur) {
     console.error("Erreur lors de l'enregistrement du pseudonyme :", erreur);
     message.textContent = "Impossible d'enregistrer ton pseudonyme. Réessaie.";
