@@ -7911,9 +7911,60 @@ function showPage(page) {
         </div>
       `;
 
-    } else {
-      html += `
-        <div class="content-card" style="text-align:center; padding:30px 20px;">
+    
+<div class="content-card" style="text-align:center; padding:30px 20px;">
+  <div style="font-size:48px; margin-bottom:15px;">👤</div>
+  <h3>Ton espace personnel ESIVO</h3>
+  <p style="color:#aaa; line-height:1.6; margin:12px 0 22px;">
+    Connecte-toi ou crée ton compte pour profiter de ton espace membre.
+  </p>
+
+  <button class="btn-primary"
+    style="width:100%; max-width:320px; margin-bottom:20px;"
+    onclick="connecterAvecGoogle()">
+    Continuer avec Google
+  </button>
+
+  <div style="display:flex; align-items:center; gap:12px; margin:10px 0 20px; color:#888;">
+    <span style="flex:1; height:1px; background:#383B43;"></span>
+    OU AVEC TON E-MAIL
+    <span style="flex:1; height:1px; background:#383B43;"></span>
+  </div>
+
+  <div style="max-width:380px; margin:auto; text-align:left;">
+    <label for="compteEmail">Adresse e-mail</label>
+    <input type="email" id="compteEmail"
+      placeholder="tonadresse@email.com" required>
+
+    <label for="compteMotDePasse" style="display:block; margin-top:15px;">
+      Mot de passe
+    </label>
+    <input type="password" id="compteMotDePasse"
+      placeholder="6 caractères minimum" minlength="6" required>
+
+    <button class="btn-primary"
+      style="width:100%; margin-top:18px;"
+      onclick="connecterAvecEmail()">
+      Se connecter
+    </button>
+
+    <button class="btn-primary"
+      style="width:100%; margin-top:10px; background:#292B32; border:1px solid #555;"
+      onclick="inscrireAvecEmail()">
+      Créer mon compte
+    </button>
+
+    <button type="button"
+      style="display:block; margin:15px auto 0; background:none; border:none; color:#E5BD37; cursor:pointer;"
+      onclick="reinitialiserMotDePasse()">
+      Mot de passe oublié ?
+    </button>
+  </div>
+
+  <p id="compteMessage" style="margin-top:18px; color:#E5BD37;"></p>
+</div>
+</escape>
+
           <div style="font-size:48px; margin-bottom:15px;">👤</div>
           <h3>Ton espace personnel ESIVO</h3>
           <p style="color:#aaa; line-height:1.6; margin:12px 0 22px;">
@@ -10931,6 +10982,114 @@ async function connecterAvecGoogle() {
     }
   }
 }
+
+  
+async function inscrireAvecEmail() {
+  const email = document.getElementById("compteEmail").value.trim();
+  const password = document.getElementById("compteMotDePasse").value;
+  const message = document.getElementById("compteMessage");
+
+  if (!email || !password) {
+    message.textContent = "Renseigne ton adresse e-mail et ton mot de passe.";
+    return;
+  }
+
+  if (password.length < 6) {
+    message.textContent = "Ton mot de passe doit contenir au moins 6 caractères.";
+    return;
+  }
+
+  try {
+    const resultat = await window.esivoAuth.createUserWithEmailAndPassword(
+      email,
+      password
+    );
+
+    await resultat.user.sendEmailVerification();
+    await window.esivoAuth.signOut();
+
+    message.textContent =
+      "Ton compte est créé ! Consulte tes e-mails pour vérifier ton adresse avant de te connecter.";
+  } catch (erreur) {
+    console.error("Erreur lors de l'inscription :", erreur);
+
+    if (erreur.code === "auth/email-already-in-use") {
+      message.textContent =
+        "Cette adresse possède déjà un compte. Essaie de te connecter ou utilise Google.";
+    } else if (erreur.code === "auth/invalid-email") {
+      message.textContent = "L'adresse e-mail n'est pas valide.";
+    } else if (erreur.code === "auth/weak-password") {
+      message.textContent = "Choisis un mot de passe plus sécurisé.";
+    } else {
+      message.textContent = "Impossible de créer ton compte. Réessaie.";
+    }
+  }
+}
+
+
+async function connecterAvecEmail() {
+  const email = document.getElementById("compteEmail").value.trim();
+  const password = document.getElementById("compteMotDePasse").value;
+  const message = document.getElementById("compteMessage");
+
+  if (!email || !password) {
+    message.textContent = "Renseigne ton adresse e-mail et ton mot de passe.";
+    return;
+  }
+
+  try {
+    const resultat = await window.esivoAuth.signInWithEmailAndPassword(
+      email,
+      password
+    );
+
+    if (!resultat.user.emailVerified) {
+      await resultat.user.sendEmailVerification();
+      await window.esivoAuth.signOut();
+
+      message.textContent =
+        "Ton adresse n'est pas encore vérifiée. Nous venons de t'envoyer un nouveau lien de vérification.";
+      return;
+    }
+
+    showPage("Mon compte");
+
+  } catch (erreur) {
+    console.error("Erreur de connexion :", erreur);
+
+    if (erreur.code === "auth/user-not-found" ||
+        erreur.code === "auth/wrong-password" ||
+        erreur.code === "auth/invalid-credential") {
+      message.textContent = "Adresse e-mail ou mot de passe incorrect.";
+    } else {
+      message.textContent = "Impossible de te connecter. Réessaie.";
+    }
+  }
+}
+
+
+async function reinitialiserMotDePasse() {
+  const email = document.getElementById("compteEmail").value.trim();
+  const message = document.getElementById("compteMessage");
+
+  if (!email) {
+    message.textContent = "Indique ton adresse e-mail pour recevoir le lien.";
+    return;
+  }
+
+  try {
+    await window.esivoAuth.sendPasswordResetEmail(email);
+
+    message.textContent =
+      "Si un compte existe avec cette adresse, un e-mail de réinitialisation va être envoyé.";
+
+  } catch (erreur) {
+    console.error("Erreur de réinitialisation :", erreur);
+    message.textContent =
+      "Impossible d'envoyer le lien. Vérifie ton adresse e-mail et réessaie.";
+  }
+}
+
 
   
 async function chargerCalendriersFirebase() {
