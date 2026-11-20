@@ -7827,23 +7827,43 @@ function showPage(page) {
       `;
     }
   
+  
   } else if (page === "Mon compte") {
-    html += `
-      <div class="content-card" style="text-align:center; padding:30px 20px;">
-        <div style="font-size:48px; margin-bottom:15px;">👤</div>
-        <h3>Bienvenue dans ton espace personnel</h3>
-        <p style="color:#aaa; line-height:1.6; margin-top:12px;">
-          Connecte-toi pour créer ton profil ESIVO, participer aux discussions
-          et retrouver tes pronostics.
-        </p>
-        <div style="margin-top:25px; padding:18px; background:#19191D; border-radius:12px;">
-          <p style="font-weight:bold; margin-bottom:8px;">Ton compte ESIVO</p>
-          <p style="color:#aaa; font-size:14px;">
-            La connexion et la création de profil arrivent prochainement.
+    const utilisateur = window.esivoAuth.currentUser;
+
+    if (utilisateur && utilisateur.uid !== ADMIN_UID) {
+      html += `
+        <div class="content-card" style="text-align:center; padding:30px 20px;">
+          <div style="font-size:48px; margin-bottom:15px;">👤</div>
+          <h3>Bienvenue sur ton espace ESIVO</h3>
+          <p style="color:#aaa; margin-top:10px;">
+            Connecté avec ${utilisateur.displayName || utilisateur.email || "ton compte"}.
           </p>
+          <button class="btn-primary" style="margin-top:20px;" onclick="deconnecterCompte()">
+            Se déconnecter
+          </button>
         </div>
-      </div>
-    `;
+      `;
+    } else {
+      html += `
+        <div class="content-card" style="text-align:center; padding:30px 20px;">
+          <div style="font-size:48px; margin-bottom:15px;">👤</div>
+          <h3>Ton espace personnel ESIVO</h3>
+          <p style="color:#aaa; line-height:1.6; margin:12px 0 22px;">
+            Connecte-toi pour créer ton profil, participer aux discussions
+            et retrouver tes pronostics.
+          </p>
+
+          <button class="btn-primary" style="width:100%; max-width:320px;" onclick="connecterAvecGoogle()">
+            Continuer avec Google
+          </button>
+
+          <p id="compteMessage" style="margin-top:15px; color:#E5BD37;"></p>
+        </div>
+      `;
+    }
+  `;
+
   } else {
     html += `
       <div class="content-card">
@@ -10792,6 +10812,28 @@ async function deconnecterAdmin() {
   await window.esivoAuth.signOut();
   showPage("Administration");
 }
+
+  
+async function connecterAvecGoogle() {
+  const message = document.getElementById("compteMessage");
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  try {
+    await window.esivoAuth.signInWithPopup(provider);
+    showPage("Mon compte");
+  } catch (erreur) {
+    console.error("Erreur de connexion Google :", erreur);
+
+    if (message) {
+      if (erreur.code === "auth/popup-closed-by-user") {
+        message.textContent = "Connexion annulée.";
+      } else {
+        message.textContent = "Impossible de se connecter avec Google. Réessaie.";
+      }
+    }
+  }
+}
+
   
 async function chargerCalendriersFirebase() {
   try {
