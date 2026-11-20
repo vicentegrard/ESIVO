@@ -3694,6 +3694,128 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
     padding: 13px;
   }
 }
+
+/* FENÊTRE DE RECADRAGE PHOTO */
+#cropModal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+}
+
+.crop-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+.crop-panel {
+  width: 100%;
+  max-width: 420px;
+  background: #19191D;
+  border: 1px solid #AA1A24;
+  border-radius: 18px;
+  padding: 25px 20px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.crop-panel h2 {
+  margin: 0 0 10px;
+  color: #E5BD37;
+  font-size: 22px;
+}
+
+.crop-panel p {
+  color: #aaa;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.crop-preview {
+  width: 260px;
+  height: 260px;
+  max-width: 100%;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #AA1A24;
+  background: #292930;
+  touch-action: none;
+}
+
+#cropCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+
+#cropCanvas:active {
+  cursor: grabbing;
+}
+
+.crop-zoom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.crop-zoom label {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#cropZoom {
+  width: 100%;
+  accent-color: #AA1A24;
+  cursor: pointer;
+}
+
+.crop-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.crop-actions button {
+  flex: 1;
+  min-height: 44px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#cropCancel {
+  background: #35353D;
+  color: white;
+}
+
+#cropValidate {
+  background: #AA1A24;
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .crop-panel {
+    padding: 22px 16px;
+  }
+
+  .crop-preview {
+    width: 230px;
+    height: 230px;
+  }
+}
   
 </style>
 </head>
@@ -3884,7 +4006,39 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
 
 </main>
 
+<!-- FENÊTRE DE RECADRAGE PHOTO -->
+<div id="cropModal" style="display:none;">
+  <div class="crop-overlay">
+    <div class="crop-panel">
 
+      <h2>Recadrer ma photo</h2>
+      <p>Déplace la photo et ajuste le zoom pour obtenir le cadrage souhaité.</p>
+
+      <div class="crop-preview">
+        <canvas id="cropCanvas" width="320" height="320"></canvas>
+      </div>
+
+      <div class="crop-zoom">
+        <label for="cropZoom">Zoom</label>
+        <input
+          type="range"
+          id="cropZoom"
+          min="1"
+          max="3"
+          step="0.01"
+          value="1"
+        >
+      </div>
+
+      <div class="crop-actions">
+        <button type="button" id="cropCancel">Annuler</button>
+        <button type="button" id="cropValidate">Valider la photo</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+  
 <nav class="bottom-nav">
   <div class="bottom-inner">
     <button class="active" onclick="home()"><span>🏠</span>Accueil</button>
@@ -11050,16 +11204,17 @@ async function deconnecterAdmin() {
 }
 
   
+let urlTemporaireRecadrage = null;
+
 async function enregistrerPhotoProfil(event) {
-  const utilisateur = window.esivoAuth.currentUser;
   const fichier = event.target.files?.[0];
   const message = document.getElementById("photoMessage");
-  const imageAffichee = document.getElementById("photoProfilAffichee");
 
-  if (!utilisateur || !fichier) return;
+  if (!fichier) return;
 
   if (!fichier.type.startsWith("image/")) {
     message.textContent = "Choisis un fichier image.";
+    event.target.value = "";
     return;
   }
 
@@ -11069,51 +11224,176 @@ async function enregistrerPhotoProfil(event) {
     return;
   }
 
-  message.style.color = "#E5BD37";
-  message.textContent = "Préparation de ta photo...";
-
-  const urlTemporaire = URL.createObjectURL(fichier);
-  const image = new Image();
-
   try {
+    if (urlTemporaireRecadrage) {
+      URL.revokeObjectURL(urlTemporaireRecadrage);
+    }
+
+    urlTemporaireRecadrage = URL.createObjectURL(fichier);
+
+    const image = new Image();
+
     await new Promise((resolve, reject) => {
       image.onload = resolve;
       image.onerror = reject;
-      image.src = urlTemporaire;
+      image.src = urlTemporaireRecadrage;
     });
 
+    imageRecadrage = image;
+    zoomRecadrage = 1;
+
+    document.getElementById("cropZoom").value = 1;
+
+    const canvas = document.getElementById("cropCanvas");
+    const echelle = Math.max(
+      canvas.width / image.naturalWidth,
+      canvas.height / image.naturalHeight
+    );
+
+    positionXRecadrage =
+      (canvas.width - image.naturalWidth * echelle) / 2;
+
+    positionYRecadrage =
+      (canvas.height - image.naturalHeight * echelle) / 2;
+
+    dessinerRecadrage();
+
+    document.getElementById("cropModal").style.display = "block";
+
+    message.textContent = "";
+
+  } catch (erreur) {
+    console.error("Erreur lors du chargement de la photo :", erreur);
+    message.textContent = "Impossible de charger cette image.";
+    event.target.value = "";
+  }
+}
+
+  // ÉTAT DU RECADRAGE PHOTO
+let imageRecadrage = null;
+let zoomRecadrage = 1;
+let positionXRecadrage = 0;
+let positionYRecadrage = 0;
+let glissementRecadrage = false;
+let departXRecadrage = 0;
+let departYRecadrage = 0;
+
+function dessinerRecadrage() {
+  const canvas = document.getElementById("cropCanvas");
+  if (!canvas || !imageRecadrage) return;
+
+  const contexte = canvas.getContext("2d");
+  const largeur = canvas.width;
+  const hauteur = canvas.height;
+
+  contexte.clearRect(0, 0, largeur, hauteur);
+
+  const echelleBase = Math.max(
+    largeur / imageRecadrage.naturalWidth,
+    hauteur / imageRecadrage.naturalHeight
+  );
+
+  const echelle = echelleBase * zoomRecadrage;
+
+  const largeurImage = imageRecadrage.naturalWidth * echelle;
+  const hauteurImage = imageRecadrage.naturalHeight * echelle;
+
+  const minX = largeur - largeurImage;
+  const minY = hauteur - hauteurImage;
+
+  positionXRecadrage = Math.min(0, Math.max(minX, positionXRecadrage));
+  positionYRecadrage = Math.min(0, Math.max(minY, positionYRecadrage));
+
+  contexte.drawImage(
+    imageRecadrage,
+    positionXRecadrage,
+    positionYRecadrage,
+    largeurImage,
+    hauteurImage
+  );
+}
+
+// DÉPLACEMENT DE LA PHOTO
+const canvasRecadrage = document.getElementById("cropCanvas");
+
+canvasRecadrage.addEventListener("pointerdown", (event) => {
+  if (!imageRecadrage) return;
+
+  glissementRecadrage = true;
+  departXRecadrage = event.clientX - positionXRecadrage;
+  departYRecadrage = event.clientY - positionYRecadrage;
+
+  canvasRecadrage.setPointerCapture(event.pointerId);
+});
+
+canvasRecadrage.addEventListener("pointermove", (event) => {
+  if (!glissementRecadrage) return;
+
+  positionXRecadrage = event.clientX - departXRecadrage;
+  positionYRecadrage = event.clientY - departYRecadrage;
+
+  dessinerRecadrage();
+});
+
+canvasRecadrage.addEventListener("pointerup", () => {
+  glissementRecadrage = false;
+});
+
+canvasRecadrage.addEventListener("pointercancel", () => {
+  glissementRecadrage = false;
+});
+
+// RÉGLAGE DU ZOOM
+document.getElementById("cropZoom").addEventListener("input", (event) => {
+  zoomRecadrage = Number(event.target.value);
+  dessinerRecadrage();
+});
+
+  // ANNULER LE RECADRAGE
+document.getElementById("cropCancel").addEventListener("click", () => {
+  document.getElementById("cropModal").style.display = "none";
+
+  imageRecadrage = null;
+
+  if (urlTemporaireRecadrage) {
+    URL.revokeObjectURL(urlTemporaireRecadrage);
+    urlTemporaireRecadrage = null;
+  }
+
+  document.getElementById("photoProfilInput").value = "";
+});
+
+// VALIDER ET ENREGISTRER LA PHOTO RECADRÉE
+document.getElementById("cropValidate").addEventListener("click", async () => {
+  const utilisateur = window.esivoAuth.currentUser;
+  const message = document.getElementById("photoMessage");
+  const canvas = document.getElementById("cropCanvas");
+
+  if (!utilisateur || !imageRecadrage) return;
+
+  const bouton = document.getElementById("cropValidate");
+  bouton.disabled = true;
+  bouton.textContent = "Enregistrement...";
+
+  try {
     let photoDataUrl = null;
 
-    for (const tailleMax of [512, 384, 256]) {
-      const ratio = Math.min(
-        1,
-        tailleMax / Math.max(image.naturalWidth, image.naturalHeight)
-      );
+    for (const qualite of [0.9, 0.8, 0.7, 0.6, 0.5]) {
+      const candidate = canvas.toDataURL("image/jpeg", qualite);
 
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.max(1, Math.round(image.naturalWidth * ratio));
-      canvas.height = Math.max(1, Math.round(image.naturalHeight * ratio));
-
-      const contexte = canvas.getContext("2d");
-      contexte.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-      for (const qualite of [0.82, 0.7, 0.58, 0.48]) {
-        const candidate = canvas.toDataURL("image/jpeg", qualite);
-
-        if (candidate.length <= 650000) {
-          photoDataUrl = candidate;
-          break;
-        }
+      if (candidate.length <= 650000) {
+        photoDataUrl = candidate;
+        break;
       }
-
-      if (photoDataUrl) break;
     }
 
     if (!photoDataUrl) {
       throw new Error("image-too-large");
     }
 
-    const pseudo = (utilisateur.displayName || "Supporter ESIVO").trim().slice(0, 20);
+    const pseudo = (utilisateur.displayName || "Supporter ESIVO")
+      .trim()
+      .slice(0, 20);
 
     await window.esivoDb.collection("membres").doc(utilisateur.uid).set({
       pseudo: pseudo.length >= 2 ? pseudo : "Supporter ESIVO",
@@ -11121,38 +11401,41 @@ async function enregistrerPhotoProfil(event) {
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
 
-    if (imageAffichee) {
-      imageAffichee.src = photoDataUrl;
-    }
-    
+    const imageAffichee = document.getElementById("photoProfilAffichee");
     const avatarHeader = document.getElementById("photoProfilHeader");
-
-if (avatarHeader) {
-  avatarHeader.src = photoDataUrl;
-}
-
     const avatarMobile = document.getElementById("photoProfilMobile");
 
-if (avatarMobile) {
-  avatarMobile.src = photoDataUrl;
-}
+    if (imageAffichee) imageAffichee.src = photoDataUrl;
+    if (avatarHeader) avatarHeader.src = photoDataUrl;
+    if (avatarMobile) avatarMobile.src = photoDataUrl;
+
+    document.getElementById("cropModal").style.display = "none";
+
+    imageRecadrage = null;
+
+    if (urlTemporaireRecadrage) {
+      URL.revokeObjectURL(urlTemporaireRecadrage);
+      urlTemporaireRecadrage = null;
+    }
+
+    document.getElementById("photoProfilInput").value = "";
 
     message.style.color = "#4CAF50";
     message.textContent = "Ta photo de profil a bien été enregistrée !";
 
   } catch (erreur) {
-    console.error("Erreur lors de l'enregistrement de la photo :", erreur);
+    console.error("Erreur lors de l'enregistrement :", erreur);
 
     message.style.color = "#E5BD37";
     message.textContent = erreur.message === "image-too-large"
-      ? "Essaie une autre photo, plus facile à compresser."
+      ? "Essaie une autre photo."
       : "Impossible d'enregistrer ta photo. Réessaie.";
 
   } finally {
-    URL.revokeObjectURL(urlTemporaire);
-    event.target.value = "";
+    bouton.disabled = false;
+    bouton.textContent = "Valider la photo";
   }
-}
+});
 
   
 async function connecterAvecGoogle() {
