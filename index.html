@@ -3873,7 +3873,13 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   <div class="bottom-inner">
     <button class="active" onclick="home()"><span>🏠</span>Accueil</button>
     <button onclick="showPage('Calendrier')"><span>📅</span>Matchs</button>
-    <button onclick="showPage('Actualités')"><span>📰</span>Actus</button>
+    <button onclick="ouvrirNotifications()">
+  <span>🔔</span>Notifications
+  <i id="notificationBadgeBottom"
+     style="display:none; position:absolute; top:3px; right:calc(50% - 19px); background:#AA1A24; color:white; border-radius:50%; min-width:16px; height:16px; font-size:10px; font-weight:bold; font-style:normal; align-items:center; justify-content:center; padding:0 2px;">
+    0
+  </i>
+</button>
     <button onclick="showPage('Contacts')"><span>📞</span>Contacts</button>
   </div>
 </nav>
@@ -11005,9 +11011,12 @@ function chargerNotifications() {
 
 function afficherNotifications() {
   const liste = document.getElementById("notificationList");
-  const badge = document.getElementById("notificationBadge");
+  const badges = [
+    document.getElementById("notificationBadge"),
+    document.getElementById("notificationBadgeBottom")
+  ].filter(Boolean);
 
-  if (!liste || !badge) return;
+  if (!liste || badges.length === 0) return;
 
   const lues = recupererNotificationsLues();
 
@@ -11031,8 +11040,12 @@ function afficherNotifications() {
     !lues.includes(notification.id)
   );
 
+    badges.forEach(badge => {
+    badges.forEach(badge => {
   badge.textContent = nonLues.length;
   badge.style.display = nonLues.length > 0 ? "flex" : "none";
+});
+  });
 
   liste.innerHTML = "";
 
