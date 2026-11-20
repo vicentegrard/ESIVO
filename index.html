@@ -3928,15 +3928,21 @@ window.esivoAuth = firebase.auth();
   window.esivoDb = firebase.firestore();
 
   async function actualiserAvatarCompte() {
-  const utilisateur = window.esivoAuth.currentUser;
-  const image = document.getElementById("photoProfilHeader");
+  const images = [
+    document.getElementById("photoProfilHeader"),
+    document.getElementById("photoProfilMobile")
+  ].filter(Boolean);
 
-  if (!image) return;
+  if (images.length === 0) return;
+
+  const utilisateur = window.esivoAuth.currentUser;
 
   const photoParDefaut = utilisateur?.photoURL ||
     "https://ui-avatars.com/api/?name=ESIVO&background=292930&color=fff&size=128";
 
-  image.src = photoParDefaut;
+  images.forEach(image => {
+    image.src = photoParDefaut;
+  });
 
   if (!utilisateur) return;
 
@@ -3947,10 +3953,12 @@ window.esivoAuth = firebase.auth();
       .get();
 
     if (doc.exists && doc.data().photoDataUrl) {
-      image.src = doc.data().photoDataUrl;
+      images.forEach(image => {
+        image.src = doc.data().photoDataUrl;
+      });
     }
   } catch (erreur) {
-    console.error("Erreur lors du chargement de l'avatar :", erreur);
+    console.error("Erreur lors du chargement des avatars :", erreur);
   }
 }
 
