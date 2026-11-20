@@ -7831,7 +7831,7 @@ function showPage(page) {
   } else if (page === "Mon compte") {
     const utilisateur = window.esivoAuth.currentUser;
 
-    if (utilisateur && utilisateur.uid !== ADMIN_UID) {
+    if (utilisateur) {
       html += `
         <div class="content-card" style="text-align:center; padding:30px 20px;">
           <div style="font-size:48px; margin-bottom:15px;">👤</div>
