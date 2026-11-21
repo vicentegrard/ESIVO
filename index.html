@@ -11539,6 +11539,8 @@ async function ouvrirEditeurProfil() {
 
     document.getElementById("profilPrenom").value = donnees.prenom || "";
     document.getElementById("profilNom").value = donnees.nom || "";
+    document.getElementById("afficherNomPrenom").checked =
+  donnees.afficherNomPrenom === true;
     document.getElementById("pseudoCompte").value =
       donnees.pseudo || utilisateur.displayName || "";
 
@@ -11613,7 +11615,8 @@ async function enregistrerInformationsProfil() {
   const informations = {
     prenom: document.getElementById("profilPrenom").value.trim(),
     nom: document.getElementById("profilNom").value.trim(),
-    pseudo: pseudo,
+afficherNomPrenom: document.getElementById("afficherNomPrenom").checked,
+pseudo: pseudo,
     dateNaissance: document.getElementById("profilNaissance").value,
     ville: document.getElementById("profilVille").value.trim(),
     telephone: document.getElementById("profilTelephone").value.trim(),
