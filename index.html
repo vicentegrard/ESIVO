@@ -8309,18 +8309,86 @@ function showPage(page) {
       const photoProfilParDefaut = utilisateur.photoURL ||
   "https://ui-avatars.com/api/?name=ESIVO&background=AA1A24&color=fff&size=128";
 
+
 window.esivoDb.collection("membres").doc(utilisateur.uid).get()
   .then(doc => {
-    if (doc.exists && doc.data().photoDataUrl) {
+    const donnees = doc.exists ? doc.data() : {};
+
+    // Photo de profil
+    if (donnees.photoDataUrl) {
       const image = document.getElementById("photoProfilAffichee");
       if (image) {
-        image.src = doc.data().photoDataUrl;
+        image.src = donnees.photoDataUrl;
+      }
+    }
+
+    // Pseudonyme
+    const pseudoElement = document.getElementById("pseudoProfilAffiche");
+    if (pseudoElement && donnees.pseudo) {
+      pseudoElement.textContent = donnees.pseudo;
+    }
+
+    // Badge de statut
+    const badge = document.getElementById("badgeStatutProfil");
+
+    const statuts = {
+      "supporter": {
+        texte: "SUPPORTER ESIVO",
+        fond: "#E5BD37",
+        couleur: "#19191D"
+      },
+      "licencie-esivo": {
+        texte: "LICENCIÉ AU CLUB ESIVO",
+        fond: "#AA1A24",
+        couleur: "#FFFFFF"
+      },
+      "licencie-autre": {
+        texte: "LICENCIÉ D'UN AUTRE CLUB",
+        fond: "#269B59",
+        couleur: "#FFFFFF"
+      }
+    };
+
+    const statut = statuts[donnees.statut] || statuts.supporter;
+
+    if (badge) {
+      badge.textContent = statut.texte;
+      badge.style.background = statut.fond;
+      badge.style.color = statut.couleur;
+    }
+
+    // Prénom et nom : affichage uniquement si autorisé
+    const nomPrenom = document.getElementById("nomPrenomProfil");
+
+    if (nomPrenom) {
+      const nomComplet = [donnees.prenom, donnees.nom]
+        .filter(Boolean)
+        .join(" ");
+
+      if (donnees.afficherNomPrenom === true && nomComplet) {
+        nomPrenom.textContent = nomComplet;
+        nomPrenom.hidden = false;
+      } else {
+        nomPrenom.hidden = true;
+      }
+    }
+
+    // Description personnelle
+    const description = document.getElementById("descriptionProfil");
+
+    if (description) {
+      if (donnees.description && donnees.description.trim()) {
+        description.textContent = donnees.description;
+        description.hidden = false;
+      } else {
+        description.hidden = true;
       }
     }
   })
   .catch(erreur => {
-    console.error("Erreur lors du chargement de la photo :", erreur);
+    console.error("Erreur lors du chargement du profil :", erreur);
   });
+
 
       html += `
         <div class="content-card" style="text-align:center; padding:30px 20px;">
