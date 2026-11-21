@@ -3928,6 +3928,109 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   box-shadow: 0 0 0 3px rgba(170, 26, 36, .20);
 }
 
+  
+/* ESPACE MEMBRE — FORMULAIRE PERSONNEL DARK PREMIUM */
+
+.profil-editor {
+  margin-top: 25px;
+  text-align: left;
+  border-top: 1px solid #383943;
+  padding-top: 22px;
+}
+
+.profil-editor h3 {
+  color: #E5BD37;
+  margin-bottom: 20px;
+}
+
+.profil-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.profil-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.profil-field label {
+  color: #D5D5DA;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.profil-field input,
+.profil-field select,
+.profil-field textarea {
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+  padding: 12px 13px;
+  background: #22232B;
+  color: #FEFFFE;
+  border: 1px solid #44444D;
+  border-radius: 8px;
+  font-family: 'Champions', Arial, sans-serif;
+  font-size: 13px;
+}
+
+.profil-field textarea {
+  min-height: 95px;
+  resize: vertical;
+}
+
+.profil-field input:focus,
+.profil-field select:focus,
+.profil-field textarea:focus {
+  outline: none;
+  border-color: #AA1A24;
+  box-shadow: 0 0 0 3px rgba(170, 26, 36, .20);
+}
+
+.profil-field input::placeholder,
+.profil-field textarea::placeholder {
+  color: #92929D;
+}
+
+.profil-field select option {
+  background: #22232B;
+  color: #FEFFFE;
+}
+
+.profil-field-full {
+  grid-column: 1 / -1;
+}
+
+.profil-editor [hidden] {
+  display: none !important;
+}
+
+.profil-editor-message {
+  color: #E5BD37;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.profil-editor-secondary {
+  background: #292B32 !important;
+  color: #FEFFFE !important;
+  border: 1px solid #44444D !important;
+}
+
+@media (max-width: 600px) {
+  .profil-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profil-field-full {
+    grid-column: auto;
+  }
+}
+
+
 </style>
 
 
@@ -8246,32 +8349,114 @@ window.esivoDb.collection("membres").doc(utilisateur.uid).get()
             Membre depuis le ${dateInscription}
           </p>
 
-          <div style="margin-top:30px; text-align:left; border-top:1px solid #383943; padding-top:22px;">
+          
+<button
+  type="button"
+  class="btn-primary"
+  style="width:100%; margin-top:25px;"
+  onclick="ouvrirEditeurProfil()"
+>
+  Modifier mes informations personnelles
+</button>
 
-            <h3 style="margin-bottom:18px; color:#E5BD37;">
-              Personnaliser mon profil
-            </h3>
+<div id="editeurProfil" class="profil-editor" style="display:none;">
 
-            <label for="pseudoCompte" style="display:block; margin-bottom:8px; font-weight:bold;">
-              Ton pseudonyme
-            </label>
+  <h3>Mes informations personnelles</h3>
 
-            <input
-              type="text"
-              id="pseudoCompte"
-              maxlength="20"
-              value="${pseudoSecurise}"
-              placeholder="Choisis ton pseudonyme"
-              style="width:100%; padding:13px; border-radius:8px; border:1px solid #444; background:#19191D; color:white; box-sizing:border-box;"
-            >
+  <div class="profil-form-grid">
 
-            <p id="pseudoMessage" style="color:#E5BD37; font-size:13px; margin-top:8px;"></p>
+    <div class="profil-field">
+      <label for="profilPrenom">Prénom</label>
+      <input type="text" id="profilPrenom" placeholder="Ton prénom">
+    </div>
 
-            <button class="btn-primary" style="width:100%; margin-top:12px;" onclick="enregistrerPseudo()">
-              Enregistrer mon pseudonyme
-            </button>
+    <div class="profil-field">
+      <label for="profilNom">Nom</label>
+      <input type="text" id="profilNom" placeholder="Ton nom">
+    </div>
 
-          </div>
+    <div class="profil-field profil-field-full">
+      <label for="pseudoCompte">Pseudonyme *</label>
+      <input
+        type="text"
+        id="pseudoCompte"
+        maxlength="20"
+        placeholder="Choisis ton pseudonyme"
+        required
+      >
+    </div>
+
+    <div class="profil-field">
+      <label for="profilNaissance">Date de naissance</label>
+      <input type="date" id="profilNaissance">
+    </div>
+
+    <div class="profil-field">
+      <label for="profilVille">Ville de résidence</label>
+      <input type="text" id="profilVille" placeholder="Ta ville">
+    </div>
+
+    <div class="profil-field">
+      <label for="profilTelephone">Téléphone</label>
+      <input type="tel" id="profilTelephone" placeholder="Ton numéro">
+    </div>
+
+    <div class="profil-field">
+      <label for="profilEmail">Adresse e-mail</label>
+      <input type="email" id="profilEmail" readonly>
+    </div>
+
+    <div class="profil-field profil-field-full">
+      <label for="profilStatut">Mon statut</label>
+      <select id="profilStatut">
+        <option value="supporter">Supporter ESIVO</option>
+        <option value="licencie-esivo">Licencié au club ESIVO</option>
+        <option value="licencie-autre">Licencié d'un autre club</option>
+      </select>
+    </div>
+
+    <div
+      class="profil-field profil-field-full"
+      id="champDateArrivee"
+      hidden
+    >
+      <label for="profilDateArrivee">Date d'arrivée au club</label>
+      <input type="date" id="profilDateArrivee">
+    </div>
+
+    <div class="profil-field profil-field-full">
+      <label for="profilDescription">Petite description personnelle</label>
+      <textarea
+        id="profilDescription"
+        maxlength="180"
+        placeholder="Quelques mots pour te présenter..."
+      ></textarea>
+    </div>
+
+  </div>
+
+  <p class="profil-editor-message" id="profilMessage"></p>
+
+  <button
+    type="button"
+    class="btn-primary"
+    style="width:100%; margin-top:15px;"
+    onclick="enregistrerInformationsProfil()"
+  >
+    Enregistrer mes informations
+  </button>
+
+  <button
+    type="button"
+    class="btn-primary profil-editor-secondary"
+    style="width:100%; margin-top:10px;"
+    onclick="fermerEditeurProfil()"
+  >
+    Annuler
+  </button>
+
+</div>
+
 
           <button class="btn-primary" style="margin-top:25px; width:100%; background:#383943;" onclick="deconnecterCompte()">
             Se déconnecter
