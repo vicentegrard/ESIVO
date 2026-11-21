@@ -4030,6 +4030,28 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   }
 }
 
+  
+.profil-visibility-option {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  color: #D5D5DA !important;
+  font-size: 13px;
+  font-weight: 400 !important;
+}
+
+.profil-visibility-option input {
+  width: 18px !important;
+  min-width: 18px;
+  height: 18px;
+  min-height: 18px;
+  margin: 0;
+  padding: 0;
+  accent-color: #AA1A24;
+  cursor: pointer;
+}
+
 
 </style>
 
@@ -8374,6 +8396,18 @@ window.esivoDb.collection("membres").doc(utilisateur.uid).get()
       <label for="profilNom">Nom</label>
       <input type="text" id="profilNom" placeholder="Ton nom">
     </div>
+
+    
+<div class="profil-field profil-field-full">
+  <label class="profil-visibility-option" for="afficherNomPrenom">
+    <input
+      type="checkbox"
+      id="afficherNomPrenom"
+    >
+    <span>Afficher mes informations personnelles (nom + prénom)</span>
+  </label>
+</div>
+
 
     <div class="profil-field profil-field-full">
       <label for="pseudoCompte">Pseudonyme *</label>
