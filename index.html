@@ -4509,6 +4509,102 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
 }
 
 
+/* INFORMATIONS PRATIQUES — DESIGN PREMIUM ESIVO */
+
+.mc-sheet-information {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.mc-sheet-info-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 17px 15px;
+  border: 1px solid #34343D;
+  border-radius: 11px;
+  background: linear-gradient(120deg, #222229, #19191F);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.mc-sheet-info-card:hover {
+  border-color: #AA1A24;
+  transform: translateY(-2px);
+}
+
+.mc-sheet-info-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 39px;
+  border: 1px solid rgba(229, 189, 55, 0.25);
+  border-radius: 9px;
+  background: rgba(229, 189, 55, 0.08);
+  font-size: 18px;
+}
+
+.mc-sheet-info-card > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mc-sheet-info-card > div > span {
+  color: #9999A3;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+}
+
+.mc-sheet-info-card strong {
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+/* ADAPTATION MOBILE */
+
+@media (max-width: 600px) {
+  .mc-sheet-information {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 15px;
+  }
+
+  .mc-sheet-info-card {
+    gap: 8px;
+    padding: 12px 9px;
+  }
+
+  .mc-sheet-info-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .mc-sheet-info-card > div {
+    gap: 5px;
+  }
+
+  .mc-sheet-info-card > div > span {
+    font-size: 8px;
+    letter-spacing: 0.6px;
+  }
+
+  .mc-sheet-info-card strong {
+    font-size: 11px;
+  }
+}
+
+
 </style>
 
 
@@ -10078,37 +10174,56 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
             </div>
           </div>
 
-          <div class="mc-sheet-information">
-            <div>
-              <span>DATE</span>
-              <strong>${dateComplete}</strong>
-            </div>
-            <div>
-              <span>COUP D'ENVOI</span>
-              <strong>${heure}</strong>
-            </div>
-            <div>
-              <span>COMPÉTITION</span>
-              <strong>${competition}</strong>
-            </div>
-            <div>
-              <span>JOURNÉE / TOUR</span>
-              <strong>${journee}</strong>
-            </div>
-          </div>
+          
+<div class="mc-sheet-information">
 
-          <div class="mc-sheet-venue">
-            <span class="mc-eyebrow">LE STADE</span>
-            <h3>${lieu}</h3>
-            <p>${ville}</p>
-            <a href="https://www.openstreetmap.org/search?query=${rechercheLieu}"
-               target="_blank" rel="noopener noreferrer">
-              Voir la localisation sur OpenStreetMap ↗
-            </a>
-          </div>
-        </section>
-      </div>
-    `);
+  <div class="mc-sheet-info-card">
+    <span class="mc-sheet-info-icon">📅</span>
+    <div>
+      <span>DATE DU MATCH</span>
+      <strong>${dateComplete}</strong>
+    </div>
+  </div>
+
+  <div class="mc-sheet-info-card">
+    <span class="mc-sheet-info-icon">⏱️</span>
+    <div>
+      <span>COUP D'ENVOI</span>
+      <strong>${heure}</strong>
+    </div>
+  </div>
+
+  <div class="mc-sheet-info-card">
+    <span class="mc-sheet-info-icon">🏆</span>
+    <div>
+      <span>COMPÉTITION</span>
+      <strong>${competition}</strong>
+    </div>
+  </div>
+
+  <div class="mc-sheet-info-card">
+    <span class="mc-sheet-info-icon">⚽</span>
+    <div>
+      <span>JOURNÉE / TOUR</span>
+      <strong>${journee}</strong>
+    </div>
+  </div>
+
+</div>
+
+<div class="mc-sheet-venue">
+  <span class="mc-eyebrow">LE STADE</span>
+  <h3>${lieu}</h3>
+  <p>${ville}</p>
+  <a href="https://www.openstreetmap.org/search?query=${rechercheLieu}"
+     target="_blank" rel="noopener noreferrer">
+    Voir la localisation sur OpenStreetMap ↗
+  </a>
+</div>
+</section>
+</div>
+`);
+
 
     const overlay = contenu.querySelector(".mc-match-overlay");
     const boutonFermer = overlay.querySelector(".mc-match-close");
