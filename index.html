@@ -8355,13 +8355,33 @@ window.esivoDb.collection("membres").doc(utilisateur.uid).get()
 ></p>
 </button>
 
-          <h2 style="font-size:24px; margin-bottom:8px;">
-            ${pseudoSecurise}
-          </h2>
+          
+<h2
+  id="pseudoProfilAffiche"
+  style="font-size:24px; margin-bottom:8px;"
+>
+  ${pseudoSecurise}
+</h2>
 
-          <span style="display:inline-block; background:rgba(170,26,36,0.18); color:#E5BD37; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:bold; letter-spacing:1px;">
-            MEMBRE ESIVO
-          </span>
+<span
+  id="badgeStatutProfil"
+  style="display:inline-block; background:#E5BD37; color:#19191D; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:bold; letter-spacing:1px;"
+>
+  SUPPORTER ESIVO
+</span>
+
+<p
+  id="nomPrenomProfil"
+  hidden
+  style="color:#92929D; font-size:13px; margin-top:9px; margin-bottom:0;"
+></p>
+
+<p
+  id="descriptionProfil"
+  hidden
+  style="color:#D5D5DA; font-size:13px; line-height:1.6; margin-top:13px; max-width:450px; margin-left:auto; margin-right:auto;"
+></p>
+
 
           <p style="color:#aaa; margin-top:18px; font-size:14px;">
             ${utilisateur.email || "Adresse e-mail non disponible"}
