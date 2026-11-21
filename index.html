@@ -8327,22 +8327,6 @@ window.esivoDb.collection("membres").doc(utilisateur.uid).get()
     if (pseudoElement && donnees.pseudo) {
       pseudoElement.textContent = donnees.pseudo;
     }
-
-// Badge Fondateur ESIVO
-const estFondateur =
-  utilisateur.uid === "89slmmF1D1FQdOmwbdPna1lqXIVH2";
-
-if (estFondateur) {
-  const badge = document.getElementById("badgeStatutProfil");
-
-  if (badge) {
-    badge.textContent = "FONDATEUR DU SITE ESIVO";
-    badge.style.background = "#2687E8";
-    badge.style.color = "#FFFFFF";
-  }
-
-  return;
-}
   
     // Badge de statut
 const badge = document.getElementById("badgeStatutProfil");
