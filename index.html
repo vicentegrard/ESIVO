@@ -3894,18 +3894,42 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   }
 }
 
-  #app .content-card button[onclick="connecterAvecGoogle()"] {
-    width: 100%;
-  }
+  
+/* ESPACE MEMBRE — BOUTONS DU PROFIL */
+
+#app .content-card button.btn-primary {
+  background: #AA1A24 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #AA1A24 !important;
+  border-radius: 8px;
+  min-height: 46px;
+  font-family: 'Champions', Arial, sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease;
 }
 
-/* NOUVEAU BLOC : ESPACE MEMBRE — BOUTONS DU PROFIL */
+#app .content-card button.btn-primary:hover {
+  background: #80131B !important;
+}
 
-/* Colle ici tout le CSS que je viens de te donner */
+#app .content-card button[onclick="deconnecterCompte()"] {
+  background: #292B32 !important;
+  border: 1px solid #AA1A24 !important;
+}
+
+#app .content-card button[onclick="deconnecterCompte()"]:hover {
+  background: #383943 !important;
+}
+
+#app .content-card input#pseudoCompte:focus {
+  outline: none;
+  border: 1px solid #AA1A24 !important;
+  box-shadow: 0 0 0 3px rgba(170, 26, 36, .20);
+}
 
 </style>
-  
-</style>
+
 
 </head>
 
