@@ -8328,34 +8328,59 @@ window.esivoDb.collection("membres").doc(utilisateur.uid).get()
       pseudoElement.textContent = donnees.pseudo;
     }
 
+// Badge Fondateur ESIVO
+const estFondateur =
+  utilisateur.uid === "89slmmF1D1FQdOmwbdPna1lqXIVH2";
+
+if (estFondateur) {
+  const badge = document.getElementById("badgeStatutProfil");
+
+  if (badge) {
+    badge.textContent = "FONDATEUR DU SITE ESIVO";
+    badge.style.background = "#2687E8";
+    badge.style.color = "#FFFFFF";
+  }
+
+  return;
+}
+  
     // Badge de statut
-    const badge = document.getElementById("badgeStatutProfil");
+const badge = document.getElementById("badgeStatutProfil");
 
-    const statuts = {
-      "supporter": {
-        texte: "SUPPORTER ESIVO",
-        fond: "#E5BD37",
-        couleur: "#19191D"
-      },
-      "licencie-esivo": {
-        texte: "LICENCIÉ AU CLUB ESIVO",
-        fond: "#AA1A24",
-        couleur: "#FFFFFF"
-      },
-      "licencie-autre": {
-        texte: "LICENCIÉ D'UN AUTRE CLUB",
-        fond: "#269B59",
-        couleur: "#FFFFFF"
-      }
-    };
+const estFondateur =
+  utilisateur.uid === "89slmmF1D1FQdOmwbdPna1lqXIVH2";
 
+const statuts = {
+  "supporter": {
+    texte: "SUPPORTER ESIVO",
+    fond: "#E5BD37",
+    couleur: "#19191D"
+  },
+  "licencie-esivo": {
+    texte: "LICENCIÉ AU CLUB ESIVO",
+    fond: "#AA1A24",
+    couleur: "#FFFFFF"
+  },
+  "licencie-autre": {
+    texte: "LICENCIÉ D'UN AUTRE CLUB",
+    fond: "#269B59",
+    couleur: "#FFFFFF"
+  }
+};
+
+if (badge) {
+  if (estFondateur) {
+    badge.textContent = "FONDATEUR DU SITE ESIVO";
+    badge.style.background = "#2687E8";
+    badge.style.color = "#FFFFFF";
+  } else {
     const statut = statuts[donnees.statut] || statuts.supporter;
 
-    if (badge) {
-      badge.textContent = statut.texte;
-      badge.style.background = statut.fond;
-      badge.style.color = statut.couleur;
-    }
+    badge.textContent = statut.texte;
+    badge.style.background = statut.fond;
+    badge.style.color = statut.couleur;
+  }
+}
 
     // Prénom et nom : affichage uniquement si autorisé
     const nomPrenom = document.getElementById("nomPrenomProfil");
