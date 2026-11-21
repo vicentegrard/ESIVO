@@ -8408,7 +8408,7 @@ window.esivoDb.collection("membres").doc(utilisateur.uid).get()
 
     <div class="profil-field profil-field-full">
       <label for="profilStatut">Mon statut</label>
-      <select id="profilStatut">
+      <select id="profilStatut" onchange="gererDateArriveeProfil()">
         <option value="supporter">Supporter ESIVO</option>
         <option value="licencie-esivo">Licencié au club ESIVO</option>
         <option value="licencie-autre">Licencié d'un autre club</option>
@@ -11474,32 +11474,153 @@ async function deconnecterAdmin() {
   showPage("Mon compte");
 }
 
-  async function enregistrerPseudo() {
+  
+function gererDateArriveeProfil() {
+  const statut = document.getElementById("profilStatut")?.value;
+  const champDate = document.getElementById("champDateArrivee");
+
+  if (champDate) {
+    champDate.hidden = statut !== "licencie-esivo";
+  }
+}
+
+async function ouvrirEditeurProfil() {
   const utilisateur = window.esivoAuth.currentUser;
-  const champ = document.getElementById("pseudoCompte");
-  const message = document.getElementById("pseudoMessage");
+  const editeur = document.getElementById("editeurProfil");
+
+  if (!utilisateur || !editeur) return;
+
+  editeur.style.display = "block";
+
+  const message = document.getElementById("profilMessage");
+  if (message) message.textContent = "Chargement de tes informations...";
+
+  try {
+    const doc = await window.esivoDb
+      .collection("membres")
+      .doc(utilisateur.uid)
+      .get();
+
+    const donnees = doc.exists ? doc.data() : {};
+
+    document.getElementById("profilPrenom").value = donnees.prenom || "";
+    document.getElementById("profilNom").value = donnees.nom || "";
+    document.getElementById("pseudoCompte").value =
+      donnees.pseudo || utilisateur.displayName || "";
+
+    document.getElementById("profilNaissance").value =
+      donnees.dateNaissance || "";
+
+    document.getElementById("profilVille").value = donnees.ville || "";
+    document.getElementById("profilTelephone").value =
+      donnees.telephone || "";
+
+    document.getElementById("profilEmail").value =
+      utilisateur.email || "";
+
+    document.getElementById("profilStatut").value =
+      donnees.statut || "supporter";
+
+    document.getElementById("profilDateArrivee").value =
+      donnees.dateArrivee || "";
+
+    document.getElementById("profilDescription").value =
+      donnees.description || "";
+
+    gererDateArriveeProfil();
+
+    if (message) message.textContent = "";
+
+  } catch (erreur) {
+    console.error("Erreur de chargement du profil :", erreur);
+
+    if (message) {
+      message.textContent =
+        "Impossible de charger tes informations pour le moment.";
+    }
+  }
+}
+
+function fermerEditeurProfil() {
+  const editeur = document.getElementById("editeurProfil");
+
+  if (editeur) {
+    editeur.style.display = "none";
+  }
+}
+
+async function enregistrerInformationsProfil() {
+  const utilisateur = window.esivoAuth.currentUser;
+  const message = document.getElementById("profilMessage");
 
   if (!utilisateur) return;
 
-  const pseudo = champ.value.trim();
+  const pseudo = document.getElementById("pseudoCompte").value.trim();
 
   if (pseudo.length < 2 || pseudo.length > 20) {
-    message.textContent = "Ton pseudonyme doit contenir entre 2 et 20 caractères.";
+    message.textContent =
+      "Ton pseudonyme doit contenir entre 2 et 20 caractères.";
     return;
   }
 
+  const statut = document.getElementById("profilStatut").value;
+
+  const statutsAutorises = [
+    "supporter",
+    "licencie-esivo",
+    "licencie-autre"
+  ];
+
+  if (!statutsAutorises.includes(statut)) {
+    message.textContent = "Le statut sélectionné n'est pas valide.";
+    return;
+  }
+
+  const informations = {
+    prenom: document.getElementById("profilPrenom").value.trim(),
+    nom: document.getElementById("profilNom").value.trim(),
+    pseudo: pseudo,
+    dateNaissance: document.getElementById("profilNaissance").value,
+    ville: document.getElementById("profilVille").value.trim(),
+    telephone: document.getElementById("profilTelephone").value.trim(),
+    statut: statut,
+    dateArrivee:
+      statut === "licencie-esivo"
+        ? document.getElementById("profilDateArrivee").value
+        : "",
+    description: document.getElementById("profilDescription").value.trim(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
   try {
-        await utilisateur.updateProfile({
+    message.textContent = "Enregistrement en cours...";
+
+    await window.esivoDb
+      .collection("membres")
+      .doc(utilisateur.uid)
+      .set(informations, { merge: true });
+
+    await utilisateur.updateProfile({
       displayName: pseudo
     });
 
-    message.textContent = "Ton pseudonyme a bien été enregistré !";
+    message.textContent = "Tes informations ont bien été enregistrées !";
     message.style.color = "#4CAF50";
+
+    setTimeout(() => {
+      showPage("Mon compte");
+    }, 1000);
+
   } catch (erreur) {
-    console.error("Erreur lors de l'enregistrement du pseudonyme :", erreur);
-    message.textContent = "Impossible d'enregistrer ton pseudonyme. Réessaie.";
+    console.error("Erreur d'enregistrement du profil :", erreur);
+
+    message.textContent =
+      "Une erreur est survenue. Tes informations n'ont pas pu être enregistrées.";
+
+    message.style.color = "#E57373";
   }
 }
+
 
   
 let urlTemporaireRecadrage = null;
