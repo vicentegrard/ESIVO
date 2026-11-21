@@ -4178,16 +4178,21 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
 
 /* AFFICHAGE DES ÉQUIPES */
 
+
+/* BANDEAU FACE-À-FACE DES ÉQUIPES */
+
 .mc-sheet-teams {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 18px;
-  padding: 30px 18px;
-  border: 1px solid #303039;
+  padding: 35px 20px;
+  overflow: hidden;
+  border: 1px solid #38383F;
   border-radius: 16px;
   background:
-    radial-gradient(circle at center, rgba(170, 26, 36, 0.13), transparent 65%),
+    linear-gradient(90deg, rgba(170, 26, 36, 0.17), transparent 48%, rgba(255,255,255,0.035)),
     #111116;
 }
 
@@ -4196,26 +4201,36 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 11px;
+  gap: 12px;
   min-width: 0;
 }
 
 .mc-sheet-team img {
-  width: 90px;
-  height: 90px;
+  width: 105px;
+  height: 105px;
   object-fit: contain;
-  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.5));
+  transition: transform 0.25s ease;
+}
+
+.mc-sheet-team img:hover {
+  transform: scale(1.08);
 }
 
 .mc-sheet-team strong {
   overflow-wrap: anywhere;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 900;
+  line-height: 1.25;
 }
 
 .mc-sheet-team span {
-  color: #9999A3;
-  font-size: 10px;
+  padding: 6px 11px;
+  border: 1px solid rgba(229, 189, 55, 0.25);
+  border-radius: 5px;
+  background: rgba(229, 189, 55, 0.08);
+  color: #E5BD37;
+  font-size: 9px;
   font-weight: 900;
   letter-spacing: 1.5px;
 }
@@ -4224,15 +4239,17 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid rgba(229, 189, 55, 0.35);
+  width: 54px;
+  height: 54px;
+  border: 2px solid #AA1A24;
   border-radius: 50%;
-  background: #25252B;
-  color: #E5BD37;
-  font-size: 16px;
+  background: linear-gradient(145deg, #AA1A24, #650E15);
+  color: #fff;
+  font-size: 17px;
   font-weight: 1000;
+  box-shadow: 0 0 25px rgba(170, 26, 36, 0.3);
 }
+
 
 /* INFORMATIONS DU MATCH */
 
@@ -4326,33 +4343,9 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
     padding: 10px;
   }
 
-  .mc-match-sheet {
-    max-height: 95vh;
-    padding: 27px 17px 20px;
-    border-radius: 15px;
-  }
-
-  .mc-match-close {
-    top: 12px;
-    right: 12px;
-    width: 34px;
-    height: 34px;
-    font-size: 22px;
-  }
-
-  .mc-match-sheet h2 {
-    font-size: 23px;
-    padding-right: 30px;
-  }
-
-  .mc-sheet-competition {
-    font-size: 11px;
-    margin-bottom: 18px;
-  }
-
-  .mc-sheet-teams {
+    .mc-sheet-teams {
     gap: 7px;
-    padding: 22px 8px;
+    padding: 25px 8px;
   }
 
   .mc-sheet-team {
@@ -4360,8 +4353,8 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   }
 
   .mc-sheet-team img {
-    width: 62px;
-    height: 62px;
+    width: 70px;
+    height: 70px;
   }
 
   .mc-sheet-team strong {
@@ -4369,13 +4362,13 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   }
 
   .mc-sheet-team span {
-    font-size: 9px;
-    letter-spacing: 1px;
+    padding: 5px 7px;
+    font-size: 8px;
   }
 
   .mc-sheet-vs {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     font-size: 12px;
   }
 
@@ -4413,57 +4406,6 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
     font-size: 11px;
   }
 }
-
-
-/* ADAPTATION MOBILE */
-
-@media (max-width: 600px) {
-  .mc-match-overlay {
-    padding: 10px;
-    align-items: center;
-  }
-
-  .mc-match-sheet {
-    padding: 25px 17px;
-    max-height: 94vh;
-    border-radius: 14px;
-  }
-
-  .mc-match-sheet h2 {
-    font-size: 23px;
-  }
-
-  .mc-sheet-teams {
-    gap: 8px;
-    padding: 20px 7px;
-  }
-
-  .mc-sheet-team img {
-    width: 55px;
-    height: 55px;
-  }
-
-  .mc-sheet-team strong {
-    font-size: 12px;
-  }
-
-  .mc-sheet-information {
-    gap: 8px;
-  }
-
-  .mc-sheet-information > div {
-    padding: 12px 10px;
-  }
-
-  .mc-sheet-information strong {
-    font-size: 12px;
-  }
-
-  .mc-sheet-venue {
-    padding: 16px;
-  }
-}
-
 
 </style>
 
