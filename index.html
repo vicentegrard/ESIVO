@@ -4407,6 +4407,108 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   }
 }
 
+
+/* BLOC STADE — DESIGN PREMIUM ESIVO */
+
+.mc-sheet-venue {
+  position: relative;
+  overflow: hidden;
+  margin-top: 22px;
+  padding: 25px;
+  border: 1px solid #38383F;
+  border-left: 4px solid #AA1A24;
+  border-radius: 14px;
+  background:
+    linear-gradient(115deg, rgba(170, 26, 36, 0.13), transparent 65%),
+    #19191F;
+}
+
+.mc-sheet-venue::after {
+  content: " ";
+  position: absolute;
+  top: -55px;
+  right: -45px;
+  width: 155px;
+  height: 155px;
+  border-radius: 50%;
+  background: rgba(170, 26, 36, 0.09);
+  pointer-events: none;
+}
+
+.mc-sheet-venue .mc-eyebrow {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: #E5BD37;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.mc-sheet-venue h3 {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 6px;
+  color: #FFFFFF;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.mc-sheet-venue p {
+  margin: 0 0 20px;
+  color: #A5A5AE;
+  font-size: 14px;
+}
+
+.mc-sheet-venue a {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 17px;
+  border: 1px solid #AA1A24;
+  border-radius: 7px;
+  background: #AA1A24;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mc-sheet-venue a:hover {
+  background: #850F18;
+  transform: translateY(-2px);
+}
+
+/* ADAPTATION MOBILE */
+
+@media (max-width: 600px) {
+  .mc-sheet-venue {
+    margin-top: 17px;
+    padding: 19px 16px;
+  }
+
+  .mc-sheet-venue h3 {
+    font-size: 19px;
+  }
+
+  .mc-sheet-venue p {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .mc-sheet-venue a {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 10px;
+    font-size: 11px;
+  }
+}
+
+
 </style>
 
 
