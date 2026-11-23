@@ -6333,6 +6333,276 @@ function ouvrirFicheAccueil(carte) {
   boutonFermer.focus();
 }
 
+
+// =========================================
+// SYSTÈME DE COMMENTAIRES ESIVO
+// =========================================
+
+// Génère un identifiant stable pour chaque rencontre
+function genererIdEvenement(type, elements) {
+  const texte = JSON.stringify([type, ...elements]);
+  let hash = 2166136261;
+
+  for (let i = 0; i < texte.length; i++) {
+    hash ^= texte.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  return type + "_" + (hash >>> 0).toString(36);
+}
+
+// Sécurise les textes affichés dans le HTML
+function echapperTexteCommentaire(texte) {
+  return String(texte ?? "").replace(/[&<>"']/g, caractere => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[caractere]);
+}
+
+// Affiche les commentaires d'une rencontre
+async function initialiserCommentaires(type, eventId, conteneur) {
+  if (!conteneur) return;
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  conteneur.innerHTML = `
+    <section class="esivo-commentaires">
+      <div class="esivo-commentaires-entete">
+        <span class="mc-eyebrow">ESIVO · COMMUNAUTÉ</span>
+        <h3>ESPACE COMMENTAIRES</h3>
+      </div>
+
+      <div class="esivo-commentaires-liste">
+        <p class="esivo-commentaires-chargement">
+          Chargement des commentaires...
+        </p>
+      </div>
+
+      <div class="esivo-commentaires-formulaire"></div>
+    </section>
+  `;
+
+  const liste = conteneur.querySelector(".esivo-commentaires-liste");
+  const formulaire = conteneur.querySelector(".esivo-commentaires-formulaire");
+
+  if (utilisateur) {
+    formulaire.innerHTML = `
+      <form class="esivo-commentaire-form">
+        <textarea
+          maxlength="1000"
+          placeholder="Écris ton commentaire..."
+          required
+        ></textarea>
+        <div class="esivo-commentaire-form-bas">
+          <span>1000 caractères maximum</span>
+          <button type="submit">PUBLIER</button>
+        </div>
+        <p class="esivo-commentaire-message"></p>
+      </form>
+    `;
+  } else {
+    formulaire.innerHTML = `
+      <p class="esivo-commentaire-connexion">
+        Connecte-toi pour participer à la discussion.
+      </p>
+    `;
+  }
+
+  async function chargerListeCommentaires() {
+    try {
+      const resultat = await window.esivoDb
+        .collection("commentaires")
+        .where("eventId", "==", eventId)
+        .where("type", "==", type)
+        .get();
+
+      const commentaires = resultat.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      commentaires.sort((a, b) => {
+        const dateA = a.createdAt?.toDate?.() || new Date(0);
+        const dateB = b.createdAt?.toDate?.() || new Date(0);
+        return dateA - dateB;
+      });
+
+      if (commentaires.length === 0) {
+        liste.innerHTML = `
+          <p class="esivo-commentaires-vide">
+            Aucun commentaire pour le moment. Sois le premier à réagir !
+          </p>
+        `;
+        return;
+      }
+
+      const profils = {};
+
+      for (const commentaire of commentaires) {
+        if (!profils[commentaire.uid]) {
+          try {
+            const profil = await window.esivoDb
+              .collection("profils_publics")
+              .doc(commentaire.uid)
+              .get();
+
+            profils[commentaire.uid] = profil.exists
+              ? profil.data()
+              : null;
+          } catch (erreur) {
+            profils[commentaire.uid] = null;
+          }
+        }
+      }
+
+      const statuts = {
+        "supporter": {
+          texte: "SUPPORTER ESIVO",
+          fond: "#E5BD37",
+          couleur: "#19191D"
+        },
+        "licencie-esivo": {
+          texte: "LICENCIÉ AU CLUB ESIVO",
+          fond: "#AA1A24",
+          couleur: "#FFFFFF"
+        },
+        "licencie-autre": {
+          texte: "LICENCIÉ D'UN AUTRE CLUB",
+          fond: "#269B59",
+          couleur: "#FFFFFF"
+        }
+      };
+
+      liste.innerHTML = commentaires.map(commentaire => {
+        const profil = profils[commentaire.uid] || {};
+        const pseudo = profil.pseudo || "Membre ESIVO";
+
+        const nomComplet =
+          profil.afficherNomPrenom === true
+            ? [profil.prenom, profil.nom].filter(Boolean).join(" ")
+            : "";
+
+        const estFondateur =
+          commentaire.uid === "89slmmfD1FQdOmwbdPna1lqXIVH2";
+
+        const badge = estFondateur
+          ? {
+              texte: "FONDATEUR DU SITE ESIVO",
+              fond: "#2687E8",
+              couleur: "#FFFFFF"
+            }
+          : statuts[profil.statut] || statuts.supporter;
+
+        const date = commentaire.createdAt?.toDate?.();
+
+        const dateTexte = date
+          ? date.toLocaleDateString("fr-FR", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit"
+            })
+          : "À l'instant";
+
+        const photo = profil.photoDataUrl ||
+          "https://ui-avatars.com/api/?name=ESIVO&background=292930&color=fff&size=128";
+
+        return `
+          <article class="esivo-commentaire">
+            <img
+              class="esivo-commentaire-photo"
+              src="${echapperTexteCommentaire(photo)}"
+              alt=""
+            >
+
+            <div class="esivo-commentaire-contenu">
+              <div class="esivo-commentaire-identite">
+                <strong>${echapperTexteCommentaire(pseudo)}</strong>
+                ${nomComplet
+                  ? `<span>${echapperTexteCommentaire(nomComplet)}</span>`
+                  : ""}
+                <span
+                  class="esivo-commentaire-badge"
+                  style="background:${badge.fond};color:${badge.couleur}"
+                >${badge.texte}</span>
+              </div>
+
+              ${profil.description
+                ? `<p class="esivo-commentaire-description">${echapperTexteCommentaire(profil.description)}</p>`
+                : ""}
+
+              <p class="esivo-commentaire-texte">${echapperTexteCommentaire(commentaire.texte)}</p>
+
+              <time class="esivo-commentaire-date">
+                ${dateTexte}
+              </time>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+    } catch (erreur) {
+      console.error("Erreur de chargement des commentaires :", erreur);
+      liste.innerHTML = `
+        <p class="esivo-commentaires-erreur">
+          Impossible de charger les commentaires.
+        </p>
+      `;
+    }
+  }
+
+  await chargerListeCommentaires();
+
+  const formulaireCommentaire = formulaire.querySelector("form");
+
+  if (formulaireCommentaire) {
+    formulaireCommentaire.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const champ = formulaireCommentaire.querySelector("textarea");
+      const bouton = formulaireCommentaire.querySelector("button");
+      const message = formulaireCommentaire.querySelector(
+        ".esivo-commentaire-message"
+      );
+
+      const texte = champ.value.trim();
+      const utilisateurActuel = window.esivoAuth.currentUser;
+
+      if (!utilisateurActuel || !texte) return;
+
+      bouton.disabled = true;
+      message.textContent = "Publication en cours...";
+
+      try {
+        await window.esivoDb.collection("commentaires").add({
+          eventId: eventId,
+          type: type,
+          uid: utilisateurActuel.uid,
+          texte: texte,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        champ.value = "";
+        message.textContent = "Commentaire publié !";
+
+        await chargerListeCommentaires();
+
+      } catch (erreur) {
+        console.error("Erreur de publication :", erreur);
+        message.textContent =
+          "Impossible de publier ton commentaire. Réessaie.";
+      } finally {
+        bouton.disabled = false;
+      }
+    });
+  }
+}
+
+  
 function ouvrirFicheMatchAccueil(match, nomEquipe) {
   if (!match) return;
 
@@ -6363,6 +6633,11 @@ function ouvrirFicheMatchAccueil(match, nomEquipe) {
     });
 
   const rechercheLieu = encodeURIComponent(lieu + ", " + ville);
+
+  const eventId = genererIdEvenement("match", [
+  nomEquipe,
+  ...match
+]);
 
   document.querySelector(".mc-match-overlay")?.remove();
 
@@ -6443,18 +6718,27 @@ function ouvrirFicheMatchAccueil(match, nomEquipe) {
           </a>
         </div>
 
-        <div class="mc-sheet-signature">
-          <div class="mc-signature-line"></div>
-          <img src="logos/esivo.png" alt="Logo ESIVO">
-          <strong>ENVERS ET CONTRE TOUS</strong>
-          <span>ESIVO · SAISON 2026 / 2027</span>
-        </div>
+        <div class="esivo-commentaires-mount"></div>
+
+<div class="mc-sheet-signature">
+  <div class="mc-signature-line"></div>
+  <img src="logos/esivo.png" alt="Logo ESIVO">
+  <strong>ENVERS ET CONTRE TOUS</strong>
+  <span>ESIVO · SAISON 2026 / 2027</span>
+</div>
 
       </section>
     </div>
   `);
 
-  const overlay = document.querySelector(".mc-match-overlay");
+const overlay = document.querySelector(".mc-match-overlay");
+
+initialiserCommentaires(
+  "match",
+  eventId,
+  overlay.querySelector(".esivo-commentaires-mount")
+);
+  
   const boutonFermer = overlay.querySelector(".mc-match-close");
 
   const fermerFiche = () => {
