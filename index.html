@@ -8174,6 +8174,44 @@ ${enregistre && (aUnScore || aUnForfait) ? `
     </div>
   </div>
 
+    <h5>Informations complémentaires du match</h5>
+
+  <div class="form-group">
+    <label for="resultat-buteurs-${evenement.id}">Buteurs et minutes</label>
+    <textarea id="resultat-buteurs-${evenement.id}" rows="3"
+      placeholder="Ex : Dupont 12', Martin 45', Durand 78'">${evenement.buteurs || ""}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="resultat-titulaires-${evenement.id}">Composition de départ (ESIVO)</label>
+    <textarea id="resultat-titulaires-${evenement.id}" rows="4"
+      placeholder="Indique les joueurs titulaires">${evenement.titulaires || ""}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="resultat-remplacants-${evenement.id}">Remplaçants (ESIVO)</label>
+    <textarea id="resultat-remplacants-${evenement.id}" rows="3"
+      placeholder="Indique les joueurs remplaçants">${evenement.remplacants || ""}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="resultat-changements-${evenement.id}">Remplacements et minutes</label>
+    <textarea id="resultat-changements-${evenement.id}" rows="3"
+      placeholder="Ex : Martin remplacé par Dupont à la 65e minute">${evenement.changements || ""}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="resultat-cartons-${evenement.id}">Cartons</label>
+    <textarea id="resultat-cartons-${evenement.id}" rows="3"
+      placeholder="Ex : Dupont (jaune, 34e), Martin (rouge, 82e)">${evenement.cartons || ""}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="resultat-commentaire-${evenement.id}">Résumé du match</label>
+    <textarea id="resultat-commentaire-${evenement.id}" rows="5"
+      placeholder="Raconte les moments importants de la rencontre...">${evenement.commentaire || ""}</textarea>
+  </div>
+
   <div class="admin-resultat-actions">
     <button type="button" class="admin-btn-primary"
       onclick="enregistrerResultatAdmin('${evenement.id}', 'match')">
@@ -8367,6 +8405,12 @@ if (type === "match") {
   const tirsAuBut = document.getElementById("resultat-tab-" + id).checked;
   const scoreTABESIVO = document.getElementById("resultat-tab-esivo-" + id).value;
   const scoreTABAdversaire = document.getElementById("resultat-tab-adverse-" + id).value;
+  const buteurs = document.getElementById("resultat-buteurs-" + id).value;
+  const titulaires = document.getElementById("resultat-titulaires-" + id).value;
+  const remplacants = document.getElementById("resultat-remplacants-" + id).value;
+  const changements = document.getElementById("resultat-changements-" + id).value;
+  const cartons = document.getElementById("resultat-cartons-" + id).value;
+  const commentaire = document.getElementById("resultat-commentaire-" + id).value;
 
   if (forfait && tirsAuBut) {
     message.textContent = "Un forfait ne peut pas être associé à une séance de tirs au but.";
@@ -8424,9 +8468,16 @@ if (type === "match") {
   forfait: forfait,
   forfaitEquipe: forfait ? forfaitEquipe : null,
 
-  tirsAuBut: tirsAuBut,
+    tirsAuBut: tirsAuBut,
   scoreTABESIVO: tirsAuBut ? Number(scoreTABESIVO) : null,
   scoreTABAdversaire: tirsAuBut ? Number(scoreTABAdversaire) : null,
+
+  buteurs: buteurs,
+  titulaires: titulaires,
+  remplacants: remplacants,
+  changements: changements,
+  cartons: cartons,
+  commentaire: commentaire,
 
   resultatEnregistre: true
 };
