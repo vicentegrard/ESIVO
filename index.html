@@ -13489,6 +13489,38 @@ function fermerEditeurProfil() {
   }
 }
 
+
+async function synchroniserProfilPublic(uid) {
+  const documentMembre = await window.esivoDb
+    .collection("membres")
+    .doc(uid)
+    .get();
+
+  if (!documentMembre.exists) {
+    throw new Error("Profil membre introuvable.");
+  }
+
+  const membre = documentMembre.data();
+  const afficherNom = membre.afficherNomPrenom === true;
+
+  const profilPublic = {
+    pseudo: membre.pseudo || "Supporter ESIVO",
+    statut: membre.statut || "supporter",
+    description: membre.description || "",
+    afficherNomPrenom: afficherNom,
+    prenom: afficherNom ? (membre.prenom || "") : "",
+    nom: afficherNom ? (membre.nom || "") : "",
+    photoDataUrl: membre.photoDataUrl || "",
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  await window.esivoDb
+    .collection("profils_publics")
+    .doc(uid)
+    .set(profilPublic);
+}
+
+
 async function enregistrerInformationsProfil() {
   const utilisateur = window.esivoAuth.currentUser;
   const message = document.getElementById("profilMessage");
@@ -13542,8 +13574,10 @@ pseudo: pseudo,
       .set(informations, { merge: true });
 
     await utilisateur.updateProfile({
-      displayName: pseudo
-    });
+  displayName: pseudo
+});
+
+await synchroniserProfilPublic(utilisateur.uid);
 
     message.textContent = "Tes informations ont bien été enregistrées !";
     message.style.color = "#4CAF50";
@@ -13761,7 +13795,9 @@ document.getElementById("cropValidate").addEventListener("click", async () => {
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
 
-    const imageAffichee = document.getElementById("photoProfilAffichee");
+await synchroniserProfilPublic(utilisateur.uid);
+
+const imageAffichee = document.getElementById("photoProfilAffichee");
     const avatarHeader = document.getElementById("photoProfilHeader");
     const avatarMobile = document.getElementById("photoProfilMobile");
 
