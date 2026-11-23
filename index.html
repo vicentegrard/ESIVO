@@ -1854,6 +1854,10 @@ body {
   padding: 4px 9px;
 }
 
+.mc-result-fixture > .mc-match-info {
+  grid-column: 1 / -1;
+}
+
 /* STATUTS DES MATCHS */
 
 .mc-result-score .match-win,
@@ -10834,47 +10838,50 @@ const afficherStatut = resultat => {
     </div>
   `;
 
-    const afficherDetailsMatch = resultat => {
-    const rubriques = [
-      ["Buteurs", resultat.buteurs],
-      ["Composition de départ · ESIVO", resultat.titulaires],
-      ["Remplaçants · ESIVO", resultat.remplacants],
-      ["Remplacements", resultat.changements],
-      ["Cartons", resultat.cartons],
-      ["Résumé du match", resultat.commentaire]
-    ];
+    
+const afficherDetailsMatch = resultat => {
+  const rubriques = [
+    ["buteurs", "⚽ Buteurs", resultat.buteurs],
+    ["titulaires", "👕 Composition de départ · ESIVO", resultat.titulaires],
+    ["remplacants", "🔄 Remplaçants · ESIVO", resultat.remplacants],
+    ["changements", "↔️ Remplacements", resultat.changements],
+    ["cartons", "🟨 Cartons", resultat.cartons],
+    ["commentaire", "📝 Résumé du match", resultat.commentaire]
+  ];
 
-    const presentes = rubriques.filter(([titre, valeur]) =>
-      typeof valeur === "string" && valeur.trim() !== ""
-    );
+  const presentes = rubriques.filter(([, titre, valeur]) =>
+    typeof valeur === "string" && valeur.trim() !== ""
+  );
 
-    if (presentes.length === 0) return "";
+  if (presentes.length === 0) return "";
 
-    const echapperHTML = texte => String(texte).replace(/[&<>"']/g, caractere => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    })[caractere]);
+  const echapperHTML = texte => String(texte).replace(/[&<>"']/g, caractere => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[caractere]);
 
-    return `
-      <div style="margin-top:20px; padding:18px; background:rgba(255,255,255,.035); border:1px solid #393943; border-radius:12px;">
-        <h3 style="margin:0 0 16px; color:#E5BD37;">LES INFOS DU MATCH</h3>
+  return `
+    <section class="mc-match-info">
+      <div class="mc-match-info-header">
+        <span class="mc-eyebrow">APRÈS-MATCH</span>
+        <h3>LES INFOS DU MATCH</h3>
+      </div>
 
-        ${presentes.map(([titre, valeur]) => `
-          <div style="margin-bottom:15px;">
-            <strong style="display:block; margin-bottom:6px; color:#FFFFFF;">
-              ${titre}
-            </strong>
-            <div style="color:#C7C7D0; line-height:1.7; white-space:pre-line;">
-              ${echapperHTML(valeur)}
-            </div>
+      <div class="mc-match-info-grid">
+        ${presentes.map(([type, titre, valeur]) => `
+          <div class="mc-match-info-item mc-match-info-${type}">
+            <h4>${titre}</h4>
+            <div>${echapperHTML(valeur)}</div>
           </div>
         `).join("")}
       </div>
-    `;
-  };
+    </section>
+  `;
+};
+
 
   const statutDernier = afficherStatut(dernier);
   const domicile = dernier.domicile;
