@@ -11238,7 +11238,10 @@ ${anciens
     const domicileMatch = resultat.domicile;
 
     return `
-      <article class="mc-result-fixture">
+      <article class="mc-result-fixture mc-result-clickable"
+  role="button"
+  tabindex="0"
+  data-result-index="${anciens.indexOf(resultat)}">
         <div class="mc-result-date">
           <strong>${new Date(resultat.date + "T12:00:00")
             .toLocaleDateString("fr-FR", {
@@ -11283,6 +11286,38 @@ ${anciens
     </div>
   `;
 
+    const dernierClickable = contenu.querySelector(".mc-hero");
+
+  if (dernierClickable) {
+    dernierClickable.setAttribute("role", "button");
+    dernierClickable.setAttribute("tabindex", "0");
+    dernierClickable.style.cursor = "pointer";
+
+    const ouvrirDernier = () => ouvrirFicheResultat(dernier);
+
+    dernierClickable.addEventListener("click", ouvrirDernier);
+
+    dernierClickable.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        ouvrirDernier();
+      }
+    });
+  }
+
+    contenu.querySelectorAll(".mc-result-clickable").forEach(carte => {
+    const ouvrir = () =>
+      ouvrirFicheResultat(anciens[Number(carte.dataset.resultIndex)]);
+
+    carte.addEventListener("click", ouvrir);
+
+    carte.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        ouvrir();
+      }
+    });
+  });
   
 } else if (page === "Classements") {
     if (["U7", "U9", "U11"].includes(equipe)) {
