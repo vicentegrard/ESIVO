@@ -10834,6 +10834,48 @@ const afficherStatut = resultat => {
     </div>
   `;
 
+    const afficherDetailsMatch = resultat => {
+    const rubriques = [
+      ["Buteurs", resultat.buteurs],
+      ["Composition de départ · ESIVO", resultat.titulaires],
+      ["Remplaçants · ESIVO", resultat.remplacants],
+      ["Remplacements", resultat.changements],
+      ["Cartons", resultat.cartons],
+      ["Résumé du match", resultat.commentaire]
+    ];
+
+    const presentes = rubriques.filter(([titre, valeur]) =>
+      typeof valeur === "string" && valeur.trim() !== ""
+    );
+
+    if (presentes.length === 0) return "";
+
+    const echapperHTML = texte => String(texte).replace(/[&<>"']/g, caractere => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[caractere]);
+
+    return `
+      <div style="margin-top:20px; padding:18px; background:rgba(255,255,255,.035); border:1px solid #393943; border-radius:12px;">
+        <h3 style="margin:0 0 16px; color:#E5BD37;">LES INFOS DU MATCH</h3>
+
+        ${presentes.map(([titre, valeur]) => `
+          <div style="margin-bottom:15px;">
+            <strong style="display:block; margin-bottom:6px; color:#FFFFFF;">
+              ${titre}
+            </strong>
+            <div style="color:#C7C7D0; line-height:1.7; white-space:pre-line;">
+              ${echapperHTML(valeur)}
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  };
+
   const statutDernier = afficherStatut(dernier);
   const domicile = dernier.domicile;
 
@@ -10897,6 +10939,8 @@ ${dernier.tirsAuBut
 
         </div>
       </div>
+
+        ${afficherDetailsMatch(dernier)}
 
       <div class="mc-list-heading">
         <div>
@@ -11057,7 +11101,7 @@ ${anciens
           </div>
         </div>
 
-        <div class="mc-result-meta">
+                <div class="mc-result-meta">
           <span>${resultat.competition}</span>
           <span>${resultat.journee}</span>
           <span class="${statut.classe}">${statut.libelle}</span>
@@ -11065,6 +11109,8 @@ ${anciens
             ? `<span>TAB : ${resultat.tirsAuBut}</span>`
             : ""}
         </div>
+
+        ${afficherDetailsMatch(resultat)}
       </article>
     `;
   }).join("")}
