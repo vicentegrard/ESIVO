@@ -6294,6 +6294,150 @@ function ouvrirFicheAccueil(carte) {
   boutonFermer.focus();
 }
 
+function ouvrirFicheMatchAccueil(match, nomEquipe) {
+  if (!match) return;
+
+  const [
+    date, heure, competition, journee,
+    domicile, adversaire, logo, lieu, ville
+  ] = match;
+
+  const nomClub =
+    nomEquipe === "Seniors B" ? "ESIVO B" :
+    nomEquipe === "Seniors C" ? "ESIVO C" : "ESIVO";
+
+  const nomDomicile = domicile ? nomClub : adversaire;
+  const nomExterieur = domicile ? adversaire : nomClub;
+
+  const logoDomicile = domicile ? "esivo.png" : logo;
+  const logoExterieur = domicile ? logo : "esivo.png";
+
+  const cheminLogo = fichier =>
+    fichier.startsWith("http") ? fichier : "logos/" + fichier;
+
+  const dateComplete = new Date(date + "T12:00:00")
+    .toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+
+  const rechercheLieu = encodeURIComponent(lieu + ", " + ville);
+
+  document.querySelector(".mc-match-overlay")?.remove();
+
+  document.body.insertAdjacentHTML("beforeend", `
+    <div class="mc-match-overlay">
+      <section class="mc-match-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mc-match-title">
+
+        <button type="button" class="mc-match-close"
+          aria-label="Fermer la fiche">×</button>
+
+        <span class="mc-eyebrow">ESIVO · SAISON 2026 / 2027</span>
+        <h2 id="mc-match-title">FICHE DU MATCH</h2>
+
+        <div class="mc-sheet-competition">
+          ${competition} · ${journee}
+        </div>
+
+        <div class="mc-sheet-teams">
+          <div class="mc-sheet-team">
+            <img src="${cheminLogo(logoDomicile)}" alt="${nomDomicile}">
+            <strong>${nomDomicile}</strong>
+            <span>DOMICILE</span>
+          </div>
+
+          <span class="mc-sheet-vs">VS</span>
+
+          <div class="mc-sheet-team">
+            <img src="${cheminLogo(logoExterieur)}" alt="${nomExterieur}">
+            <strong>${nomExterieur}</strong>
+            <span>EXTÉRIEUR</span>
+          </div>
+        </div>
+
+        <div class="mc-sheet-information">
+          <div class="mc-sheet-info-card">
+            <span class="mc-sheet-info-icon">📅</span>
+            <div>
+              <span>DATE DU MATCH</span>
+              <strong>${dateComplete}</strong>
+            </div>
+          </div>
+
+          <div class="mc-sheet-info-card">
+            <span class="mc-sheet-info-icon">⏱️</span>
+            <div>
+              <span>COUP D'ENVOI</span>
+              <strong>${heure}</strong>
+            </div>
+          </div>
+
+          <div class="mc-sheet-info-card">
+            <span class="mc-sheet-info-icon">🏆</span>
+            <div>
+              <span>COMPÉTITION</span>
+              <strong>${competition}</strong>
+            </div>
+          </div>
+
+          <div class="mc-sheet-info-card">
+            <span class="mc-sheet-info-icon">⚽</span>
+            <div>
+              <span>JOURNÉE / TOUR</span>
+              <strong>${journee}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="mc-sheet-venue">
+          <span class="mc-eyebrow">LE STADE</span>
+          <h3>${lieu}</h3>
+          <p>${ville}</p>
+          <a href="https://www.openstreetmap.org/search?query=${rechercheLieu}"
+             target="_blank" rel="noopener noreferrer">
+            Voir la localisation sur OpenStreetMap ↗
+          </a>
+        </div>
+
+        <div class="mc-sheet-signature">
+          <div class="mc-signature-line"></div>
+          <img src="logos/esivo.png" alt="Logo ESIVO">
+          <strong>ENVERS ET CONTRE TOUS</strong>
+          <span>ESIVO · SAISON 2026 / 2027</span>
+        </div>
+
+      </section>
+    </div>
+  `);
+
+  const overlay = document.querySelector(".mc-match-overlay");
+  const boutonFermer = overlay.querySelector(".mc-match-close");
+
+  const fermerFiche = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", toucheEchap);
+  };
+
+  const toucheEchap = event => {
+    if (event.key === "Escape") fermerFiche();
+  };
+
+  boutonFermer.addEventListener("click", fermerFiche);
+
+  overlay.addEventListener("click", event => {
+    if (event.target === overlay) fermerFiche();
+  });
+
+  document.addEventListener("keydown", toucheEchap);
+
+  boutonFermer.focus();
+}
+
 
 function afficherRencontresWeekend() {
   const conteneur = document.getElementById("weekendMatches");
@@ -6519,30 +6663,20 @@ const evenementsU13 = [
   `;
 
   conteneur.querySelectorAll(".home-carousel-track > .weekend-match")
-  .forEach(carte => {
+  .forEach((carte, index) => {
     carte.style.cursor = "pointer";
     carte.setAttribute("role", "button");
     carte.setAttribute("tabindex", "0");
 
-    const ouvrir = () => ouvrirFicheAccueil(carte);
+    const evenement = tousLesMatchs[index];
 
-    carte.addEventListener("click", ouvrir);
-
-    carte.addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        ouvrir();
+    const ouvrir = () => {
+      if (evenement.match) {
+        ouvrirFicheMatchAccueil(evenement.match, evenement.equipe);
+      } else {
+        ouvrirFicheAccueil(carte);
       }
-    });
-  });
-
-  conteneur.querySelectorAll(".home-carousel-track > .weekend-match")
-  .forEach(carte => {
-    carte.style.cursor = "pointer";
-    carte.setAttribute("role", "button");
-    carte.setAttribute("tabindex", "0");
-
-    const ouvrir = () => ouvrirFicheAccueil(carte);
+    };
 
     carte.addEventListener("click", ouvrir);
 
