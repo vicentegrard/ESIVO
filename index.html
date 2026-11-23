@@ -10883,6 +10883,9 @@ const afficherDetailsMatch = resultat => {
   `;
 };
 
+const cheminLogoMatchResultat = logo => {
+  return logo.startsWith("http") ? logo : "logos/" + logo;
+};
 
 const ouvrirFicheResultat = resultat => {
   if (!resultat) return;
@@ -10940,7 +10943,7 @@ const ouvrirFicheResultat = resultat => {
 
         <div class="mc-sheet-teams">
           <div class="mc-sheet-team">
-            <img src="${cheminLogoMatch(logoDomicile)}" alt="${nomDomicile}">
+            <img src="${cheminLogoMatchResultat(logoDomicile)}" alt="${nomDomicile}">
             <strong>${nomDomicile}</strong>
             <span>DOMICILE</span>
           </div>
@@ -10954,7 +10957,7 @@ const ouvrirFicheResultat = resultat => {
           </div>
 
           <div class="mc-sheet-team">
-            <img src="${cheminLogoMatch(logoExterieur)}" alt="${nomExterieur}">
+            <img src="${cheminLogoMatchResultat(logoExterieur)}" alt="${nomExterieur}">
             <strong>${nomExterieur}</strong>
             <span>EXTÉRIEUR</span>
           </div>
