@@ -4705,6 +4705,51 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   text-align: center;
 }
 
+
+/* RÉACTIONS AUX COMMENTAIRES */
+
+.esivo-commentaire-reactions {
+  margin-top: 12px;
+}
+
+.esivo-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.esivo-reaction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border: 1px solid #41414A;
+  border-radius: 20px;
+  background: #19191F;
+  color: #FFFFFF;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.esivo-reaction-btn:hover:not(:disabled) {
+  border-color: #AA1A24;
+  background: #292026;
+  transform: translateY(-2px);
+}
+
+.esivo-reaction-btn.active {
+  border-color: #AA1A24;
+  background: rgba(170, 26, 36, 0.2);
+  box-shadow: 0 0 0 1px rgba(170, 26, 36, 0.2);
+}
+
+.esivo-reaction-btn:disabled {
+  opacity: 0.8;
+  cursor: default;
+}
+
+
 /* CARTE D'UN COMMENTAIRE */
 
 .esivo-commentaire {
@@ -6632,6 +6677,97 @@ function echapperTexteCommentaire(texte) {
 }
 
 // Affiche les commentaires d'une rencontre
+
+  
+async function initialiserReactionsCommentaire(commentaireId, conteneur) {
+  if (!conteneur) return;
+
+  const emojis = ["👍", "❤️", "😂", "😮", "😢", "🔥"];
+  const utilisateur = window.esivoAuth.currentUser;
+
+  try {
+    const resultat = await window.esivoDb
+      .collection("commentaires")
+      .doc(commentaireId)
+      .collection("reactions")
+      .get();
+
+    const reactions = resultat.docs.map(doc => ({
+      uid: doc.id,
+      ...doc.data()
+    }));
+
+    const compteurs = {};
+    emojis.forEach(emoji => compteurs[emoji] = 0);
+
+    reactions.forEach(reaction => {
+      if (compteurs[reaction.emoji] !== undefined) {
+        compteurs[reaction.emoji]++;
+      }
+    });
+
+    const maReaction = utilisateur
+      ? reactions.find(r => r.uid === utilisateur.uid)?.emoji
+      : null;
+
+    conteneur.innerHTML = `
+      <div class="esivo-reactions">
+        ${emojis.map(emoji => `
+          <button
+            type="button"
+            class="esivo-reaction-btn ${maReaction === emoji ? "active" : ""}"
+            data-emoji="${emoji}"
+            ${!utilisateur ? "disabled" : ""}
+            title="${utilisateur ? "Réagir" : "Connecte-toi pour réagir"}"
+          >
+            <span>${emoji}</span>
+            <span>${compteurs[emoji]}</span>
+          </button>
+        `).join("")}
+      </div>
+    `;
+
+    if (!utilisateur) return;
+
+    conteneur.querySelectorAll(".esivo-reaction-btn").forEach(bouton => {
+      bouton.addEventListener("click", async () => {
+        const emoji = bouton.dataset.emoji;
+        const reactionRef = window.esivoDb
+          .collection("commentaires")
+          .doc(commentaireId)
+          .collection("reactions")
+          .doc(utilisateur.uid);
+
+        try {
+          const reactionActuelle = reactions.find(
+            r => r.uid === utilisateur.uid
+          );
+
+          if (reactionActuelle?.emoji === emoji) {
+            await reactionRef.delete();
+          } else {
+            await reactionRef.set({
+              uid: utilisateur.uid,
+              emoji: emoji,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+
+          await initialiserReactionsCommentaire(commentaireId, conteneur);
+
+        } catch (erreur) {
+          console.error("Erreur de réaction :", erreur);
+          alert("Impossible d'enregistrer ta réaction.");
+        }
+      });
+    });
+
+  } catch (erreur) {
+    console.error("Erreur de chargement des réactions :", erreur);
+    conteneur.textContent = "Réactions indisponibles.";
+  }
+}
+
 async function initialiserCommentaires(type, eventId, conteneur) {
   if (!conteneur) return;
 
@@ -6809,10 +6945,27 @@ async function initialiserCommentaires(type, eventId, conteneur) {
               <time class="esivo-commentaire-date">
                 ${dateTexte}
               </time>
+
+                            <div
+                class="esivo-commentaire-reactions"
+                data-commentaire-id="${commentaire.id}"
+              ></div>
             </div>
           </article>
         `;
       }).join("");
+
+            // Initialisation des réactions de chaque commentaire
+      const emplacementsReactions = liste.querySelectorAll(
+        ".esivo-commentaire-reactions"
+      );
+
+      for (const emplacement of emplacementsReactions) {
+        await initialiserReactionsCommentaire(
+          emplacement.dataset.commentaireId,
+          emplacement
+        );
+      }
 
     } catch (erreur) {
       console.error("Erreur de chargement des commentaires :", erreur);
