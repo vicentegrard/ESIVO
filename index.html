@@ -10884,6 +10884,164 @@ const afficherDetailsMatch = resultat => {
 };
 
 
+const ouvrirFicheResultat = resultat => {
+  if (!resultat) return;
+
+  const domicile = resultat.domicile;
+  const nomDomicile = domicile ? "ESIVO" : resultat.adversaire;
+  const nomExterieur = domicile ? resultat.adversaire : "ESIVO";
+
+  const logoDomicile = domicile ? "esivo.png" : resultat.logo;
+  const logoExterieur = domicile ? resultat.logo : "esivo.png";
+
+  const butsDomicile = domicile
+    ? resultat.butsESIVO
+    : resultat.butsAdversaire;
+
+  const butsExterieur = domicile
+    ? resultat.butsAdversaire
+    : resultat.butsESIVO;
+
+  const statut = afficherStatut(resultat);
+  const dateComplete = afficherDate(resultat.date);
+  const rechercheLieu = encodeURIComponent(
+    resultat.lieu + ", " + resultat.ville
+  );
+
+  let detailsTAB = "";
+
+  if (resultat.tirsAuBut) {
+    detailsTAB = typeof resultat.tirsAuBut === "string"
+      ? resultat.tirsAuBut
+      : domicile
+        ? `${resultat.scoreTABESIVO} - ${resultat.scoreTABAdversaire}`
+        : `${resultat.scoreTABAdversaire} - ${resultat.scoreTABESIVO}`;
+  }
+
+  const ancienneFiche = contenu.querySelector(".mc-match-overlay");
+  if (ancienneFiche) ancienneFiche.remove();
+
+  contenu.insertAdjacentHTML("beforeend", `
+    <div class="mc-match-overlay">
+      <section class="mc-match-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mc-match-title">
+
+        <button type="button" class="mc-match-close"
+          aria-label="Fermer la fiche">×</button>
+
+        <span class="mc-eyebrow">ESIVO · SAISON 2026 / 2027</span>
+        <h2 id="mc-match-title">FICHE DU MATCH</h2>
+
+        <div class="mc-sheet-competition">
+          ${resultat.competition} · ${resultat.journee}
+        </div>
+
+        <div class="mc-sheet-teams">
+          <div class="mc-sheet-team">
+            <img src="${cheminLogoMatch(logoDomicile)}" alt="${nomDomicile}">
+            <strong>${nomDomicile}</strong>
+            <span>DOMICILE</span>
+          </div>
+
+          <div class="mc-sheet-result-score">
+            <strong>${butsDomicile} - ${butsExterieur}</strong>
+            <span class="${statut.classe}">${statut.libelle}</span>
+            ${detailsTAB
+              ? `<small>TIRS AU BUT : ${detailsTAB}</small>`
+              : ""}
+          </div>
+
+          <div class="mc-sheet-team">
+            <img src="${cheminLogoMatch(logoExterieur)}" alt="${nomExterieur}">
+            <strong>${nomExterieur}</strong>
+            <span>EXTÉRIEUR</span>
+          </div>
+        </div>
+
+        <div class="mc-sheet-information">
+          <div class="mc-sheet-info-card">
+            <span class="mc-sheet-info-icon">📅</span>
+            <div>
+              <span>DATE DU MATCH</span>
+              <strong>${dateComplete}</strong>
+            </div>
+          </div>
+
+          <div class="mc-sheet-info-card">
+            <span class="mc-sheet-info-icon">⏱️</span>
+            <div>
+              <span>HORAIRE</span>
+              <strong>${resultat.heure}</strong>
+            </div>
+          </div>
+
+          <div class="mc-sheet-info-card">
+            <span class="mc-sheet-info-icon">🏆</span>
+            <div>
+              <span>COMPÉTITION</span>
+              <strong>${resultat.competition}</strong>
+            </div>
+          </div>
+
+          <div class="mc-sheet-info-card">
+            <span class="mc-sheet-info-icon">⚽</span>
+            <div>
+              <span>JOURNÉE / TOUR</span>
+              <strong>${resultat.journee}</strong>
+            </div>
+          </div>
+        </div>
+
+        ${afficherDetailsMatch(resultat).replace(' hidden', '')}
+
+        <div class="mc-sheet-venue">
+          <span class="mc-eyebrow">LE STADE</span>
+          <h3>${resultat.lieu}</h3>
+          <p>${resultat.ville}</p>
+          <a href="https://www.openstreetmap.org/search?query=${rechercheLieu}"
+             target="_blank" rel="noopener noreferrer">
+            Voir la localisation sur OpenStreetMap ↗
+          </a>
+        </div>
+
+        <div class="mc-sheet-signature">
+          <div class="mc-signature-line"></div>
+          <img src="logos/esivo.png" alt="Logo ESIVO">
+          <strong>ENVERS ET CONTRE TOUS</strong>
+          <span>ESIVO · SAISON 2026 / 2027</span>
+        </div>
+
+      </section>
+    </div>
+  `);
+
+  const overlay = contenu.querySelector(".mc-match-overlay");
+  const boutonFermer = overlay.querySelector(".mc-match-close");
+
+  const fermerFiche = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", toucheEchap);
+  };
+
+  const toucheEchap = event => {
+    if (event.key === "Escape") fermerFiche();
+  };
+
+  boutonFermer.addEventListener("click", fermerFiche);
+
+  overlay.addEventListener("click", event => {
+    if (event.target === overlay) fermerFiche();
+  });
+
+  document.addEventListener("keydown", toucheEchap);
+
+  boutonFermer.focus();
+};
+
+
+
 
   const statutDernier = afficherStatut(dernier);
   const domicile = dernier.domicile;
@@ -10948,8 +11106,6 @@ ${dernier.tirsAuBut
 
         </div>
       </div>
-
-        ${afficherDetailsMatch(dernier)}
 
       <div class="mc-list-heading">
         <div>
@@ -11119,7 +11275,6 @@ ${anciens
             : ""}
         </div>
 
-        ${afficherDetailsMatch(resultat)}
       </article>
     `;
   }).join("")}
