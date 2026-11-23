@@ -4672,36 +4672,6 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   }
 }
 
-.mc-match-info-toggle {
-  width: 100%;
-  margin-top: 12px;
-  padding: 12px 16px;
-  background: rgba(170, 26, 36, 0.10);
-  border: 1px solid rgba(170, 26, 36, 0.35);
-  border-radius: 10px;
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-align: left;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.mc-match-info-toggle:hover {
-  background: rgba(170, 26, 36, 0.22);
-  border-color: #AA1A24;
-}
-
-.mc-match-info-toggle span {
-  color: #E5BD37;
-  font-size: 18px;
-}
-
 </style>
 
 
@@ -10894,10 +10864,6 @@ const afficherDetailsMatch = resultat => {
   })[caractere]);
 
   return `
-    <div class="mc-match-info-container">
-      <button type="button" class="mc-match-info-toggle">
-        VOIR LES INFOS DU MATCH <span>＋</span>
-      </button>
 
       <section class="mc-match-info" hidden>
         <div class="mc-match-info-header">
@@ -10914,7 +10880,6 @@ const afficherDetailsMatch = resultat => {
           `).join("")}
         </div>
       </section>
-    </div>
   `;
 };
 
@@ -11162,21 +11127,6 @@ ${anciens
 
     </div>
   `;
-
-  
-contenu.querySelectorAll(".mc-match-info-toggle").forEach(bouton => {
-  bouton.addEventListener("click", () => {
-    const panneau = bouton.nextElementSibling;
-    const ouvert = !panneau.hidden;
-
-    panneau.hidden = ouvert;
-    bouton.setAttribute("aria-expanded", String(!ouvert));
-
-    bouton.innerHTML = ouvert
-      ? 'VOIR LES INFOS DU MATCH <span>＋</span>'
-      : 'MASQUER LES INFOS <span>−</span>';
-  });
-});
 
   
 } else if (page === "Classements") {
