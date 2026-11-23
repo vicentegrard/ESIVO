@@ -15395,8 +15395,47 @@ async function chargerCommentairesAdmin() {
 
         <p style="margin:0;color:#EEEEF0;line-height:1.6;overflow-wrap:anywhere;">
           ${echapperTexteCommentaire(commentaire.texte)}
+        
         </p>
+
+        <button
+          type="button"
+          class="btn-primary"
+          style="margin-top:14px;background:#AA1A24;border-color:#AA1A24;"
+          data-supprimer-commentaire
+        >
+          Supprimer ce commentaire
+        </button>
       `;
+
+
+      carte.querySelector("[data-supprimer-commentaire]")
+        .addEventListener("click", async () => {
+          const utilisateurActuel = window.esivoAuth.currentUser;
+
+          if (!utilisateurActuel || utilisateurActuel.uid !== ADMIN_UID) {
+            alert("Accès refusé.");
+            return;
+          }
+
+          if (!confirm("Supprimer définitivement ce commentaire ?")) {
+            return;
+          }
+
+          try {
+            await window.esivoDb
+              .collection("commentaires")
+              .doc(commentaire.id)
+              .delete();
+
+            await chargerCommentairesAdmin();
+
+          } catch (erreur) {
+            console.error("Erreur de suppression :", erreur);
+            alert("Impossible de supprimer ce commentaire.");
+          }
+        });
+
 
       liste.appendChild(carte);
     }
