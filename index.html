@@ -11830,6 +11830,12 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
       });
 
     const rechercheLieu = encodeURIComponent(lieu + ", " + ville);
+
+    const eventId = genererIdEvenement("match", [
+  equipe,
+  ...match
+]);
+    
     const ancienneFiche = contenu.querySelector(".mc-match-overlay");
 
     if (ancienneFiche) ancienneFiche.remove();
