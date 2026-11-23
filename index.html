@@ -8021,10 +8021,13 @@ async function chargerEvenementsResultatsAdmin(equipe) {
       }
 
       const aUnScore =
-        evenement.butsESIVO !== undefined &&
-        evenement.butsESIVO !== null &&
-        evenement.butsAdversaire !== undefined &&
-        evenement.butsAdversaire !== null;
+  evenement.forfait === true ||
+  (
+    evenement.butsESIVO !== undefined &&
+    evenement.butsESIVO !== null &&
+    evenement.butsAdversaire !== undefined &&
+    evenement.butsAdversaire !== null
+  );
 
       return `
         <article class="content-card admin-resultat-card" id="resultat-carte-${evenement.id}">
@@ -8066,34 +8069,87 @@ async function chargerEvenementsResultatsAdmin(equipe) {
             </div>
           ` : ""}
 
-          <div class="admin-resultat-editor" id="resultat-edition-${evenement.id}" ${enregistre && aUnScore ? "hidden" : ""}>
-            <div class="admin-resultat-fields">
-              <div class="form-group">
-                <label for="resultat-esivo-${evenement.id}">Buts ESIVO</label>
-                <input type="number" min="0" step="1"
-                  id="resultat-esivo-${evenement.id}"
-                  value="${evenement.butsESIVO ?? ""}">
-              </div>
-              <div class="form-group">
-                <label for="resultat-adverse-${evenement.id}">Buts adversaire</label>
-                <input type="number" min="0" step="1"
-                  id="resultat-adverse-${evenement.id}"
-                  value="${evenement.butsAdversaire ?? ""}">
-              </div>
-            </div>
-            <div class="admin-resultat-actions">
-              <button type="button" class="admin-btn-primary"
-                onclick="enregistrerResultatAdmin('${evenement.id}', 'match')">
-                Enregistrer le score
-              </button>
-              ${enregistre ? `
-                <button type="button" class="admin-btn-secondary"
-                  onclick="annulerModificationResultatAdmin()">
-                  Annuler
-                </button>
-              ` : ""}
-            </div>
-          </div>
+          
+<div class="admin-resultat-editor" id="resultat-edition-${evenement.id}" ${enregistre && aUnScore ? "hidden" : ""}>
+  <div class="admin-resultat-fields">
+    <div class="form-group">
+      <label for="resultat-esivo-${evenement.id}">Buts ESIVO</label>
+      <input type="number" min="0" step="1"
+        id="resultat-esivo-${evenement.id}"
+        value="${evenement.butsESIVO ?? ""}">
+    </div>
+    <div class="form-group">
+      <label for="resultat-adverse-${evenement.id}">Buts adversaire</label>
+      <input type="number" min="0" step="1"
+        id="resultat-adverse-${evenement.id}"
+        value="${evenement.butsAdversaire ?? ""}">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>
+      <input type="checkbox"
+        id="resultat-forfait-${evenement.id}"
+        ${evenement.forfait ? "checked" : ""}
+        onchange="basculerOptionResultatAdmin('${evenement.id}', 'forfait')">
+      Forfait
+    </label>
+  </div>
+
+  <div class="form-group" id="resultat-forfait-equipe-${evenement.id}"
+    ${evenement.forfait ? "" : "hidden"}>
+    <label for="resultat-forfait-cote-${evenement.id}">Équipe forfaitaire</label>
+    <select id="resultat-forfait-cote-${evenement.id}">
+      <option value="">Sélectionner</option>
+      <option value="esivo" ${evenement.forfaitEquipe === "esivo" ? "selected" : ""}>ESIVO</option>
+      <option value="adversaire" ${evenement.forfaitEquipe === "adversaire" ? "selected" : ""}>Adversaire</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>
+      <input type="checkbox"
+        id="resultat-tab-${evenement.id}"
+        ${evenement.tirsAuBut ? "checked" : ""}
+        onchange="basculerOptionResultatAdmin('${evenement.id}', 'tab')">
+      Tirs au but
+    </label>
+  </div>
+
+  <div id="resultat-tab-scores-${evenement.id}"
+    ${evenement.tirsAuBut ? "" : "hidden"}>
+    <h5>Score de la séance de tirs au but</h5>
+    <div class="admin-resultat-fields">
+      <div class="form-group">
+        <label for="resultat-tab-esivo-${evenement.id}">Tirs au but ESIVO</label>
+        <input type="number" min="0" step="1"
+          id="resultat-tab-esivo-${evenement.id}"
+          value="${evenement.scoreTABESIVO ?? ""}">
+      </div>
+      <div class="form-group">
+        <label for="resultat-tab-adverse-${evenement.id}">Tirs au but adversaire</label>
+        <input type="number" min="0" step="1"
+          id="resultat-tab-adverse-${evenement.id}"
+          value="${evenement.scoreTABAdversaire ?? ""}">
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-resultat-actions">
+    <button type="button" class="admin-btn-primary"
+      onclick="enregistrerResultatAdmin('${evenement.id}', 'match')">
+      Enregistrer le score
+    </button>
+    ${enregistre ? `
+      <button type="button" class="admin-btn-secondary"
+        onclick="annulerModificationResultatAdmin()">
+        Annuler
+      </button>
+    ` : ""}
+  </div>
+</div>
+</article>
+
         </article>
       `;
     }).join("");
@@ -8209,6 +8265,29 @@ async function synchroniserNotificationResultat(id) {
 }
 
   
+
+function basculerOptionResultatAdmin(id, option) {
+  const caseOption = document.getElementById(
+    `resultat-${option}-${id}`
+  );
+
+  let optionsId = "";
+
+  if (option === "forfait") {
+    optionsId = `resultat-forfait-equipe-${id}`;
+  } else if (option === "tab") {
+    optionsId = `resultat-tab-scores-${id}`;
+  }
+
+  const options = document.getElementById(optionsId);
+
+  if (caseOption && options) {
+    options.hidden = !caseOption.checked;
+  }
+}
+
+
+  
 async function enregistrerResultatAdmin(id, type) {
   const message = document.getElementById("adminResultatsMessage");
   const utilisateur = window.esivoAuth.currentUser;
@@ -8220,20 +8299,74 @@ async function enregistrerResultatAdmin(id, type) {
 
   let donnees = {};
 
-  if (type === "match") {
-    const butsESIVO = document.getElementById("resultat-esivo-" + id).value;
-    const butsAdversaire = document.getElementById("resultat-adverse-" + id).value;
+  
+if (type === "match") {
+  const butsESIVO = document.getElementById("resultat-esivo-" + id).value;
+  const butsAdversaire = document.getElementById("resultat-adverse-" + id).value;
 
+  const forfait = document.getElementById("resultat-forfait-" + id).checked;
+  const forfaitEquipe = document.getElementById("resultat-forfait-cote-" + id).value;
+
+  const tirsAuBut = document.getElementById("resultat-tab-" + id).checked;
+  const scoreTABESIVO = document.getElementById("resultat-tab-esivo-" + id).value;
+  const scoreTABAdversaire = document.getElementById("resultat-tab-adverse-" + id).value;
+
+  if (forfait && tirsAuBut) {
+    message.textContent = "Un forfait ne peut pas être associé à une séance de tirs au but.";
+    return;
+  }
+
+  if (forfait) {
+    if (!forfaitEquipe) {
+      message.textContent = "Merci de sélectionner l'équipe forfaitaire.";
+      return;
+    }
+  } else {
     if (butsESIVO === "" || butsAdversaire === "") {
       message.textContent = "Merci de renseigner les deux scores.";
       return;
     }
 
-    donnees = {
-      butsESIVO: Number(butsESIVO),
-      butsAdversaire: Number(butsAdversaire),
-      resultatEnregistre: true
-    };
+    if (
+      !Number.isInteger(Number(butsESIVO)) ||
+      !Number.isInteger(Number(butsAdversaire)) ||
+      Number(butsESIVO) < 0 ||
+      Number(butsAdversaire) < 0
+    ) {
+      message.textContent = "Les scores doivent être des nombres entiers positifs.";
+      return;
+    }
+  }
+
+  if (tirsAuBut) {
+    if (scoreTABESIVO === "" || scoreTABAdversaire === "") {
+      message.textContent = "Merci de renseigner les deux scores des tirs au but.";
+      return;
+    }
+
+    if (
+      !Number.isInteger(Number(scoreTABESIVO)) ||
+      !Number.isInteger(Number(scoreTABAdversaire)) ||
+      Number(scoreTABESIVO) < 0 ||
+      Number(scoreTABAdversaire) < 0
+    ) {
+      message.textContent = "Les scores des tirs au but doivent être des nombres entiers positifs.";
+      return;
+    }
+  }
+
+  donnees = {
+    butsESIVO: forfait ? null : Number(butsESIVO),
+    butsAdversaire: forfait ? null : Number(butsAdversaire),
+    forfait: forfait,
+    forfaitEquipe: forfait ? forfaitEquipe : null,
+    tirsAuBut: tirsAuBut,
+    scoreTABESIVO: tirsAuBut ? Number(scoreTABESIVO) : null,
+    scoreTABAdversaire: tirsAuBut ? Number(scoreTABAdversaire) : null,
+    resultatEnregistre: true
+  };
+
+
 
   } else if (type === "plateau") {
     const victoires = document.getElementById("resultat-v-" + id).value;
