@@ -6695,26 +6695,52 @@ const derniersPlateaux = ["U7", "U9", "U11", "U13"]
     let libelle = "MATCH NUL";
     let scoreTirsAuBut = "";
 
-    if (resultat.forfait) {
-      statut = "match-loss";
-      libelle = "FORFAIT";
-    } else if (resultat.tirsAuBut) {
-      const [butsAdversaireTAB, butsESIVOTAB] =
-        resultat.tirsAuBut.split("-").map(Number);
+    
+if (resultat.forfait) {
+  const forfaitESIVO = resultat.forfaitEquipe
+    ? resultat.forfaitEquipe === "esivo"
+    : resultat.butsESIVO < resultat.butsAdversaire;
 
-      statut = "match-win";
-      libelle = "QUALIFICATION AUX TIRS AU BUT";
+  statut = forfaitESIVO ? "match-loss" : "match-win";
+  libelle = "FORFAIT";
 
-      scoreTirsAuBut = domicile
-        ? `${butsESIVOTAB}-${butsAdversaireTAB}`
-        : `${butsAdversaireTAB}-${butsESIVOTAB}`;
-    } else if (resultat.butsESIVO > resultat.butsAdversaire) {
-      statut = "match-win";
-      libelle = "VICTOIRE";
-    } else if (resultat.butsESIVO < resultat.butsAdversaire) {
-      statut = "match-loss";
-      libelle = "DÉFAITE";
-    }
+} else if (resultat.tirsAuBut) {
+  let tabESIVO;
+  let tabAdversaire;
+
+  if (typeof resultat.tirsAuBut === "string") {
+    const [butsAdversaireTAB, butsESIVOTAB] =
+      resultat.tirsAuBut.split("-").map(Number);
+
+    tabESIVO = butsESIVOTAB;
+    tabAdversaire = butsAdversaireTAB;
+
+  } else {
+    tabESIVO = Number(resultat.scoreTABESIVO);
+    tabAdversaire = Number(resultat.scoreTABAdversaire);
+  }
+
+  if (tabESIVO > tabAdversaire) {
+    statut = "match-win";
+    libelle = "QUALIFICATION AUX TIRS AU BUT";
+  } else {
+    statut = "match-loss";
+    libelle = "ÉLIMINATION AUX TIRS AU BUT";
+  }
+
+  scoreTirsAuBut = domicile
+    ? `${tabESIVO}-${tabAdversaire}`
+    : `${tabAdversaire}-${tabESIVO}`;
+
+} else if (resultat.butsESIVO > resultat.butsAdversaire) {
+  statut = "match-win";
+  libelle = "VICTOIRE";
+
+} else if (resultat.butsESIVO < resultat.butsAdversaire) {
+  statut = "match-loss";
+  libelle = "DÉFAITE";
+}
+
 
     return `
       <div class="weekend-match home-next-match home-result-card">
@@ -8249,22 +8275,40 @@ async function synchroniserNotificationResultat(id) {
     logoAdversaire: logoAdversaire,
     dateMatch: date,
 
-    ...(estPlateau ? {
-      organisateur: match.organisateur || "Organisateur",
-      victoires: match.bilanESIVO.victoires,
-      nuls: match.bilanESIVO.nuls,
-      defaites: match.bilanESIVO.defaites
-    } : {
-      adversaire: match.adversaire || "Adversaire",
-      butsESIVO: match.butsESIVO,
-      butsAdversaire: match.butsAdversaire,
-      statutResultat:
-        match.butsESIVO > match.butsAdversaire
-          ? "Victoire"
-          : match.butsESIVO < match.butsAdversaire
-            ? "Défaite"
-            : "Match nul"
-    }),
+    
+...(estPlateau ? {
+  organisateur: match.organisateur || "Organisateur",
+  victoires: match.bilanESIVO.victoires,
+  nuls: match.bilanESIVO.nuls,
+  defaites: match.bilanESIVO.defaites
+} : {
+  adversaire: match.adversaire || "Adversaire",
+
+  butsESIVO: match.butsESIVO,
+  butsAdversaire: match.butsAdversaire,
+
+  forfait: match.forfait === true,
+  forfaitEquipe: match.forfaitEquipe || null,
+
+  tirsAuBut: match.tirsAuBut === true,
+  scoreTABESIVO: match.scoreTABESIVO ?? null,
+  scoreTABAdversaire: match.scoreTABAdversaire ?? null,
+
+  statutResultat: match.forfait === true
+    ? (match.forfaitEquipe === "esivo" ? "Défaite par forfait" : "Victoire par forfait")
+    : match.tirsAuBut === true
+      ? (
+          match.scoreTABESIVO > match.scoreTABAdversaire
+            ? "Qualification aux tirs au but"
+            : "Élimination aux tirs au but"
+        )
+      : match.butsESIVO > match.butsAdversaire
+        ? "Victoire"
+        : match.butsESIVO < match.butsAdversaire
+          ? "Défaite"
+          : "Match nul"
+}),
+
 
     dateModification: firebase.firestore.FieldValue.serverTimestamp()
   };
@@ -8369,15 +8413,23 @@ if (type === "match") {
   }
 
   donnees = {
-    butsESIVO: forfait ? null : Number(butsESIVO),
-    butsAdversaire: forfait ? null : Number(butsAdversaire),
-    forfait: forfait,
-    forfaitEquipe: forfait ? forfaitEquipe : null,
-    tirsAuBut: tirsAuBut,
-    scoreTABESIVO: tirsAuBut ? Number(scoreTABESIVO) : null,
-    scoreTABAdversaire: tirsAuBut ? Number(scoreTABAdversaire) : null,
-    resultatEnregistre: true
-  };
+  butsESIVO: forfait
+    ? (forfaitEquipe === "esivo" ? 0 : 3)
+    : Number(butsESIVO),
+
+  butsAdversaire: forfait
+    ? (forfaitEquipe === "esivo" ? 3 : 0)
+    : Number(butsAdversaire),
+
+  forfait: forfait,
+  forfaitEquipe: forfait ? forfaitEquipe : null,
+
+  tirsAuBut: tirsAuBut,
+  scoreTABESIVO: tirsAuBut ? Number(scoreTABESIVO) : null,
+  scoreTABAdversaire: tirsAuBut ? Number(scoreTABAdversaire) : null,
+
+  resultatEnregistre: true
+};
 
 
 
@@ -10665,14 +10717,57 @@ const resultats = [...resultatsParMatch.values()]
   const dernier = resultats[0];
   const anciens = resultats.slice(1);
 
-  const afficherStatut = resultat => {
+  
+const afficherStatut = resultat => {
   if (resultat.forfait) {
-  const victoireForfait = resultat.butsESIVO > resultat.butsAdversaire;
+    const forfaitESIVO = resultat.forfaitEquipe === "esivo";
 
-  return {
-    classe: victoireForfait ? "match-win" : "match-loss",
-    libelle: victoireForfait ? "VICTOIRE PAR FORFAIT" : "FORFAIT"
-  };
+    return {
+      classe: forfaitESIVO ? "match-loss" : "match-win",
+      libelle: "FORFAIT"
+    };
+  }
+
+  if (resultat.tirsAuBut) {
+    let tabESIVO;
+    let tabAdversaire;
+
+    if (typeof resultat.tirsAuBut === "string") {
+      const [tabDomicile, tabExterieur] = resultat.tirsAuBut
+        .split("-")
+        .map(Number);
+
+      tabESIVO = resultat.domicile ? tabDomicile : tabExterieur;
+      tabAdversaire = resultat.domicile ? tabExterieur : tabDomicile;
+    } else {
+      tabESIVO = Number(resultat.scoreTABESIVO);
+      tabAdversaire = Number(resultat.scoreTABAdversaire);
+    }
+
+    if (tabESIVO > tabAdversaire) {
+      return {
+        classe: "match-win",
+        libelle: "QUALIFICATION AUX TIRS AU BUT"
+      };
+    }
+
+    return {
+      classe: "match-loss",
+      libelle: "ÉLIMINATION AUX TIRS AU BUT"
+    };
+  }
+
+  if (resultat.butsESIVO > resultat.butsAdversaire) {
+    return { classe: "match-win", libelle: "VICTOIRE" };
+  }
+
+  if (resultat.butsESIVO < resultat.butsAdversaire) {
+    return { classe: "match-loss", libelle: "DÉFAITE" };
+  }
+
+  return { classe: "match-draw", libelle: "MATCH NUL" };
+};
+
 }
 
   if (resultat.tirsAuBut) {
@@ -10777,9 +10872,17 @@ const resultats = [...resultatsParMatch.values()]
           <span>📅 ${afficherDate(dernier.date)}</span>
           <span>🕒 ${dernier.heure}</span>
           <span>📍 ${dernier.lieu} · ${dernier.ville}</span>
-          ${dernier.tirsAuBut
-            ? `<span>⚽ Tirs au but : ${dernier.tirsAuBut}</span>`
-            : ""}
+          
+${dernier.tirsAuBut
+  ? `<span>⚽ Tirs au but : ${
+      typeof dernier.tirsAuBut === "string"
+        ? dernier.tirsAuBut
+        : domicile
+          ? `${dernier.scoreTABESIVO} - ${dernier.scoreTABAdversaire}`
+          : `${dernier.scoreTABAdversaire} - ${dernier.scoreTABESIVO}`
+    }</span>`
+  : ""}
+
         </div>
       </div>
 
@@ -13421,37 +13524,63 @@ if (notification.typeAutomatique === "resultat") {
     min-width:0;
   `;
 
-  const statut = document.createElement("strong");
-  statut.textContent = notification.statutResultat;
+  
+const statut = document.createElement("strong");
 
-  const couleurStatut =
-    notification.statutResultat === "Victoire"
+const estForfait = notification.forfait === true;
+const estTAB = notification.tirsAuBut === true;
+
+statut.textContent = estForfait
+  ? "FORFAIT"
+  : notification.statutResultat;
+
+const couleurStatut = estForfait
+  ? (notification.forfaitEquipe === "esivo" ? "#F04444" : "#16C784")
+  : notification.statutResultat === "Victoire" ||
+    notification.statutResultat === "Qualification aux tirs au but"
       ? "#16C784"
-      : notification.statutResultat === "Défaite"
+      : notification.statutResultat === "Défaite" ||
+        notification.statutResultat === "Élimination aux tirs au but"
         ? "#F04444"
         : "#E5BD37";
 
-  statut.style.cssText = `
-    color:${couleurStatut};
-    font-size:13px;
-    font-weight:800;
-    text-transform:uppercase;
+statut.style.cssText = `
+  color:${couleurStatut};
+  font-size:13px;
+  font-weight:800;
+  text-transform:uppercase;
+`;
+
+const score = document.createElement("strong");
+score.textContent =
+  `${notification.butsESIVO} – ${notification.butsAdversaire}`;
+
+score.style.cssText = `
+  color:${couleurStatut};
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:1px;
+`;
+
+informations.append(statut, score);
+
+if (estTAB) {
+  const detailTAB = document.createElement("span");
+  detailTAB.textContent =
+    `Tirs au but : ${notification.scoreTABESIVO} – ${notification.scoreTABAdversaire}`;
+
+  detailTAB.style.cssText = `
+    color:#ccc;
+    font-size:12px;
+    font-weight:600;
   `;
 
-  const score = document.createElement("strong");
-  score.textContent =
-    `${notification.butsESIVO} – ${notification.butsAdversaire}`;
+  informations.appendChild(detailTAB);
+}
 
-  score.style.cssText = `
-    color:${couleurStatut};
-    font-size:22px;
-    font-weight:800;
-    letter-spacing:1px;
-  `;
+resultat.append(logoAdverse, informations);
+contenu.appendChild(resultat);
 
-  informations.append(statut, score);
-  resultat.append(logoAdverse, informations);
-  contenu.appendChild(resultat);
 }
 
 // Affichage spécifique des résultats de plateaux
