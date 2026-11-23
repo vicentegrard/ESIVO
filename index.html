@@ -10167,7 +10167,28 @@ function showPage(page) {
 
   <p id="adminClassementMessage"></p>
 </div>
-        
+
+
+<div class="content-card" style="margin-top:20px;">
+  <h3>🛡️ Modération des commentaires</h3>
+  <p>Consulter et supprimer les commentaires publiés sur les rencontres et les résultats de l'ESIVO.</p>
+
+  <button
+    type="button"
+    class="btn-primary"
+    onclick="chargerCommentairesAdmin()"
+  >
+    Actualiser les commentaires
+  </button>
+
+  <div id="adminCommentairesListe" style="margin-top:25px;">
+    <p>Clique sur « Actualiser les commentaires » pour afficher les messages.</p>
+  </div>
+
+  <p id="adminCommentairesMessage"></p>
+</div>
+
+
 <div class="content-card" style="margin-top:20px;">
   <h3>🔔 Gestion des notifications</h3>
   <p>Créer et gérer les annonces destinées aux membres de l'ESIVO.</p>
