@@ -4648,6 +4648,275 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
 }
 
 
+/* =========================================
+   ESPACE COMMENTAIRES — DESIGN PREMIUM ESIVO
+========================================= */
+
+.esivo-commentaires {
+  margin-top: 30px;
+  padding: 25px;
+  border: 1px solid #38383F;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #222229, #19191F);
+  color: #FFFFFF;
+}
+
+.esivo-commentaires-entete {
+  margin-bottom: 22px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #38383F;
+}
+
+.esivo-commentaires-entete .mc-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: #E5BD37;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.esivo-commentaires-entete h3 {
+  margin: 0;
+  color: #FFFFFF;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.esivo-commentaires-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.esivo-commentaires-chargement,
+.esivo-commentaires-vide,
+.esivo-commentaires-erreur,
+.esivo-commentaires-connexion {
+  margin: 0;
+  padding: 18px;
+  border: 1px solid #34343D;
+  border-radius: 10px;
+  background: #1B1B21;
+  color: #A5A5AE;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* CARTE D'UN COMMENTAIRE */
+
+.esivo-commentaire {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 17px;
+  border: 1px solid #34343D;
+  border-radius: 11px;
+  background: linear-gradient(120deg, #292930, #202026);
+  transition: border-color 0.2s ease;
+}
+
+.esivo-commentaire:hover {
+  border-color: rgba(170, 26, 36, 0.7);
+}
+
+.esivo-commentaire-photo {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border: 2px solid #AA1A24;
+  border-radius: 50%;
+  background: #292930;
+  object-fit: cover;
+}
+
+.esivo-commentaire-contenu {
+  flex: 1;
+  min-width: 0;
+}
+
+.esivo-commentaire-identite {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px 10px;
+  margin-bottom: 7px;
+}
+
+.esivo-commentaire-identite strong {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.esivo-commentaire-identite > span:not(.esivo-commentaire-badge) {
+  color: #A5A5AE;
+  font-size: 12px;
+}
+
+.esivo-commentaire-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: 1000;
+  letter-spacing: 0.5px;
+}
+
+.esivo-commentaire-description {
+  margin: 0 0 11px;
+  color: #92929C;
+  font-size: 11px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.esivo-commentaire-texte {
+  margin: 0;
+  color: #EEEEF0;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.esivo-commentaire-date {
+  display: block;
+  margin-top: 11px;
+  color: #777780;
+  font-size: 10px;
+}
+
+/* FORMULAIRE DE PUBLICATION */
+
+.esivo-commentaires-formulaire {
+  margin-top: 20px;
+}
+
+.esivo-commentaire-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.esivo-commentaire-form textarea {
+  width: 100%;
+  min-height: 105px;
+  padding: 15px;
+  border: 1px solid #41414A;
+  border-radius: 9px;
+  outline: none;
+  resize: vertical;
+  background: #15151A;
+  color: #FFFFFF;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.esivo-commentaire-form textarea::placeholder {
+  color: #777780;
+}
+
+.esivo-commentaire-form textarea:focus {
+  border-color: #AA1A24;
+  box-shadow: 0 0 0 3px rgba(170, 26, 36, 0.12);
+}
+
+.esivo-commentaire-form-bas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.esivo-commentaire-form-bas > span {
+  color: #777780;
+  font-size: 10px;
+}
+
+.esivo-commentaire-form-bas button {
+  padding: 11px 20px;
+  border: 1px solid #AA1A24;
+  border-radius: 6px;
+  background: #AA1A24;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.esivo-commentaire-form-bas button:hover:not(:disabled) {
+  background: #850F18;
+  transform: translateY(-2px);
+}
+
+.esivo-commentaire-form-bas button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.esivo-commentaire-message {
+  margin: 0;
+  color: #E5BD37;
+  font-size: 11px;
+}
+
+/* ADAPTATION MOBILE */
+
+@media (max-width: 600px) {
+  .esivo-commentaires {
+    margin-top: 22px;
+    padding: 17px 13px;
+    border-radius: 12px;
+  }
+
+  .esivo-commentaires-entete h3 {
+    font-size: 16px;
+  }
+
+  .esivo-commentaire {
+    gap: 10px;
+    padding: 13px 10px;
+  }
+
+  .esivo-commentaire-photo {
+    width: 39px;
+    height: 39px;
+  }
+
+  .esivo-commentaire-identite {
+    gap: 6px;
+  }
+
+  .esivo-commentaire-identite strong {
+    font-size: 12px;
+  }
+
+  .esivo-commentaire-identite > span:not(.esivo-commentaire-badge) {
+    font-size: 11px;
+  }
+
+  .esivo-commentaire-badge {
+    font-size: 7px;
+    padding: 4px 6px;
+  }
+
+  .esivo-commentaire-texte {
+    font-size: 12px;
+  }
+
+  .esivo-commentaire-form-bas button {
+    padding: 10px 15px;
+  }
+}
+
+
 /* SIGNATURE OFFICIELLE ESIVO */
 
 .mc-sheet-signature {
