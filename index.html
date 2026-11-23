@@ -8029,6 +8029,11 @@ async function chargerEvenementsResultatsAdmin(equipe) {
     evenement.butsAdversaire !== null
   );
 
+      const aUnForfait =
+  evenement.forfait === true &&
+  (evenement.forfaitEquipe === "esivo" ||
+   evenement.forfaitEquipe === "adversaire");
+
       return `
         <article class="content-card admin-resultat-card" id="resultat-carte-${evenement.id}">
           <div class="admin-resultat-card-top">
@@ -8043,34 +8048,42 @@ async function chargerEvenementsResultatsAdmin(equipe) {
 
           <p class="admin-resultat-meta"><strong>Adversaire :</strong> ${evenement.adversaire || "Non renseigné"}</p>
 
-          ${enregistre && aUnScore ? `
-            <div class="admin-resultat-display" id="resultat-affichage-${evenement.id}">
-              <div class="admin-score-display">
-                <div>
-                  <span>ESIVO</span>
-                  <strong>${evenement.butsESIVO}</strong>
-                </div>
-                <b>—</b>
-                <div>
-                  <span>${evenement.adversaire || "Adversaire"}</span>
-                  <strong>${evenement.butsAdversaire}</strong>
-                </div>
-              </div>
-              <div class="admin-resultat-actions">
-                <button type="button" class="admin-btn-primary"
-                  onclick="modifierResultatAdmin('${evenement.id}')">
-                  Modifier
-                </button>
-                <button type="button" class="admin-btn-danger"
-                  onclick="supprimerResultatAdmin('${evenement.id}', 'match')">
-                  Supprimer le résultat
-                </button>
-              </div>
-            </div>
-          ` : ""}
+          
+${enregistre && (aUnScore || aUnForfait) ? `
+  <div class="admin-resultat-display" id="resultat-affichage-${evenement.id}">
+    ${aUnForfait ? `
+      <div class="admin-forfait-badge ${evenement.forfaitEquipe === "esivo" ? "forfait-esivo" : "forfait-adversaire"}">
+        FORFAIT
+      </div>
+    ` : `
+      <div class="admin-score-display">
+        <div>
+          <span>ESIVO</span>
+          <strong>${evenement.butsESIVO}</strong>
+        </div>
+        <b>—</b>
+        <div>
+          <span>${evenement.adversaire || "Adversaire"}</span>
+          <strong>${evenement.butsAdversaire}</strong>
+        </div>
+      </div>
+    `}
+    <div class="admin-resultat-actions">
+      <button type="button" class="admin-btn-primary"
+        onclick="modifierResultatAdmin('${evenement.id}')">
+        Modifier
+      </button>
+      <button type="button" class="admin-btn-danger"
+        onclick="supprimerResultatAdmin('${evenement.id}', 'match')">
+        Supprimer le résultat
+      </button>
+    </div>
+  </div>
+` : ""}
+
 
           
-<div class="admin-resultat-editor" id="resultat-edition-${evenement.id}" ${enregistre && aUnScore ? "hidden" : ""}>
+<div class="admin-resultat-editor" id="resultat-edition-${evenement.id}" ${enregistre && (aUnScore || aUnForfait) ? "hidden" : ""}>
   <div class="admin-resultat-fields">
     <div class="form-group">
       <label for="resultat-esivo-${evenement.id}">Buts ESIVO</label>
