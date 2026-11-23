@@ -6242,7 +6242,57 @@ const u7Calendrier = [
 ];
 
 
+function ouvrirFicheAccueil(carte) {
+  if (!carte) return;
 
+  const ancienneFiche = document.querySelector(".mc-match-overlay");
+  if (ancienneFiche) ancienneFiche.remove();
+
+  const overlay = document.createElement("div");
+  overlay.className = "mc-match-overlay";
+
+  overlay.innerHTML = `
+    <section class="mc-match-sheet"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Détail de la rencontre">
+
+      <button type="button" class="mc-match-close"
+        aria-label="Fermer la fiche">×</button>
+
+      <span class="mc-eyebrow">ESIVO · SAISON 2026 / 2027</span>
+      <h2>FICHE DÉTAILLÉE</h2>
+
+      <div class="mc-home-modal-content"></div>
+    </section>
+  `;
+
+  overlay.querySelector(".mc-home-modal-content")
+    .appendChild(carte.cloneNode(true));
+
+  document.body.appendChild(overlay);
+
+  const boutonFermer = overlay.querySelector(".mc-match-close");
+
+  const fermerFiche = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", toucheEchap);
+  };
+
+  const toucheEchap = event => {
+    if (event.key === "Escape") fermerFiche();
+  };
+
+  boutonFermer.addEventListener("click", fermerFiche);
+
+  overlay.addEventListener("click", event => {
+    if (event.target === overlay) fermerFiche();
+  });
+
+  document.addEventListener("keydown", toucheEchap);
+
+  boutonFermer.focus();
+}
 
 
 function afficherRencontresWeekend() {
@@ -6468,6 +6518,42 @@ const evenementsU13 = [
     </div>
   `;
 
+  conteneur.querySelectorAll(".home-carousel-track > .weekend-match")
+  .forEach(carte => {
+    carte.style.cursor = "pointer";
+    carte.setAttribute("role", "button");
+    carte.setAttribute("tabindex", "0");
+
+    const ouvrir = () => ouvrirFicheAccueil(carte);
+
+    carte.addEventListener("click", ouvrir);
+
+    carte.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        ouvrir();
+      }
+    });
+  });
+
+  conteneur.querySelectorAll(".home-carousel-track > .weekend-match")
+  .forEach(carte => {
+    carte.style.cursor = "pointer";
+    carte.setAttribute("role", "button");
+    carte.setAttribute("tabindex", "0");
+
+    const ouvrir = () => ouvrirFicheAccueil(carte);
+
+    carte.addEventListener("click", ouvrir);
+
+    carte.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        ouvrir();
+      }
+    });
+  });
+  
   const track = conteneur.querySelector(".home-carousel-track");
   const dots = conteneur.querySelectorAll(".home-carousel-dot");
 
