@@ -10768,45 +10768,6 @@ const afficherStatut = resultat => {
   return { classe: "match-draw", libelle: "MATCH NUL" };
 };
 
-}
-
-  if (resultat.tirsAuBut) {
-    const [tabDomicile, tabExterieur] = resultat.tirsAuBut
-      .split("-")
-      .map(Number);
-
-    const tabESIVO = resultat.domicile
-      ? tabDomicile
-      : tabExterieur;
-
-    const tabAdversaire = resultat.domicile
-      ? tabExterieur
-      : tabDomicile;
-
-    if (tabESIVO > tabAdversaire) {
-      return {
-        classe: "match-win",
-        libelle: "QUALIFICATION AUX TIRS AU BUT"
-      };
-    }
-
-    return {
-      classe: "match-loss",
-      libelle: "ÉLIMINATION AUX TIRS AU BUT"
-    };
-  }
-
-  if (resultat.butsESIVO > resultat.butsAdversaire) {
-    return { classe: "match-win", libelle: "VICTOIRE" };
-  }
-
-  if (resultat.butsESIVO < resultat.butsAdversaire) {
-    return { classe: "match-loss", libelle: "DÉFAITE" };
-  }
-
-  return { classe: "match-draw", libelle: "MATCH NUL" };
-};
-
   const afficherDate = date => new Date(date + "T12:00:00")
     .toLocaleDateString("fr-FR", {
       weekday: "long",
