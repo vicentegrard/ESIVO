@@ -15299,6 +15299,120 @@ async function enregistrerNotificationAdmin() {
 }
 
 
+async function chargerCommentairesAdmin() {
+  const liste = document.getElementById("adminCommentairesListe");
+  const message = document.getElementById("adminCommentairesMessage");
+
+  if (!liste) return;
+
+  const utilisateur = window.esivoAuth.currentUser;
+
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) {
+    liste.textContent = "Accès refusé.";
+    return;
+  }
+
+  liste.textContent = "Chargement des commentaires...";
+  if (message) message.textContent = "";
+
+  try {
+    const snapshot = await window.esivoDb
+      .collection("commentaires")
+      .get();
+
+    const commentaires = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    commentaires.sort((a, b) =>
+      (b.createdAt?.toMillis?.() || 0) -
+      (a.createdAt?.toMillis?.() || 0)
+    );
+
+    liste.innerHTML = "";
+
+    if (commentaires.length === 0) {
+      liste.textContent = "Aucun commentaire publié pour le moment.";
+      return;
+    }
+
+    for (const commentaire of commentaires) {
+      let profil = {};
+
+      try {
+        const profilDoc = await window.esivoDb
+          .collection("profils_publics")
+          .doc(commentaire.uid)
+          .get();
+
+        if (profilDoc.exists) {
+          profil = profilDoc.data();
+        }
+      } catch (erreur) {
+        console.error("Erreur de chargement du profil :", erreur);
+      }
+
+      const date = commentaire.createdAt?.toDate?.();
+
+      const dateTexte = date
+        ? date.toLocaleString("fr-FR")
+        : "Date indisponible";
+
+      const typeTexte = commentaire.type === "match"
+        ? "RENCONTRE"
+        : "RÉSULTAT";
+
+      const carte = document.createElement("article");
+
+      carte.style.cssText = `
+        padding: 16px;
+        margin-bottom: 14px;
+        border: 1px solid #38383F;
+        border-radius: 10px;
+        background: #202026;
+        color: #FFFFFF;
+      `;
+
+      carte.innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <img
+            src="${echapperTexteCommentaire(
+              profil.photoDataUrl ||
+              "https://ui-avatars.com/api/?name=ESIVO&background=292930&color=fff&size=128"
+            )}"
+            alt=""
+            style="width:42px;height:42px;border-radius:50%;object-fit:cover;"
+          >
+
+          <div>
+            <strong>${echapperTexteCommentaire(profil.pseudo || "Membre ESIVO")}</strong>
+            <div style="color:#A5A5AE;font-size:11px;">
+              ${typeTexte} · ${dateTexte}
+            </div>
+          </div>
+        </div>
+
+        <p style="margin:0;color:#EEEEF0;line-height:1.6;overflow-wrap:anywhere;">
+          ${echapperTexteCommentaire(commentaire.texte)}
+        </p>
+      `;
+
+      liste.appendChild(carte);
+    }
+
+    if (message) {
+      message.textContent = commentaires.length +
+        " commentaire(s) chargé(s).";
+    }
+
+  } catch (erreur) {
+    console.error("Erreur de chargement des commentaires :", erreur);
+    liste.textContent = "Impossible de charger les commentaires.";
+  }
+}
+
+
 async function chargerNotificationsAdmin() {
   const liste = document.getElementById("adminNotificationsListe");
   if (!liste) return;
