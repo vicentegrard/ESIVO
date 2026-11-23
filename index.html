@@ -11919,6 +11919,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
     Voir la localisation sur OpenStreetMap ↗
   </a>
 </div>
+<div class="esivo-commentaires-mount"></div>
 <div class="mc-sheet-signature">
   <div class="mc-signature-line"></div>
   <img src="logos/esivo.png" alt="Logo ESIVO">
@@ -11931,7 +11932,14 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
 
 
     const overlay = contenu.querySelector(".mc-match-overlay");
-    const boutonFermer = overlay.querySelector(".mc-match-close");
+
+initialiserCommentaires(
+  "match",
+  eventId,
+  overlay.querySelector(".esivo-commentaires-mount")
+);
+
+const boutonFermer = overlay.querySelector(".mc-match-close");
 
     const fermerFiche = () => {
       overlay.remove();
