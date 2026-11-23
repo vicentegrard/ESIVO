@@ -4834,6 +4834,39 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   font-size: 10px;
 }
 
+/* OUTILS DE MISE EN FORME DES COMMENTAIRES */
+
+.esivo-commentaire-outils {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.esivo-commentaire-outils button {
+  width: 34px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #41414A;
+  border-radius: 6px;
+  background: #19191F;
+  color: #FFFFFF;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.esivo-commentaire-outils button:hover {
+  background: #AA1A24;
+  border-color: #AA1A24;
+}
+
+.esivo-commentaire-outils button:active {
+  transform: scale(0.95);
+}
+
 /* FORMULAIRE DE PUBLICATION */
 
 .esivo-commentaires-formulaire {
@@ -6676,6 +6709,35 @@ function echapperTexteCommentaire(texte) {
   })[caractere]);
 }
 
+
+function formaterTexteCommentaire(texte) {
+  let contenu = echapperTexteCommentaire(texte);
+
+  // Gras : **texte**
+  contenu = contenu.replace(
+    /\*\*(.+?)\*\*/g,
+    "<strong>$1</strong>"
+  );
+
+  // Souligné : __texte__
+  contenu = contenu.replace(
+    /__([^_]+)__/g,
+    "<u>$1</u>"
+  );
+
+  // Italique : *texte*
+  contenu = contenu.replace(
+    /\*([^*\n]+)\*/g,
+    "<em>$1</em>"
+  );
+
+  // Conservation des retours à la ligne
+  contenu = contenu.replace(/\n/g, "<br>");
+
+  return contenu;
+}
+
+  
 // Affiche les commentaires d'une rencontre
 
   
@@ -6796,6 +6858,21 @@ async function initialiserCommentaires(type, eventId, conteneur) {
   if (utilisateur) {
     formulaire.innerHTML = `
       <form class="esivo-commentaire-form">
+
+              <div class="esivo-commentaire-outils">
+          <button type="button" data-format="bold" title="Gras">
+            <strong>B</strong>
+          </button>
+
+          <button type="button" data-format="italic" title="Italique">
+            <em>I</em>
+          </button>
+
+          <button type="button" data-format="underline" title="Souligné">
+            <u>U</u>
+          </button>
+        </div>
+        
         <textarea
           maxlength="1000"
           placeholder="Écris ton commentaire..."
@@ -6814,6 +6891,43 @@ async function initialiserCommentaires(type, eventId, conteneur) {
         Connecte-toi pour participer à la discussion.
       </p>
     `;
+  }
+
+    if (utilisateur) {
+    const formulaireCommentaire = formulaire.querySelector(
+      ".esivo-commentaire-form"
+    );
+
+    const champTexte = formulaireCommentaire.querySelector("textarea");
+
+    formulaireCommentaire.querySelectorAll("[data-format]").forEach(bouton => {
+      bouton.addEventListener("click", () => {
+        const format = bouton.dataset.format;
+
+        const debut = champTexte.selectionStart;
+        const fin = champTexte.selectionEnd;
+
+        const texteSelectionne = champTexte.value.substring(debut, fin);
+
+        const marqueurs = {
+          bold: ["**", "**"],
+          italic: ["*", "*"],
+          underline: ["__", "__"]
+        };
+
+        const [avant, apres] = marqueurs[format];
+        const texte = texteSelectionne || "ton texte";
+
+        champTexte.setRangeText(
+          avant + texte + apres,
+          debut,
+          fin,
+          "select"
+        );
+
+        champTexte.focus();
+      });
+    });
   }
 
   async function chargerListeCommentaires() {
@@ -6940,7 +7054,7 @@ async function initialiserCommentaires(type, eventId, conteneur) {
                 ? `<p class="esivo-commentaire-description">${echapperTexteCommentaire(profil.description)}</p>`
                 : ""}
 
-              <p class="esivo-commentaire-texte">${echapperTexteCommentaire(commentaire.texte)}</p>
+              <p class="esivo-commentaire-texte">${formaterTexteCommentaire(commentaire.texte)}</p>
 
               <time class="esivo-commentaire-date">
                 ${dateTexte}
