@@ -419,19 +419,14 @@
         const exists=await ref.get();
         const odds=await cotesDepuisClassement(match);
         if(exists.exists) {
-          const ancienneVersion = exists.data()?.versionModele || exists.data()?.oddsSnapshot?.version;
-          // Mise à niveau unique des rencontres déjà ouvertes avec le nouveau modèle.
-          // Ensuite, les cotes restent figées pour cette rencontre.
-          if(ancienneVersion !== "poisson-v2") {
-            await ref.set({
-              oddsSnapshot: odds,
-              versionModele: "poisson-v2",
-              oddsUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, {merge:true});
-            dejaPreparees++;
-          } else {
-            dejaPreparees++;
-          }
+          // L'action admin "Préparer" actualise explicitement les cotes des
+          // rencontres futures déjà ouvertes, sans toucher aux pronostics.
+          await ref.set({
+            oddsSnapshot: odds,
+            versionModele: "poisson-v2",
+            oddsUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, {merge:true});
+          dejaPreparees++;
           continue;
         }
         await ref.set(matchDocData(match,odds,firebase.firestore.Timestamp.fromDate(dateHeure(match))));
@@ -440,7 +435,7 @@
 
       resultat = futures.length===0
         ? "Aucune rencontre future éligible trouvée dans le calendrier (type « match », date à venir, résultat non enregistré)."
-        : created+" nouvelle(s) rencontre(s) préparée(s). "+dejaPreparees+" rencontre(s) étaient déjà ouvertes.";
+        : created+" nouvelle(s) rencontre(s) préparée(s). "+dejaPreparees+" rencontre(s) existantes ont vu leurs cotes actualisées.";
       await window.initialiserPronosticsPage();
       const messageApresChargement=document.getElementById("pronosticsMessage");
       if(messageApresChargement) messageApresChargement.textContent=resultat;
