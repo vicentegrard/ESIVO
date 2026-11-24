@@ -10505,8 +10505,9 @@ if (type === "match") {
     return;
   }
 
-  const matchSource = (window.calendriersFirebase || []).find(item => item.id === id);
-  if (matchSource?.formatCompetition === "coupe" && !qualifieEquipe) {
+  const matchSourceDoc = await window.esivoDb.collection("matchs").doc(id).get();
+  const estMatchCoupe = matchSourceDoc.exists && matchSourceDoc.data().formatCompetition === "coupe";
+  if (estMatchCoupe && !qualifieEquipe) {
     message.textContent = "Merci de renseigner l’équipe qualifiée pour cette coupe.";
     return;
   }
