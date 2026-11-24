@@ -6614,7 +6614,15 @@ const classementsDemo = [
 
 
 
+function definirNavigationActive(index) {
+  const boutons = document.querySelectorAll(".bottom-nav .bottom-inner > button");
+  boutons.forEach((bouton, i) => {
+    bouton.classList.toggle("active", i === index);
+  });
+}
+
 function home() {
+  definirNavigationActive(0);
   location.reload();
 }
 
@@ -10435,6 +10443,12 @@ async function importerCalendriersExistantsAdmin() {
 
   
 function showPage(page) {
+  if (page === "Mon compte") {
+    definirNavigationActive(3);
+  } else if (["Calendrier", "Résultats", "Classements"].includes(page)) {
+    definirNavigationActive(1);
+  }
+
   const app = document.getElementById("app");
   const pagesAvecEquipes = ["Calendrier", "Résultats", "Classements"];
 
@@ -11992,7 +12006,13 @@ if (equipe === "U13") {
             }).replace(".", "").toUpperCase();
 
           return `
-            <article class="mc-fixture">
+            <article
+              class="mc-fixture mc-fixture-clickable u13-match-clickable"
+              data-u13-match-index="${index}"
+              role="button"
+              tabindex="0"
+              aria-label="Voir le détail du match contre ${adversaire}"
+            >
 
               <div class="mc-date">
                 <strong>${dateCourte}</strong>
@@ -12026,6 +12046,21 @@ if (equipe === "U13") {
       </div>
     </div>
   `;
+
+  contenu.querySelectorAll(".u13-match-clickable").forEach(carte => {
+    const ouvrir = () => {
+      const index = Number(carte.dataset.u13MatchIndex);
+      ouvrirFicheMatchAccueil(matchs[index], "U13");
+    };
+
+    carte.addEventListener("click", ouvrir);
+    carte.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        ouvrir();
+      }
+    });
+  });
 
   return;
 }
@@ -15364,6 +15399,7 @@ afficherResultatsWeekend();
 
   if (panneau) {
     panneau.style.display = "block";
+    definirNavigationActive(2);
   }
 }
 
