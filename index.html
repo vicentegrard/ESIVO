@@ -11798,7 +11798,31 @@ if (equipe === "U13") {
 
   const prochainPlateau = plateaux
     .filter(p => new Date(p.date + "T12:00:00") >= aujourdHui)
-    .sort((a, b) => a.date.localeCompare(b.date))[0];
+    .sort((a, b) =>
+      a.date.localeCompare(b.date) ||
+      String(a.heure || "").localeCompare(String(b.heure || ""))
+    )[0];
+
+  const heureEnMinutesU13 = heure => {
+    const resultat = String(heure || "").match(/^(\d{1,2})(?:h|:)?(\d{2})?$/);
+    return resultat
+      ? Number(resultat[1]) * 60 + Number(resultat[2] || 0)
+      : 0;
+  };
+
+  // Le Match Center ne montre le match que s'il précède le prochain Challenge.
+  // Tant qu'un Challenge est à venir, il reste prioritaire s'il a lieu avant le match.
+  const afficherMatchCenterU13 = Boolean(
+    prochainMatchU13 &&
+    (
+      !prochainPlateau ||
+      prochainMatchU13[0] < prochainPlateau.date ||
+      (
+        prochainMatchU13[0] === prochainPlateau.date &&
+        heureEnMinutesU13(prochainMatchU13[1]) <= heureEnMinutesU13(prochainPlateau.heure)
+      )
+    )
+  );
 
   const logoOrganisateur = plateau => {
     const organisateur = plateau.equipes.find(formation =>
@@ -11823,7 +11847,7 @@ if (equipe === "U13") {
         </span>
       </div>
 
-      ${prochainMatchU13 ? (() => {
+      ${afficherMatchCenterU13 ? (() => {
         const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = prochainMatchU13;
         const nomDomicile = domicile ? "ESIVO" : adversaire;
         const nomExterieur = domicile ? adversaire : "ESIVO";
