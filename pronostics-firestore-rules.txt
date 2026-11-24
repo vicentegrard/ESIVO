@@ -1,0 +1,120 @@
+/*
+  AJOUT POUR LE JEU DES PRONOSTICS ESIVO
+  À intégrer dans match /databases/{database}/documents,
+  AVANT le bloc final match /{document=**}.
+  Ne pas remplacer les règles existantes par ce seul extrait.
+
+  Structure :
+  pronostics/{matchId}                       -> fiche publique du match + cotes figées
+  pronostics/{matchId}/participants/{uid}    -> pronostic privé avant le coup d'envoi
+  pronostics_points/{uid}                    -> total individuel, écrit par un dirigeant
+  pronostics_classement/{uid}                -> classement public, écrit par un dirigeant
+*/
+
+match /pronostics/{matchId} {
+  // La fiche du match, les cotes et la prédiction statistique sont publiques.
+  allow read: if true;
+
+  // Seuls les dirigeants peuvent créer/figer les fiches et leurs cotes.
+  allow create, update, delete: if isAdmin();
+
+  match /participants/{uid} {
+    function matchPronostic() {
+      return get(/databases/$(database)/documents/pronostics/$(matchId)).data;
+    }
+
+    function estProprietaire() {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // Un membre ne voit que son choix avant le coup d'envoi.
+    // Après le coup d'envoi, les pronostics de ce match deviennent publics.
+    allow read: if isAdmin()
+      || estProprietaire()
+      || (
+        exists(/databases/$(database)/documents/pronostics/$(matchId))
+        && request.time >= matchPronostic().kickoffAt
+      );
+
+    // Création et modification uniquement par le propriétaire,
+    // avant le coup d'envoi officiel stocké dans la fiche du match.
+    allow create: if estProprietaire()
+      && exists(/databases/$(database)/documents/pronostics/$(matchId))
+      && request.time < matchPronostic().kickoffAt
+      && request.resource.data.keys().hasOnly([
+        'uid',
+        'pseudo',
+        'scoreESIVO',
+        'scoreAdversaire',
+        'createdAt',
+        'updatedAt'
+      ])
+      && request.resource.data.keys().hasAll([
+        'uid',
+        'pseudo',
+        'scoreESIVO',
+        'scoreAdversaire',
+        'createdAt',
+        'updatedAt'
+      ])
+      && request.resource.data.uid == request.auth.uid
+      && request.resource.data.pseudo is string
+      && request.resource.data.pseudo.size() >= 2
+      && request.resource.data.pseudo.size() <= 20
+      && request.resource.data.scoreESIVO is int
+      && request.resource.data.scoreESIVO >= 0
+      && request.resource.data.scoreESIVO <= 20
+      && request.resource.data.scoreAdversaire is int
+      && request.resource.data.scoreAdversaire >= 0
+      && request.resource.data.scoreAdversaire <= 20
+      && request.resource.data.createdAt == request.time
+      && request.resource.data.updatedAt == request.time;
+
+    allow update: if estProprietaire()
+      && exists(/databases/$(database)/documents/pronostics/$(matchId))
+      && request.time < matchPronostic().kickoffAt
+      && request.resource.data.keys().hasOnly([
+        'uid',
+        'pseudo',
+        'scoreESIVO',
+        'scoreAdversaire',
+        'createdAt',
+        'updatedAt'
+      ])
+      && request.resource.data.keys().hasAll([
+        'uid',
+        'pseudo',
+        'scoreESIVO',
+        'scoreAdversaire',
+        'createdAt',
+        'updatedAt'
+      ])
+      && request.resource.data.uid == resource.data.uid
+      && request.resource.data.uid == request.auth.uid
+      && request.resource.data.pseudo == resource.data.pseudo
+      && request.resource.data.createdAt == resource.data.createdAt
+      && request.resource.data.scoreESIVO is int
+      && request.resource.data.scoreESIVO >= 0
+      && request.resource.data.scoreESIVO <= 20
+      && request.resource.data.scoreAdversaire is int
+      && request.resource.data.scoreAdversaire >= 0
+      && request.resource.data.scoreAdversaire <= 20
+      && request.resource.data.updatedAt == request.time;
+
+    // Un pronostic envoyé ne peut pas être effacé pour contourner le verrouillage.
+    allow delete: if false;
+  }
+}
+
+// Historique et totaux : jamais modifiables par les membres.
+match /pronostics_points/{uid} {
+  allow read: if request.auth != null
+    && (request.auth.uid == uid || isAdmin());
+  allow write: if isAdmin();
+}
+
+// Classement public : seule l'administration peut publier les points.
+match /pronostics_classement/{uid} {
+  allow read: if true;
+  allow write: if isAdmin();
+}
