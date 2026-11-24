@@ -11775,6 +11775,16 @@ if (equipe === "U13") {
     !Array.isArray(item)
   );
 
+  const aujourdHuiU13 = new Date();
+  aujourdHuiU13.setHours(0, 0, 0, 0);
+
+  const prochainMatchU13 = matchs
+    .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHuiU13)
+    .sort((a, b) =>
+      a[0].localeCompare(b[0]) ||
+      a[1].localeCompare(b[1])
+    )[0];
+
   const dateFr = date => new Date(date + "T12:00:00")
     .toLocaleDateString("fr-FR", {
       weekday: "long",
@@ -11813,6 +11823,47 @@ if (equipe === "U13") {
         </span>
       </div>
 
+      ${prochainMatchU13 ? (() => {
+        const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = prochainMatchU13;
+        const nomDomicile = domicile ? "ESIVO" : adversaire;
+        const nomExterieur = domicile ? adversaire : "ESIVO";
+        const logoDomicile = domicile ? "esivo.png" : logo;
+        const logoExterieur = domicile ? logo : "esivo.png";
+        const cheminLogo = valeur => valeur.startsWith("http") ? valeur : "logos/" + valeur;
+        return `
+          <div class="mc-hero">
+            <div class="mc-top">
+              <span>ESIVO · U13</span>
+              <span>SAISON 2026 / 2027</span>
+            </div>
+            <div class="mc-heading">
+              <div>
+                <span class="mc-eyebrow">LE RENDEZ-VOUS DU WEEK-END</span>
+                <h2>MATCH CENTER</h2>
+              </div>
+              <span class="mc-live-label">PROCHAIN MATCH</span>
+            </div>
+            <div class="mc-competition">${competition} · ${journee}</div>
+            <div class="mc-main-teams">
+              <div class="mc-team">
+                <img src="${cheminLogo(logoDomicile)}" alt="${nomDomicile}">
+                <strong>${nomDomicile}</strong>
+              </div>
+              <span class="mc-vs">VS</span>
+              <div class="mc-team">
+                <img src="${cheminLogo(logoExterieur)}" alt="${nomExterieur}">
+                <strong>${nomExterieur}</strong>
+              </div>
+            </div>
+            <div class="mc-main-details">
+              <span>📅 ${dateFr(date)}</span>
+              <span>🕒 ${heure}</span>
+              <span>📍 ${lieu} · ${ville}</span>
+            </div>
+          </div>
+        `;
+      })() : ""}
+      
       ${prochainPlateau ? `
         <div class="u11-next-plateau">
           <div class="u11-next-header">
@@ -15241,6 +15292,7 @@ async function chargerCalendriersFirebase() {
   .map(doc => ({
     date: doc.date,
     heure: doc.heure,
+    equipe: doc.equipe || nomEquipe,
     competition: doc.competition || "",
     organisateur: doc.organisateur,
     lieu: doc.lieu,
