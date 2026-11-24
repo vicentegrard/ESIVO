@@ -429,6 +429,10 @@
           await ref.set({
             oddsSnapshot: odds,
             versionModele: "poisson-v2",
+            date: match.date || "",
+            heure: match.heure || "",
+            kickoffAt: firebase.firestore.Timestamp.fromDate(dateHeure(match)),
+            statut: "ouvert",
             oddsUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
           }, {merge:true});
           dejaPreparees++;
