@@ -46,6 +46,7 @@ match /pronostics/{matchId} {
         'pseudo',
         'scoreESIVO',
         'scoreAdversaire',
+        'qualifieEquipe',
         'createdAt',
         'updatedAt'
       ])
@@ -54,6 +55,7 @@ match /pronostics/{matchId} {
         'pseudo',
         'scoreESIVO',
         'scoreAdversaire',
+        'qualifieEquipe',
         'createdAt',
         'updatedAt'
       ])
@@ -67,6 +69,9 @@ match /pronostics/{matchId} {
       && request.resource.data.scoreAdversaire is int
       && request.resource.data.scoreAdversaire >= 0
       && request.resource.data.scoreAdversaire <= 20
+      && (request.resource.data.qualifieEquipe == null
+        || request.resource.data.qualifieEquipe == "esivo"
+        || request.resource.data.qualifieEquipe == "adversaire")
       && request.resource.data.createdAt == request.time
       && request.resource.data.updatedAt == request.time;
 
@@ -78,6 +83,7 @@ match /pronostics/{matchId} {
         'pseudo',
         'scoreESIVO',
         'scoreAdversaire',
+        'qualifieEquipe',
         'createdAt',
         'updatedAt'
       ])
@@ -86,6 +92,7 @@ match /pronostics/{matchId} {
         'pseudo',
         'scoreESIVO',
         'scoreAdversaire',
+        'qualifieEquipe',
         'createdAt',
         'updatedAt'
       ])
@@ -99,6 +106,9 @@ match /pronostics/{matchId} {
       && request.resource.data.scoreAdversaire is int
       && request.resource.data.scoreAdversaire >= 0
       && request.resource.data.scoreAdversaire <= 20
+      && (request.resource.data.qualifieEquipe == null
+        || request.resource.data.qualifieEquipe == "esivo"
+        || request.resource.data.qualifieEquipe == "adversaire")
       && request.resource.data.updatedAt == request.time;
 
     // Un pronostic envoyé ne peut pas être effacé pour contourner le verrouillage.
