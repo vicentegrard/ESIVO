@@ -136,9 +136,10 @@
 
   function cheminLogoPronostic(logo) {
     if(!logo) return "";
-    const valeur=String(logo);
-    const propre=valeur.startsWith("/")?valeur.slice(1):valeur;
-    return valeur.startsWith("http") ? valeur : "logos/" + propre;
+    const valeur=String(logo).trim();
+    if(/^https?:\/\//i.test(valeur)) return valeur;
+    const propre=valeur.replace(/^\/+/, "");
+    return propre.startsWith("logos/") ? propre : "logos/" + propre;
   }
 
   function nomClubPronostic(categorie) {
@@ -156,7 +157,9 @@
         const categorie=String(match.equipe||"Autres");
         if(!prochains.has(categorie)) prochains.set(categorie,match);
       });
-    return Array.from(prochains.values()).sort((a,b)=>String(a.equipe||"").localeCompare(String(b.equipe||""),"fr"));
+    // Une seule prochaine rencontre par catégorie, puis classement global
+    // par date et heure de coup d'envoi (la plus proche en premier).
+    return Array.from(prochains.values()).sort((a,b)=>dateHeure(a)-dateHeure(b));
   }
 
   function renderMatch(match,meta,pick) {
