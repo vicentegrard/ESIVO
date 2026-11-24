@@ -15233,7 +15233,11 @@ async function chargerCalendriersFirebase() {
   ]);
 
       const plateaux = documents
-  .filter(doc => doc.equipe === nomEquipe && doc.type === "plateau")
+  .filter(doc =>
+    doc.equipe === nomEquipe &&
+    doc.type === "plateau" &&
+    doc.resultatEnregistre !== true
+  )
   .map(doc => ({
     date: doc.date,
     heure: doc.heure,
