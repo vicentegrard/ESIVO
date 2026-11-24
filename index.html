@@ -4940,8 +4940,36 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   margin: 0;
   color: #EEEEF0;
   font-size: 13px;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
+  line-height: 1.75;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  text-align: left;
+}
+
+.esivo-commentaire-texte .commentaire-gras {
+  color: #FFFFFF;
+  font-weight: 1000;
+  text-shadow: 0 0 0.5px currentColor;
+}
+
+.esivo-commentaire-texte .commentaire-italique {
+  font-style: italic;
+  color: #F0D68A;
+}
+
+.esivo-commentaire-texte .commentaire-souligne {
+  text-decoration: underline;
+  text-decoration-color: #E5BD37;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .esivo-commentaire-texte {
+    font-size: 13px;
+    line-height: 1.7;
+  }
 }
 
 .esivo-commentaire-date {
@@ -6818,6 +6846,82 @@ function ouvrirFicheAccueil(carte) {
 }
 
 
+function ouvrirFichePlateauDepuisNotification(plateau, afficherBilan = false) {
+  if (!plateau) return;
+
+  const carte = document.createElement("div");
+  carte.className = "weekend-match home-next-match home-next-plateau";
+
+  const echapper = valeur => String(valeur ?? "").replace(/[&<>"']/g, caractere => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[caractere]);
+
+  const equipe = plateau.equipe || "Jeunes";
+  const date = plateau.date
+    ? new Date(plateau.date + "T12:00:00").toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      })
+    : "Date non renseignée";
+
+  const organisateur = plateau.organisateur || "Organisateur";
+
+  const formation = (plateau.equipes || []).find(e =>
+    e.nom === organisateur ||
+    e.nom.startsWith(organisateur + " ")
+  );
+
+  const logo = plateau.logo || formation?.logo || "esivo.png";
+  const cheminLogo = logo.startsWith("http")
+    ? logo
+    : "logos/" + logo.replace(/^logos\//, "");
+
+  carte.innerHTML = `
+    <div class="mc-eyebrow">
+      ${afficherBilan ? "RÉSULTAT DU PLATEAU" : "PLATEAU"} · ${echapper(equipe)}
+    </div>
+
+    <div class="home-plateau-organizer">
+      <img src="${echapper(cheminLogo)}" alt="">
+      <div>
+        <small>PLATEAU ORGANISÉ PAR</small>
+        <strong>${echapper(organisateur)}</strong>
+      </div>
+    </div>
+
+    ${afficherBilan && plateau.bilanESIVO ? `
+      <div style="
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:12px;
+        flex-wrap:wrap;
+        margin:12px 0 18px;
+        font-weight:700;
+      ">
+        <span class="match-win">${echapper(plateau.bilanESIVO.victoires)} victoire(s)</span>
+        <span class="match-draw">${echapper(plateau.bilanESIVO.nuls)} nul(s)</span>
+        <span class="match-loss">${echapper(plateau.bilanESIVO.defaites)} défaite(s)</span>
+      </div>
+    ` : ""}
+
+    <div class="home-plateau-info">
+      <strong>📅 ${echapper(date)} · ${echapper(plateau.heure || "")}</strong>
+      <span>📍 ${echapper(plateau.lieu || "")}</span>
+      <span>${echapper(plateau.ville || "")}</span>
+    </div>
+  `;
+
+  ouvrirFicheAccueil(carte);
+}
+
+
 // =========================================
 // SYSTÈME DE COMMENTAIRES ESIVO
 // =========================================
@@ -6847,32 +6951,35 @@ function echapperTexteCommentaire(texte) {
 }
 
 
+
 function formaterTexteCommentaire(texte) {
   let contenu = echapperTexteCommentaire(texte);
 
-  // Gras : **texte**
+  // Normalisation des retours à la ligne
+  contenu = contenu.replace(/\r\n?/g, "\n");
+  contenu = contenu.replace(/[ \t]*\n+[ \t]*/g, " ");
+
+  // Gras
   contenu = contenu.replace(
     /\*\*(.+?)\*\*/g,
-    "<strong>$1</strong>"
+    '<strong class="commentaire-gras">$1</strong>'
   );
 
-  // Souligné : __texte__
+  // Souligné
   contenu = contenu.replace(
     /__([^_]+)__/g,
-    "<u>$1</u>"
+    '<u class="commentaire-souligne">$1</u>'
   );
 
-  // Italique : *texte*
+  // Italique
   contenu = contenu.replace(
     /\*([^*\n]+)\*/g,
-    "<em>$1</em>"
+    '<em class="commentaire-italique">$1</em>'
   );
-
-  // Conservation des retours à la ligne
-  contenu = contenu.replace(/\n/g, "<br>");
 
   return contenu;
 }
+
 
   
 // Affiche les commentaires d'une rencontre
@@ -8139,6 +8246,7 @@ const boutonFermer = overlay.querySelector(".mc-match-close");
     boutonFermer.focus();
   };
 
+  window.ouvrirFicheResultatAccueil = ouvrirFicheResultatAccueil;
 
   // Carte des résultats classiques
   const afficherCarteResultat = resultat => {
@@ -15165,27 +15273,16 @@ let notificationsESIVO = [];
   titre: `Jour de match – ${equipe}`,
   message: details.join(" • "),
   evenements: evenements.map(evenement => {
-    const equipeOrganisatrice = (evenement.equipes || []).find(formation =>
-      formation.nom === evenement.organisateur ||
-      formation.nom.startsWith((evenement.organisateur || "") + " ")
-    );
+  const equipeOrganisatrice = (evenement.equipes || []).find(formation =>
+    formation.nom === evenement.organisateur ||
+    formation.nom.startsWith((evenement.organisateur || "") + " ")
+  );
 
-    return {
-      type: evenement.type,
-      adversaire: evenement.adversaire || evenement.organisateur || "Plateau",
-      logo: evenement.logo || equipeOrganisatrice?.logo || "",
-      heure: evenement.heure || "",
-      lieu: evenement.lieu || "",
-      ville: evenement.ville || "",
-      domicile: evenement.domicile
-    };
-  }),
-  publie: true,
-  dateJour: dateDuJour,
-  dateCreation: Date.now(),
-  typeAutomatique: "jour_match"
-};
-  });
+  return {
+    ...evenement,
+    logo: evenement.logo || equipeOrganisatrice?.logo || ""
+  };
+}),
 }
 
 const NOTIFICATIONS_LUES_KEY = "esivo_notifications_lues";
@@ -15498,8 +15595,11 @@ if (notification.typeAutomatique === "resultat_plateau") {
   contenu.appendChild(resultat);
 }
     
-(notification.evenements || []).forEach(evenement => {
+(notification.evenements || []).forEach((evenement, indexEvenement) => {
     const ligne = document.createElement("div");
+  ligne.classList.add("esivo-notification-evenement");
+ligne.dataset.indexEvenement = indexEvenement;
+ligne.style.cursor = "pointer";
   ligne.style.cssText = `
     display:flex;
     align-items:center;
@@ -15588,12 +15688,74 @@ logo.alt = "";
 
     carte.append(contenu, statut);
 
-    carte.onclick = () => {
-      if (!estLue) {
-        enregistrerNotificationsLues([...lues, notification.id]);
-        afficherNotifications();
+    carte.onclick = event => {
+
+  // Marquer la notification comme lue
+  if (!estLue) {
+    enregistrerNotificationsLues([...lues, notification.id]);
+    afficherNotifications();
+  }
+
+  // Notification "Jour de match"
+  if (notification.typeAutomatique === "jour_match") {
+    const ligneCliquee = event.target.closest(
+      ".esivo-notification-evenement"
+    );
+
+    const index = ligneCliquee
+      ? Number(ligneCliquee.dataset.indexEvenement)
+      : 0;
+
+    const evenement = (notification.evenements || [])[index];
+
+    if (!evenement) return;
+
+    if (evenement.type === "match") {
+      ouvrirFicheMatchAccueil([
+        evenement.date,
+        evenement.heure,
+        evenement.competition,
+        evenement.journee,
+        evenement.domicile,
+        evenement.adversaire,
+        evenement.logo,
+        evenement.lieu,
+        evenement.ville
+      ], evenement.equipe);
+
+    } else if (evenement.type === "plateau") {
+      ouvrirFichePlateauDepuisNotification(evenement);
+    }
+
+    return;
+  }
+
+  // Notifications de résultats
+  if (
+    notification.typeAutomatique === "resultat" ||
+    notification.typeAutomatique === "resultat_plateau"
+  ) {
+    const evenement = (window.calendriersFirebase || []).find(
+      element => element.id === notification.matchId
+    );
+
+    if (!evenement) {
+      console.warn(
+        "Événement introuvable pour cette notification :",
+        notification.matchId
+      );
+      return;
+    }
+
+    if (notification.typeAutomatique === "resultat") {
+      if (typeof window.ouvrirFicheResultatAccueil === "function") {
+        window.ouvrirFicheResultatAccueil(evenement);
       }
-    };
+    } else {
+      ouvrirFichePlateauDepuisNotification(evenement, true);
+    }
+  }
+};
 
     liste.appendChild(carte);
   });
