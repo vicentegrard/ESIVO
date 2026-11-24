@@ -1296,6 +1296,207 @@ body {
   font-size: 11px;
 }
 
+/* ANNUAIRE DE LA COMMUNAUTÉ */
+
+.communaute-intro {
+  color: #B8B8C2;
+  line-height: 1.65;
+  margin: 0 0 22px;
+}
+
+.communaute-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 20px 0 28px;
+}
+
+.communaute-stat {
+  background: linear-gradient(145deg, #29232B, #1B1C23);
+  border: 1px solid #3A3038;
+  border-radius: 17px;
+  padding: 19px;
+  min-width: 0;
+}
+
+.communaute-stat-label {
+  display: block;
+  color: #B8B8C2;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+
+.communaute-stat strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 27px;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.communaute-stat-last {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.communaute-stat-last img {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #AA1A24;
+}
+
+.communaute-stat-last strong {
+  font-size: 16px;
+}
+
+.communaute-list-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 12px;
+  margin: 28px 0 15px;
+}
+
+.communaute-list-heading h3 {
+  margin: 0;
+  color: #FFFFFF;
+  font-size: 19px;
+}
+
+.communaute-list-heading span {
+  color: #E5BD37;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.communaute-members {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.communaute-member {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 15px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #262630, #1C1C23);
+  border: 1px solid #383843;
+}
+
+.communaute-member-photo {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(170,26,36,.85);
+  background: #292930;
+}
+
+.communaute-member-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.communaute-member-pseudo {
+  display: block;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.communaute-member-nom {
+  display: block;
+  color: #D5D5DC;
+  font-size: 12px;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+}
+
+.communaute-member-badge {
+  display: inline-block;
+  margin-top: 7px;
+  padding: 4px 7px;
+  border-radius: 5px;
+  font-size: 8px;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: .3px;
+}
+
+.communaute-member-date {
+  display: block;
+  margin-top: 7px;
+  color: #92929D;
+  font-size: 10px;
+}
+
+.communaute-load-more {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 24px auto 0;
+  padding: 13px 18px;
+  border: 1px solid #AA1A24;
+  border-radius: 12px;
+  background: rgba(170,26,36,.13);
+  color: #FFFFFF;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.communaute-state {
+  grid-column: 1 / -1;
+  padding: 22px;
+  color: #B8B8C2;
+  text-align: center;
+  background: #202027;
+  border: 1px solid #383843;
+  border-radius: 14px;
+}
+
+@media (max-width: 600px) {
+  .communaute-stats {
+    gap: 9px;
+  }
+  .communaute-stat {
+    padding: 14px 12px;
+  }
+  .communaute-stat strong {
+    font-size: 22px;
+  }
+  .communaute-stat-last strong {
+    font-size: 13px;
+  }
+  .communaute-stat-last img {
+    width: 35px;
+    height: 35px;
+    flex-basis: 35px;
+  }
+  .communaute-members {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .communaute-member {
+    padding: 13px;
+  }
+  .communaute-list-heading {
+    align-items: center;
+  }
+}
+
 /* PIED DE PAGE */
 
 .dashboard-footer {
@@ -5461,6 +5662,12 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
       <span class="emoji">⚙️</span>
       <strong>Administration</strong>
       <small>Espace de gestion</small>
+    </button>
+
+    <button class="quick-card" onclick="showPage('Communauté')">
+      <span class="emoji">👥</span>
+      <strong>La communauté</strong>
+      <small>Les membres inscrits</small>
     </button>
   </div>
 </section>
@@ -10613,7 +10820,40 @@ function showPage(page) {
   <button class="photo-viewer-nav photo-viewer-next" id="photoViewerNext" type="button" aria-label="Photo suivante">›</button>
 </div>
     `;
-      } else if (page === "Notifications") {
+      } else if (page === "Communauté") {
+    html += `
+      <div class="communaute-intro">
+        Retrouvez les membres qui font vivre l'ESIVO, du premier inscrit au plus récent.
+      </div>
+
+      <div class="communaute-stats">
+        <div class="communaute-stat">
+          <span class="communaute-stat-label">Membres inscrits</span>
+          <strong id="communauteTotal">—</strong>
+        </div>
+        <div class="communaute-stat">
+          <span class="communaute-stat-label">Dernier inscrit</span>
+          <div class="communaute-stat-last">
+            <img id="communauteDernierPhoto" src="https://ui-avatars.com/api/?name=ESIVO&background=292930&color=fff&size=128" alt="">
+            <strong id="communauteDernierPseudo">Chargement...</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="communaute-list-heading">
+        <h3>Les membres de l'ESIVO</h3>
+        <span>DU PLUS ANCIEN AU PLUS RÉCENT</span>
+      </div>
+
+      <div id="communauteMembres" class="communaute-members">
+        <div class="communaute-state">Chargement des membres...</div>
+      </div>
+
+      <button id="communauteChargerPlus" class="communaute-load-more" type="button" style="display:none;" onclick="chargerPlusMembres()">
+        Afficher plus de membres
+      </button>
+    `;
+  } else if (page === "Notifications") {
     html += `
       <div class="notification-list">
 
@@ -11223,6 +11463,11 @@ if (badge) {
 
 
   app.innerHTML = html;
+
+  if (page === "Communauté") {
+    chargerAnnuaireMembres(true);
+  }
+
   if (
   page === "Administration" &&
   window.esivoAuth.currentUser?.uid === ADMIN_UID
@@ -11369,6 +11614,129 @@ async function chargerClassementFirestore(equipe) {
 return donnees;
 }
   
+let annuaireMembresOffset = 0;
+let annuaireMembresTotal = 0;
+let annuaireMembresChargement = false;
+
+function echapperHTMLAnnuaire(valeur) {
+  return String(valeur ?? "").replace(/[&<>"']/g, caractere => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[caractere]);
+}
+
+function afficherCarteMembre(membre) {
+  const pseudo = echapperHTMLAnnuaire(membre.pseudo || "Membre ESIVO");
+  const nom = membre.afficherNomPrenom
+    ? [membre.prenom, membre.nom].filter(Boolean).join(" ")
+    : "";
+  const nomHTML = nom
+    ? `<span class="communaute-member-nom">${echapperHTMLAnnuaire(nom)}</span>`
+    : "";
+  const photo = echapperHTMLAnnuaire(
+    membre.photo ||
+    "https://ui-avatars.com/api/?name=ESIVO&background=292930&color=fff&size=128"
+  );
+  const badge = membre.badge || {
+    texte: "SUPPORTER ESIVO",
+    fond: "#E5BD37",
+    couleur: "#19191D"
+  };
+  const date = membre.dateInscription
+    ? new Date(membre.dateInscription).toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      })
+    : "Date indisponible";
+
+  return `
+    <article class="communaute-member">
+      <img class="communaute-member-photo" src="${photo}" alt="" loading="lazy">
+      <div class="communaute-member-info">
+        <strong class="communaute-member-pseudo">${pseudo}</strong>
+        ${nomHTML}
+        <span class="communaute-member-badge"
+          style="background:${echapperHTMLAnnuaire(badge.fond)};color:${echapperHTMLAnnuaire(badge.couleur)}">
+          ${echapperHTMLAnnuaire(badge.texte)}
+        </span>
+        <time class="communaute-member-date">Inscrit le ${date}</time>
+      </div>
+    </article>
+  `;
+}
+
+async function chargerAnnuaireMembres(reinitialiser = false) {
+  const liste = document.getElementById("communauteMembres");
+  if (!liste || annuaireMembresChargement) return;
+
+  if (reinitialiser) {
+    annuaireMembresOffset = 0;
+    annuaireMembresTotal = 0;
+    liste.innerHTML = '<div class="communaute-state">Chargement des membres...</div>';
+  }
+
+  annuaireMembresChargement = true;
+  const bouton = document.getElementById("communauteChargerPlus");
+  if (bouton) bouton.disabled = true;
+
+  try {
+    const url = "https://europe-west1-esivo-club.cloudfunctions.net/listerMembresPublics"
+      + "?offset=" + annuaireMembresOffset + "&limit=24";
+    const reponse = await fetch(url);
+    if (!reponse.ok) throw new Error("HTTP " + reponse.status);
+
+    const donnees = await reponse.json();
+    annuaireMembresTotal = donnees.total || 0;
+
+    const total = document.getElementById("communauteTotal");
+    if (total) total.textContent = String(annuaireMembresTotal);
+
+    const dernier = donnees.dernierInscrit;
+    const dernierPseudo = document.getElementById("communauteDernierPseudo");
+    const dernierePhoto = document.getElementById("communauteDernierPhoto");
+
+    if (dernierPseudo) dernierPseudo.textContent = dernier?.pseudo || "Aucun membre";
+    if (dernierePhoto && dernier?.photo) dernierePhoto.src = dernier.photo;
+
+    if (reinitialiser) liste.innerHTML = "";
+
+    if (!donnees.membres || donnees.membres.length === 0) {
+      if (reinitialiser) {
+        liste.innerHTML = '<div class="communaute-state">Aucun membre inscrit pour le moment.</div>';
+      }
+    } else {
+      liste.insertAdjacentHTML(
+        "beforeend",
+        donnees.membres.map(afficherCarteMembre).join("")
+      );
+    }
+
+    annuaireMembresOffset += (donnees.membres || []).length;
+
+    if (bouton) {
+      bouton.style.display = donnees.hasMore ? "block" : "none";
+      bouton.disabled = false;
+    }
+  } catch (erreur) {
+    console.error("Erreur de chargement de l'annuaire ESIVO :", erreur);
+    if (reinitialiser) {
+      liste.innerHTML = '<div class="communaute-state">La liste des membres sera disponible après l’activation du service communautaire.</div>';
+    }
+    if (bouton) bouton.style.display = "none";
+  } finally {
+    annuaireMembresChargement = false;
+    if (bouton) bouton.disabled = false;
+  }
+}
+
+function chargerPlusMembres() {
+  chargerAnnuaireMembres(false);
+}
+
 async function selectTeam(equipe) {
   if (!Array.isArray(window.calendriersFirebase)) {
     await chargerCalendriersFirebase();
