@@ -136,7 +136,8 @@
 
   function cheminLogoPronostic(logo) {
     if(!logo) return "";
-    return /^https?:\\/\\//i.test(logo) ? logo : "logos/" + String(logo).replace(/^\\//,"");
+    const valeur=String(logo);
+    return valeur.startsWith("http") ? valeur : "logos/" + valeur.replace(/^\\/+/, "");
   }
 
   function nomClubPronostic(categorie) {
@@ -184,10 +185,10 @@
             ${logoExterieur?`<img class="pronostics-team-logo" src="${esc(logoExterieur)}" alt="Logo ${esc(nomExterieur)}">`:""}
             <small>EXTÉRIEUR</small><strong>${esc(nomExterieur)}</strong>
           </div>
-        </div>`;
+        </div>
         ${odds?`<div class="pronostics-odds"><span>1 <b>${odds.cotes[0].toFixed(2)}</b><small>${odds.probabilites[0]}%</small></span><span>N <b>${odds.cotes[1].toFixed(2)}</b><small>${odds.probabilites[1]}%</small></span><span>2 <b>${odds.cotes[2].toFixed(2)}</b><small>${odds.probabilites[2]}%</small></span></div><p class="pronostics-model">Score statistique estimé : <strong>${score[0]} – ${score[1]}</strong></p>`: '<p class="pronostics-pending">Pronostics bientôt ouverts par l’administrateur.</p>'}
         <div class="pronostics-pick">
-          <label>Ton score</label>
+          <label>Ton score ESIVO</label>
           <input type="number" min="0" max="20" id="pick-home-${safeId}" value="${pick?pick.scoreESIVO:""}" ${(!meta||locked)?"disabled":""} aria-label="Buts ESIVO">
           <span>–</span>
           <input type="number" min="0" max="20" id="pick-away-${safeId}" value="${pick?pick.scoreAdversaire:""}" ${(!meta||locked)?"disabled":""} aria-label="Buts adversaire">
@@ -196,8 +197,6 @@
         <div class="pronostics-status">${locked?"Rencontre commencée · pronostic verrouillé":pick?"Ton pronostic est enregistré":meta?"Pronostics ouverts jusqu’au coup d’envoi":"En attente d’ouverture"}</div>
       </article>`;
   }
-
-
 
   function renderStatsPersonnelles(pointsDoc) {
     const data=pointsDoc.exists?pointsDoc.data():{};
