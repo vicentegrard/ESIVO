@@ -308,10 +308,14 @@
       const ref=db().collection("pronostics").doc(matchId).collection("participants").doc(user.uid);
       const old=await ref.get();
       const data={
-        uid:user.uid,pseudo,scoreESIVO,scoreAdversaire,
+        uid:user.uid,
+        pseudo:old.exists ? old.data().pseudo : pseudo,
+        scoreESIVO,scoreAdversaire,
         updatedAt:firebase.firestore.FieldValue.serverTimestamp()
       };
-      if(!old.exists) data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
+      data.createdAt=old.exists
+        ? old.data().createdAt
+        : firebase.firestore.FieldValue.serverTimestamp();
       await ref.set(data,{merge:false});
       if(message) message.textContent="Ton pronostic est enregistré !";
       await window.initialiserPronosticsPage();
