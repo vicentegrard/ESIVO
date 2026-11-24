@@ -11961,7 +11961,11 @@ const afficherEquipe = (nom, logo) => {
 contenu.innerHTML = `
   <div class="match-center">
 
-    <div class="mc-hero">
+    <div class="mc-hero mc-hero-clickable"
+         role="button"
+         tabindex="0"
+         aria-label="Ouvrir la fiche du prochain match"
+         style="cursor:pointer">
       <div class="mc-top">
         <span>ESIVO · ${equipe.toUpperCase()}</span>
         <span>SAISON 2026 / 2027</span>
@@ -11997,11 +12001,12 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
         <span class="mc-eyebrow">SAISON 2026 / 2027</span>
         <h3>Les prochaines rencontres</h3>
       </div>
-      <span class="mc-count">${calendrier.length} MATCH${calendrier.length > 1 ? "S" : ""}</span>
+      <span class="mc-count">${Math.max(calendrier.length - 1, 0)} MATCH${calendrier.length - 1 > 1 ? "S" : ""}</span>
     </div>
 
     <div class="mc-fixtures">
-      ${calendrier.map((m, index) => {
+      ${calendrier.slice(1).map((m, index) => {
+        const matchIndex = index + 1;
         const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = m;
         const dateCourte = new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
           day: "2-digit",
@@ -12011,7 +12016,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
         return `
           <article
   class="mc-fixture mc-fixture-clickable"
-  data-match-index="${index}"
+  data-match-index="${matchIndex}"
   role="button"
   tabindex="0"
   aria-label="Voir le détail du match contre ${adversaire}"
@@ -12205,6 +12210,19 @@ const boutonFermer = overlay.querySelector(".mc-match-close");
 
     boutonFermer.focus();
   };
+
+  const carteMatchCenter = contenu.querySelector(".mc-hero-clickable");
+
+  if (carteMatchCenter) {
+    carteMatchCenter.addEventListener("click", () => ouvrirFicheMatch(0));
+
+    carteMatchCenter.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        ouvrirFicheMatch(0);
+      }
+    });
+  }
 
   fichesMatch.forEach(carte => {
     carte.addEventListener("click", () => {
