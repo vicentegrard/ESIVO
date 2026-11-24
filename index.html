@@ -9258,6 +9258,14 @@ if (estPlateau) {
     </div>
 
     <div class="form-group">
+      <label>Format de compétition</label>
+      <select id="adminMatchFormatCompetition">
+        <option value="championnat">Championnat / match classique</option>
+        <option value="coupe">Coupe à élimination directe</option>
+      </select>
+    </div>
+
+    <div class="form-group">
       <label>Journée</label>
       <input type="text" id="adminMatchJournee" placeholder="Ex : Journée 8">
     </div>
@@ -9458,6 +9466,13 @@ if (item.type === "plateau" && equipe === "U13") {
       carte.appendChild(nom);
       carte.appendChild(details);
 
+      if (item.type === "match" && item.statutMatch === "reporte") {
+        const statut = document.createElement("p");
+        statut.textContent = "⚠️ MATCH REPORTÉ — Pronostics suspendus";
+        statut.style.cssText = "color:#E5BD37;font-weight:800;margin:8px 0;";
+        carte.appendChild(statut);
+      }
+
       if (item.type === "plateau" && item.equipes && item.equipes.length > 0) {
         const participants = document.createElement("p");
 
@@ -9483,6 +9498,13 @@ if (item.type === "plateau" && equipe === "U13") {
       };
 
       carte.appendChild(boutonModifier);
+      if (item.type === "match") {
+        const boutonReport = document.createElement("button");
+        boutonReport.type = "button";
+        boutonReport.textContent = item.statutMatch === "reporte" ? "Reprogrammer" : "Reporter";
+        boutonReport.onclick = () => gererReportMatchAdmin(item.id, equipe);
+        carte.appendChild(boutonReport);
+      }
       carte.appendChild(boutonSupprimer);
 
       conteneur.appendChild(carte);
@@ -9495,6 +9517,56 @@ if (item.type === "plateau" && equipe === "U13") {
 }
 
 
+
+async function gererReportMatchAdmin(id, equipe) {
+  const utilisateur = window.esivoAuth.currentUser;
+  if (!utilisateur || utilisateur.uid !== ADMIN_UID) return alert("Accès refusé.");
+  try {
+    const ref = window.esivoDb.collection("matchs").doc(id);
+    const snap = await ref.get();
+    if (!snap.exists) return alert("Cette rencontre n'existe plus.");
+    const match = snap.data();
+    const estDejaReporte = match.statutMatch === "reporte";
+    const nouvelleDate = window.prompt(
+      estDejaReporte
+        ? "Nouvelle date (AAAA-MM-JJ), ou laisser vide pour maintenir le report."
+        : "Date de reprogrammation (AAAA-MM-JJ), ou laisser vide si elle est inconnue."
+    );
+    if (nouvelleDate === null) return;
+    if (nouvelleDate.trim()) {
+      if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(nouvelleDate.trim())) {
+        alert("Format attendu : AAAA-MM-JJ."); return;
+      }
+      const nouvelleHeure = window.prompt("Nouvelle heure (HH:MM)", match.heure || "15:00");
+      if (nouvelleHeure === null) return;
+      if (!/^\\d{1,2}:\\d{2}$/.test(nouvelleHeure.trim())) {
+        alert("Format attendu : HH:MM."); return;
+      }
+      await ref.update({
+        dateInitiale: match.dateInitiale || match.date || "",
+        heureInitiale: match.heureInitiale || match.heure || "",
+        date: nouvelleDate.trim(), heure: nouvelleHeure.trim(),
+        statutMatch: "programme",
+        reportMisAJourAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      alert("Match reprogrammé. Les pronostics seront ouverts jusqu’au nouveau coup d’envoi.");
+    } else {
+      await ref.update({
+        dateInitiale: match.dateInitiale || match.date || "",
+        heureInitiale: match.heureInitiale || match.heure || "",
+        statutMatch: "reporte",
+        reportMisAJourAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      alert("Match marqué comme reporté. Les pronostics sont suspendus.");
+    }
+    await chargerListeCalendrierAdmin(equipe);
+    await chargerCalendriersFirebase();
+    if (typeof window.initialiserPronosticsPage === "function") await window.initialiserPronosticsPage();
+  } catch (erreur) {
+    console.error("Gestion du report :", erreur);
+    alert("Impossible de mettre à jour le report du match.");
+  }
+}
 
 async function supprimerRencontreAdmin(id, equipe) {
   if (!id || !equipe) return;
@@ -9632,6 +9704,8 @@ if (!match.equipes || match.equipes.length === 0) {
     document.getElementById("adminMatchDate").value = match.date || "";
     document.getElementById("adminMatchHeure").value = match.heure || "";
     document.getElementById("adminMatchCompetition").value = match.competition || "";
+    const formatCompetition = document.getElementById("adminMatchFormatCompetition");
+    if (formatCompetition) formatCompetition.value = match.formatCompetition || "championnat";
     document.getElementById("adminMatchJournee").value = match.journee || "";
     document.getElementById("adminMatchAdversaire").value = match.adversaire || "";
     document.getElementById("adminMatchLieu").value = match.lieu || "";
@@ -9705,6 +9779,7 @@ async function enregistrerModificationMatchAdmin(id, equipe) {
     date: document.getElementById("adminMatchDate").value,
     heure: document.getElementById("adminMatchHeure").value,
     competition: document.getElementById("adminMatchCompetition").value.trim(),
+    formatCompetition: document.getElementById("adminMatchFormatCompetition")?.value || "championnat",
     journee: document.getElementById("adminMatchJournee").value.trim(),
     adversaire: document.getElementById("adminMatchAdversaire").value.trim(),
     lieu: document.getElementById("adminMatchLieu").value.trim(),
@@ -10098,6 +10173,17 @@ ${enregistre && (aUnScore || aUnForfait) ? `
     </div>
   </div>
 
+  ${evenement.formatCompetition === "coupe" ? `
+  <div class="form-group">
+    <label for="resultat-qualifie-${evenement.id}">Équipe qualifiée</label>
+    <select id="resultat-qualifie-${evenement.id}">
+      <option value="">Sélectionner l’équipe qualifiée</option>
+      <option value="esivo" ${evenement.qualifieEquipe === "esivo" ? "selected" : ""}>ESIVO</option>
+      <option value="adversaire" ${evenement.qualifieEquipe === "adversaire" ? "selected" : ""}>${evenement.adversaire || "Adversaire"}</option>
+    </select>
+    <small>Cette information sert à attribuer les 10 points bonus.</small>
+  </div>` : ""}
+
   <div class="form-group">
     <label>
       <input type="checkbox"
@@ -10376,6 +10462,8 @@ if (type === "match") {
   const forfaitEquipe = document.getElementById("resultat-forfait-cote-" + id).value;
 
   const tirsAuBut = document.getElementById("resultat-tab-" + id).checked;
+  const selectQualifie = document.getElementById("resultat-qualifie-" + id);
+  const qualifieEquipe = selectQualifie ? selectQualifie.value : null;
   const scoreTABESIVO = document.getElementById("resultat-tab-esivo-" + id).value;
   const scoreTABAdversaire = document.getElementById("resultat-tab-adverse-" + id).value;
   const buteurs = document.getElementById("resultat-buteurs-" + id).value;
@@ -10387,6 +10475,12 @@ if (type === "match") {
 
   if (forfait && tirsAuBut) {
     message.textContent = "Un forfait ne peut pas être associé à une séance de tirs au but.";
+    return;
+  }
+
+  const matchSource = (window.calendriersFirebase || []).find(item => item.id === id);
+  if (matchSource?.formatCompetition === "coupe" && !qualifieEquipe) {
+    message.textContent = "Merci de renseigner l’équipe qualifiée pour cette coupe.";
     return;
   }
 
@@ -10442,6 +10536,7 @@ if (type === "match") {
   forfaitEquipe: forfait ? forfaitEquipe : null,
 
     tirsAuBut: tirsAuBut,
+  qualifieEquipe: qualifieEquipe,
   scoreTABESIVO: tirsAuBut ? Number(scoreTABESIVO) : null,
   scoreTABAdversaire: tirsAuBut ? Number(scoreTABAdversaire) : null,
 
@@ -10576,6 +10671,7 @@ async function enregistrerMatchAdmin() {
     date: document.getElementById("adminMatchDate").value,
     heure: document.getElementById("adminMatchHeure").value,
     competition: document.getElementById("adminMatchCompetition").value.trim(),
+    formatCompetition: document.getElementById("adminMatchFormatCompetition")?.value || "championnat",
     journee: document.getElementById("adminMatchJournee").value.trim(),
     adversaire: document.getElementById("adminMatchAdversaire").value.trim(),
     lieu: document.getElementById("adminMatchLieu").value.trim(),
