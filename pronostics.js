@@ -96,9 +96,7 @@
         db().collection("pronostics_classement").orderBy("total","desc").limit(20).get()
       ]);
       const now=new Date();
-      const matches=matchesSnap.docs.map(d=>({...d.data(),id:d.id}))
-        .filter(m=>m.type==="match" && m.resultatEnregistre!==true && m.date && dateHeure(m)>now)
-        .sort((a,b)=>dateHeure(a)-dateHeure(b));
+      const matches=prochainsMatchsParCategorie(matchesSnap.docs.map(d=>({...d.data(),id:d.id})),now);
       const picks=await Promise.all(matches.map(async m=>{
         const [parent,pick]=await Promise.all([
           db().collection("pronostics").doc(m.id).get(),
@@ -136,17 +134,57 @@
     }
   };
 
+  function cheminLogoPronostic(logo) {
+    if(!logo) return "";
+    return /^https?:\\/\\//i.test(logo) ? logo : "logos/" + String(logo).replace(/^\\//,"");
+  }
+
+  function nomClubPronostic(categorie) {
+    if(categorie==="Seniors B") return "ESIVO B";
+    if(categorie==="Seniors C") return "ESIVO C";
+    return "ESIVO";
+  }
+
+  function prochainsMatchsParCategorie(matches,now=new Date()) {
+    const prochains=new Map();
+    matches
+      .filter(m=>m.type==="match" && m.resultatEnregistre!==true && m.date && dateHeure(m)>now)
+      .sort((a,b)=>dateHeure(a)-dateHeure(b))
+      .forEach(match=>{
+        const categorie=String(match.equipe||"Autres");
+        if(!prochains.has(categorie)) prochains.set(categorie,match);
+      });
+    return Array.from(prochains.values()).sort((a,b)=>String(a.equipe||"").localeCompare(String(b.equipe||""),"fr"));
+  }
+
   function renderMatch(match,meta,pick) {
     const kickoff=dateHeure(match);
     const locked=kickoff<=new Date();
     const odds=meta?.oddsSnapshot;
     const score=odds?.scoreEstime;
-    const labelDomicile=match.domicile===true || norm(match.domicile).includes("esivo") ? "DOMICILE" : "EXTÉRIEUR";
+    const domicile=match.domicile===true || norm(match.domicile).includes("esivo");
+    const nomESIVO=nomClubPronostic(match.equipe);
+    const nomDomicile=domicile?nomESIVO:(match.adversaire||"À confirmer");
+    const nomExterieur=domicile?(match.adversaire||"À confirmer"):nomESIVO;
+    const logoESIVO=cheminLogoPronostic("esivo.png");
+    const logoAdversaire=cheminLogoPronostic(match.logo);
+    const logoDomicile=domicile?logoESIVO:logoAdversaire;
+    const logoExterieur=domicile?logoAdversaire:logoESIVO;
     const safeId=esc(match.id);
     return `
       <article class="pronostics-match">
         <div class="pronostics-match-top"><span>${esc(match.equipe)} · ${esc(match.competition||"Rencontre")}</span><span>${dateFR(kickoff)} · ${esc(match.heure||"")}</span></div>
-        <div class="pronostics-teams"><div><small>${labelDomicile}</small><strong>ESIVO</strong></div><div class="pronostics-vs">VS</div><div><small>ADVERSAIRE</small><strong>${esc(match.adversaire||"À confirmer")}</strong></div></div>
+        <div class="pronostics-teams pronostics-teams-logos">
+          <div class="pronostics-team">
+            ${logoDomicile?`<img class="pronostics-team-logo" src="${esc(logoDomicile)}" alt="Logo ${esc(nomDomicile)}">`:""}
+            <small>DOMICILE</small><strong>${esc(nomDomicile)}</strong>
+          </div>
+          <div class="pronostics-vs">VS</div>
+          <div class="pronostics-team">
+            ${logoExterieur?`<img class="pronostics-team-logo" src="${esc(logoExterieur)}" alt="Logo ${esc(nomExterieur)}">`:""}
+            <small>EXTÉRIEUR</small><strong>${esc(nomExterieur)}</strong>
+          </div>
+        </div>`;
         ${odds?`<div class="pronostics-odds"><span>1 <b>${odds.cotes[0].toFixed(2)}</b><small>${odds.probabilites[0]}%</small></span><span>N <b>${odds.cotes[1].toFixed(2)}</b><small>${odds.probabilites[1]}%</small></span><span>2 <b>${odds.cotes[2].toFixed(2)}</b><small>${odds.probabilites[2]}%</small></span></div><p class="pronostics-model">Score statistique estimé : <strong>${score[0]} – ${score[1]}</strong></p>`: '<p class="pronostics-pending">Pronostics bientôt ouverts par l’administrateur.</p>'}
         <div class="pronostics-pick">
           <label>Ton score</label>
@@ -277,8 +315,9 @@
     try {
       const snap=await db().collection("matchs").get();
       const now=new Date();
-      const futures=snap.docs.map(d=>({...d.data(),id:d.id}))
-        .filter(m=>m.type==="match" && m.date && dateHeure(m)>now && m.resultatEnregistre!==true);
+      const futures=prochainsMatchsParCategorie(
+        snap.docs.map(d=>({...d.data(),id:d.id})),now
+      );
       let created=0;
       let dejaPreparees=0;
 
