@@ -11195,6 +11195,14 @@ function showPage(page) {
             <button type="submit">Se connecter</button>
           </form>
 
+          <button
+            type="button"
+            onclick="reinitialiserMotDePasseAdmin()"
+            style="display:block; margin:12px auto 0; padding:0; border:0; background:transparent; color:#E5BD37; text-decoration:underline; cursor:pointer; font:inherit;"
+          >
+            Mot de passe oublié ?
+          </button>
+
           <p id="adminMessage"></p>
         </div>
       `;
@@ -15306,6 +15314,25 @@ async function recupererClassementInitialAdmin(equipe) {
     showPage("Administration");
   } catch (erreur) {
     message.textContent = "Identifiants incorrects ou erreur de connexion.";
+  }
+}
+
+async function reinitialiserMotDePasseAdmin() {
+  const email = document.getElementById("adminEmail").value.trim();
+  const message = document.getElementById("adminMessage");
+
+  if (!email) {
+    message.textContent = "Saisis ton adresse e-mail administrateur pour recevoir le lien.";
+    document.getElementById("adminEmail").focus();
+    return;
+  }
+
+  try {
+    await window.esivoAuth.sendPasswordResetEmail(email);
+    message.textContent = "Si un compte existe avec cette adresse, un e-mail de réinitialisation vient d'être envoyé. Pense à vérifier tes courriers indésirables.";
+  } catch (erreur) {
+    console.error("Erreur de réinitialisation du mot de passe administrateur :", erreur);
+    message.textContent = "Impossible d'envoyer le lien. Vérifie l'adresse e-mail et réessaie.";
   }
 }
 
