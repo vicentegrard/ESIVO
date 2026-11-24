@@ -9569,6 +9569,23 @@ async function gererReportMatchAdmin(id, equipe) {
       });
       alert("Match marqué comme reporté. Les pronostics sont suspendus.");
     }
+    const pronosticRef = window.esivoDb.collection("pronostics").doc(id);
+    const pronosticSnap = await pronosticRef.get();
+    if (pronosticSnap.exists) {
+      if (nouvelleDate.trim()) {
+        await pronosticRef.set({
+          date: nouvelleDate.trim(), heure: nouvelleHeure,
+          kickoffAt: firebase.firestore.Timestamp.fromDate(new Date(nouvelleDate.trim() + "T" + nouvelleHeure + ":00")),
+          statut: "ouvert",
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      } else {
+        await pronosticRef.set({
+          statut: "suspendu",
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      }
+    }
     await chargerListeCalendrierAdmin(equipe);
     await chargerCalendriersFirebase();
     if (typeof window.initialiserPronosticsPage === "function") await window.initialiserPronosticsPage();
