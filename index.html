@@ -11614,9 +11614,10 @@ async function chargerClassementFirestore(equipe) {
 return donnees;
 }
   
-let annuaireMembresOffset = 0;
-let annuaireMembresTotal = 0;
+let annuaireMembresDonnees = [];
+let annuaireMembresAffiches = 0;
 let annuaireMembresChargement = false;
+const TAILLE_PAGE_ANNUAIRE = 24;
 
 function echapperHTMLAnnuaire(valeur) {
   return String(valeur ?? "").replace(/[&<>"']/g, caractere => ({
@@ -11628,6 +11629,36 @@ function echapperHTMLAnnuaire(valeur) {
   })[caractere]);
 }
 
+function badgeMembreAnnuaire(membre) {
+  if (membre.uid === ADMIN_UID) {
+    return {
+      texte: "FONDATEUR DU SITE ESIVO",
+      fond: "#2687E8",
+      couleur: "#FFFFFF"
+    };
+  }
+
+  const badges = {
+    supporter: {
+      texte: "SUPPORTER ESIVO",
+      fond: "#E5BD37",
+      couleur: "#19191D"
+    },
+    "licencie-esivo": {
+      texte: "LICENCIÉ AU CLUB ESIVO",
+      fond: "#AA1A24",
+      couleur: "#FFFFFF"
+    },
+    "licencie-autre": {
+      texte: "LICENCIÉ D'UN AUTRE CLUB",
+      fond: "#268B57",
+      couleur: "#FFFFFF"
+    }
+  };
+
+  return badges[membre.statut] || badges.supporter;
+}
+
 function afficherCarteMembre(membre) {
   const pseudo = echapperHTMLAnnuaire(membre.pseudo || "Membre ESIVO");
   const nom = membre.afficherNomPrenom
@@ -11637,16 +11668,15 @@ function afficherCarteMembre(membre) {
     ? `<span class="communaute-member-nom">${echapperHTMLAnnuaire(nom)}</span>`
     : "";
   const photo = echapperHTMLAnnuaire(
-    membre.photo ||
+    membre.photoDataUrl ||
     "https://ui-avatars.com/api/?name=ESIVO&background=292930&color=fff&size=128"
   );
-  const badge = membre.badge || {
-    texte: "SUPPORTER ESIVO",
-    fond: "#E5BD37",
-    couleur: "#19191D"
-  };
-  const date = membre.dateInscription
-    ? new Date(membre.dateInscription).toLocaleDateString("fr-FR", {
+  const badge = badgeMembreAnnuaire(membre);
+  const dateObjet = membre.dateInscription?.toDate
+    ? membre.dateInscription.toDate()
+    : (membre.dateInscription ? new Date(membre.dateInscription) : null);
+  const date = dateObjet && !Number.isNaN(dateObjet.getTime())
+    ? dateObjet.toLocaleDateString("fr-FR", {
         day: "numeric",
         month: "long",
         year: "numeric"
@@ -11669,62 +11699,96 @@ function afficherCarteMembre(membre) {
   `;
 }
 
+function afficherPageAnnuaireMembres() {
+  const liste = document.getElementById("communauteMembres");
+  if (!liste) return;
+
+  const total = document.getElementById("communauteTotal");
+  if (total) total.textContent = String(annuaireMembresDonnees.length);
+
+  const dernier = annuaireMembresDonnees[annuaireMembresDonnees.length - 1];
+  const dernierPseudo = document.getElementById("communauteDernierPseudo");
+  const dernierePhoto = document.getElementById("communauteDernierPhoto");
+
+  if (dernierPseudo) dernierPseudo.textContent = dernier?.pseudo || "Aucun membre";
+  if (dernierePhoto) {
+    dernierePhoto.src = dernier?.photoDataUrl ||
+      "https://ui-avatars.com/api/?name=ESIVO&background=292930&color=fff&size=128";
+  }
+
+  const page = annuaireMembresDonnees.slice(
+    annuaireMembresAffiches,
+    annuaireMembresAffiches + TAILLE_PAGE_ANNUAIRE
+  );
+
+  if (page.length) {
+    liste.insertAdjacentHTML(
+      "beforeend",
+      page.map(afficherCarteMembre).join("")
+    );
+  }
+
+  annuaireMembresAffiches += page.length;
+
+  if (annuaireMembresAffiches === 0) {
+    liste.innerHTML = '<div class="communaute-state">Aucun membre inscrit pour le moment.</div>';
+  }
+
+  const bouton = document.getElementById("communauteChargerPlus");
+  if (bouton) {
+    bouton.style.display =
+      annuaireMembresAffiches < annuaireMembresDonnees.length ? "block" : "none";
+    bouton.disabled = false;
+  }
+}
+
 async function chargerAnnuaireMembres(reinitialiser = false) {
   const liste = document.getElementById("communauteMembres");
   if (!liste || annuaireMembresChargement) return;
 
+  const bouton = document.getElementById("communauteChargerPlus");
+
   if (reinitialiser) {
-    annuaireMembresOffset = 0;
-    annuaireMembresTotal = 0;
+    annuaireMembresDonnees = [];
+    annuaireMembresAffiches = 0;
     liste.innerHTML = '<div class="communaute-state">Chargement des membres...</div>';
+  } else if (annuaireMembresAffiches < annuaireMembresDonnees.length) {
+    afficherPageAnnuaireMembres();
+    return;
+  } else {
+    return;
   }
 
   annuaireMembresChargement = true;
-  const bouton = document.getElementById("communauteChargerPlus");
   if (bouton) bouton.disabled = true;
 
   try {
-    const url = "https://europe-west1-esivo-club.cloudfunctions.net/listerMembresPublics"
-      + "?offset=" + annuaireMembresOffset + "&limit=24";
-    const reponse = await fetch(url);
-    if (!reponse.ok) throw new Error("HTTP " + reponse.status);
+    const snapshot = await window.esivoDb
+      .collection("profils_publics")
+      .get();
 
-    const donnees = await reponse.json();
-    annuaireMembresTotal = donnees.total || 0;
+    annuaireMembresDonnees = snapshot.docs.map(document => ({
+      uid: document.id,
+      ...document.data()
+    }));
 
-    const total = document.getElementById("communauteTotal");
-    if (total) total.textContent = String(annuaireMembresTotal);
+    annuaireMembresDonnees.sort((a, b) => {
+      const dateA = a.dateInscription?.toMillis
+        ? a.dateInscription.toMillis()
+        : (a.dateInscription ? new Date(a.dateInscription).getTime() : 0);
+      const dateB = b.dateInscription?.toMillis
+        ? b.dateInscription.toMillis()
+        : (b.dateInscription ? new Date(b.dateInscription).getTime() : 0);
+      return dateA - dateB;
+    });
 
-    const dernier = donnees.dernierInscrit;
-    const dernierPseudo = document.getElementById("communauteDernierPseudo");
-    const dernierePhoto = document.getElementById("communauteDernierPhoto");
+    if (liste) liste.innerHTML = "";
+    afficherPageAnnuaireMembres();
 
-    if (dernierPseudo) dernierPseudo.textContent = dernier?.pseudo || "Aucun membre";
-    if (dernierePhoto && dernier?.photo) dernierePhoto.src = dernier.photo;
-
-    if (reinitialiser) liste.innerHTML = "";
-
-    if (!donnees.membres || donnees.membres.length === 0) {
-      if (reinitialiser) {
-        liste.innerHTML = '<div class="communaute-state">Aucun membre inscrit pour le moment.</div>';
-      }
-    } else {
-      liste.insertAdjacentHTML(
-        "beforeend",
-        donnees.membres.map(afficherCarteMembre).join("")
-      );
-    }
-
-    annuaireMembresOffset += (donnees.membres || []).length;
-
-    if (bouton) {
-      bouton.style.display = donnees.hasMore ? "block" : "none";
-      bouton.disabled = false;
-    }
   } catch (erreur) {
     console.error("Erreur de chargement de l'annuaire ESIVO :", erreur);
-    if (reinitialiser) {
-      liste.innerHTML = '<div class="communaute-state">La liste des membres sera disponible après l’activation du service communautaire.</div>';
+    if (liste) {
+      liste.innerHTML = '<div class="communaute-state">Impossible de charger les membres pour le moment. Réessaie plus tard.</div>';
     }
     if (bouton) bouton.style.display = "none";
   } finally {
@@ -11734,7 +11798,7 @@ async function chargerAnnuaireMembres(reinitialiser = false) {
 }
 
 function chargerPlusMembres() {
-  chargerAnnuaireMembres(false);
+  afficherPageAnnuaireMembres();
 }
 
 async function selectTeam(equipe) {
@@ -15195,6 +15259,17 @@ async function synchroniserProfilPublic(uid) {
     throw new Error("Profil membre introuvable.");
   }
 
+  const referencePublique = window.esivoDb
+    .collection("profils_publics")
+    .doc(uid);
+
+  const documentPublic = await referencePublique.get();
+
+  // La date d'inscription est créée une seule fois puis conservée.
+  if (documentPublic.exists && !documentPublic.data().dateInscription) {
+    throw new Error("Ce profil doit d'abord être inclus dans la migration de l'annuaire.");
+  }
+
   const membre = documentMembre.data();
   const afficherNom = membre.afficherNomPrenom === true;
 
@@ -15206,13 +15281,60 @@ async function synchroniserProfilPublic(uid) {
     prenom: afficherNom ? (membre.prenom || "") : "",
     nom: afficherNom ? (membre.nom || "") : "",
     photoDataUrl: membre.photoDataUrl || "",
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    dateInscription: documentPublic.exists
+      ? documentPublic.data().dateInscription
+      : firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  await window.esivoDb
+  await referencePublique.set(profilPublic);
+}
+
+async function assurerProfilPublicUtilisateur(utilisateur) {
+  if (!utilisateur) return;
+
+  const referenceMembre = window.esivoDb
+    .collection("membres")
+    .doc(utilisateur.uid);
+
+  const documentMembre = await referenceMembre.get();
+
+  // Tout compte Auth doit disposer d'une fiche membre minimale.
+  if (!documentMembre.exists) {
+    const pseudoBrut = (
+      utilisateur.displayName ||
+      (utilisateur.email || "").split("@")[0] ||
+      "Supporter ESIVO"
+    ).trim().slice(0, 20);
+
+    await referenceMembre.set({
+      pseudo: pseudoBrut.length >= 2 ? pseudoBrut : "Supporter ESIVO",
+      statut: "supporter",
+      description: "",
+      afficherNomPrenom: false,
+      prenom: "",
+      nom: "",
+      photoDataUrl: "",
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  const referencePublique = window.esivoDb
     .collection("profils_publics")
-    .doc(uid)
-    .set(profilPublic);
+    .doc(utilisateur.uid);
+
+  const documentPublic = await referencePublique.get();
+
+  if (!documentPublic.exists) {
+    await synchroniserProfilPublic(utilisateur.uid);
+  } else if (documentPublic.data().dateInscription) {
+    await synchroniserProfilPublic(utilisateur.uid);
+  } else {
+    console.warn(
+      "Profil public en attente de migration de sa date d'inscription :",
+      utilisateur.uid
+    );
+  }
 }
 
 
@@ -15534,7 +15656,8 @@ async function connecterAvecGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
 
   try {
-    await window.esivoAuth.signInWithPopup(provider);
+    const resultat = await window.esivoAuth.signInWithPopup(provider);
+    await assurerProfilPublicUtilisateur(resultat.user);
     showPage("Mon compte");
   } catch (erreur) {
     console.error("Erreur de connexion Google :", erreur);
@@ -15571,6 +15694,7 @@ async function inscrireAvecEmail() {
       password
     );
 
+    await assurerProfilPublicUtilisateur(resultat.user);
     await resultat.user.sendEmailVerification();
     await window.esivoAuth.signOut();
 
@@ -15618,6 +15742,7 @@ async function connecterAvecEmail() {
       return;
     }
 
+    await assurerProfilPublicUtilisateur(resultat.user);
     showPage("Mon compte");
 
   } catch (erreur) {
