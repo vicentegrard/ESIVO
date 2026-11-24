@@ -137,7 +137,8 @@
   function cheminLogoPronostic(logo) {
     if(!logo) return "";
     const valeur=String(logo);
-    return valeur.startsWith("http") ? valeur : "logos/" + valeur.replace(/^\\/+/, "");
+    const propre=valeur.startsWith("/")?valeur.slice(1):valeur;
+    return valeur.startsWith("http") ? valeur : "logos/" + propre;
   }
 
   function nomClubPronostic(categorie) {
