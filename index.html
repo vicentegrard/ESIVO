@@ -15280,9 +15280,9 @@ let notificationsESIVO = [];
 
   return {
     ...evenement,
-    logo: evenement.logo || equipeOrganisatrice?.logo || ""
-  };
-}),
+      logo: evenement.logo || equipeOrganisatrice?.logo || ""
+    };
+  });
 }
 
 const NOTIFICATIONS_LUES_KEY = "esivo_notifications_lues";
