@@ -442,7 +442,40 @@
         padding: 14px 5px;
     }
 }
-  </style>
+  
+/* ===== JEU DES PRONOSTICS ===== */
+.pronostics-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.pronostics-summary>div{background:#19191D;border:1px solid #38383f;border-radius:14px;padding:16px}
+.pronostics-summary span,.pronostics-match-top,.pronostics-status{display:block;color:#aaa;font-size:.78rem}
+.pronostics-summary strong{display:block;color:#E5BD37;font-size:1.8rem;margin-top:5px}
+.pronostics-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0}
+.pronostics-toolbar p{color:#bbb;margin:0}
+.pronostics-matches{display:grid;gap:16px}
+.pronostics-match{background:#19191D;border:1px solid #38383f;border-radius:16px;padding:18px;min-width:0}
+.pronostics-match-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#bbb}
+.pronostics-teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;text-align:center;padding:22px 0 16px}
+.pronostics-teams>div:last-child{text-align:right}.pronostics-teams>div:first-child{text-align:left}
+.pronostics-teams small{display:block;color:#E5BD37;font-size:.68rem;letter-spacing:.08em;margin-bottom:6px}
+.pronostics-teams strong{font-size:1.1rem;overflow-wrap:anywhere}
+.pronostics-vs{color:#777;font-weight:800}
+.pronostics-odds{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.pronostics-odds span{background:#25252c;border-radius:10px;text-align:center;padding:9px 4px;color:#bbb;font-size:.78rem}
+.pronostics-odds b{display:block;color:#E5BD37;font-size:1.05rem;margin:3px 0}
+.pronostics-odds small{display:block;font-size:.7rem}
+.pronostics-model,.pronostics-pending{color:#ccc;text-align:center;font-size:.85rem;margin:12px 0}
+.pronostics-model strong{color:#E5BD37}
+.pronostics-pick{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0 10px}
+.pronostics-pick label{width:100%;text-align:center;color:#bbb;font-size:.8rem}
+.pronostics-pick input{width:62px;background:#101014;color:white;border:1px solid #555;border-radius:8px;padding:10px;text-align:center;font-size:1.1rem}
+.pronostics-pick button{padding:10px 14px}
+.pronostics-pick button:disabled,.pronostics-pick input:disabled{opacity:.45;cursor:not-allowed}
+.pronostics-status{text-align:center}
+.pronostics-info{margin-top:20px}.pronostics-info small{color:#aaa}
+.pronostics-loading{color:#ccc;text-align:center;padding:30px}
+#pronosticsMessage{color:#E5BD37;margin:10px 0}
+@media(max-width:560px){.pronostics-match{padding:14px}.pronostics-match-top{font-size:.72rem}.pronostics-teams strong{font-size:.94rem}.pronostics-toolbar{align-items:stretch}.pronostics-toolbar button{width:100%}.pronostics-pick button{width:100%}}
+
+</style>
   
 <style>
 :root {
@@ -5830,6 +5863,7 @@ window.esivoAuth = firebase.auth();
 });
 
 const ADMIN_UID = "89slmmfD1FQdOmwbdPna1lqXIVH2";
+window.ESIVO_ADMIN_UID = ADMIN_UID;
 
 const equipes = [
   "U7",
@@ -10933,6 +10967,12 @@ function showPage(page) {
 
       </div>
     `;
+      } else if (page === "Pronostics") {
+    html += `
+      <div class="content-card" id="pronosticsRoot">
+        <p class="pronostics-loading">Chargement du jeu des pronostics…</p>
+      </div>
+    `;
       } else if (page === "Administration") {
     const utilisateur = window.esivoAuth.currentUser;
 
@@ -11516,6 +11556,10 @@ if (badge) {
 
 
   app.innerHTML = html;
+
+  if (page === "Pronostics" && typeof window.initialiserPronosticsPage === "function") {
+    window.initialiserPronosticsPage();
+  }
 
   if (page === "Communauté") {
     chargerAnnuaireMembres(true);
@@ -16995,6 +17039,8 @@ async function supprimerNotificationAdmin(id) {
   }
 }
 
+
+<script src="pronostics.js"></script>
 
 </script>
 
