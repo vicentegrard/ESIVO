@@ -267,29 +267,47 @@
   async function preparerRencontres() {
     const user=auth()?.currentUser;
     if(!user || user.uid!==window.ESIVO_ADMIN_UID) return alert("Accès réservé à l’administrateur.");
+
     const btn=document.getElementById("preparerPronosticsBtn");
     const message=document.getElementById("pronosticsMessage");
     if(btn) btn.disabled=true;
+    if(message) message.textContent="Préparation des rencontres en cours…";
+
+    let resultat="";
     try {
       const snap=await db().collection("matchs").get();
       const now=new Date();
       const futures=snap.docs.map(d=>({...d.data(),id:d.id}))
         .filter(m=>m.type==="match" && m.date && dateHeure(m)>now && m.resultatEnregistre!==true);
       let created=0;
+      let dejaPreparees=0;
+
       for(const match of futures) {
         const ref=db().collection("pronostics").doc(match.id);
         const exists=await ref.get();
-        if(exists.exists) continue;
+        if(exists.exists) {
+          dejaPreparees++;
+          continue;
+        }
         const odds=await cotesDepuisClassement(match);
         await ref.set(matchDocData(match,odds,firebase.firestore.Timestamp.fromDate(dateHeure(match))));
         created++;
       }
-      if(message) message.textContent=created+" rencontre(s) préparée(s). Les fiches déjà ouvertes et leurs cotes n’ont pas été modifiées.";
+
+      resultat = futures.length===0
+        ? "Aucune rencontre future éligible trouvée dans le calendrier (type « match », date à venir, résultat non enregistré)."
+        : created+" nouvelle(s) rencontre(s) préparée(s). "+dejaPreparees+" rencontre(s) étaient déjà ouvertes.";
       await window.initialiserPronosticsPage();
+      const messageApresChargement=document.getElementById("pronosticsMessage");
+      if(messageApresChargement) messageApresChargement.textContent=resultat;
     } catch(err) {
-      console.error(err);
-      if(message) message.textContent="Erreur de préparation : "+(err.code||err.message);
-    } finally { if(btn) btn.disabled=false; }
+      console.error("Erreur de préparation des pronostics :",err);
+      const messageApresErreur=document.getElementById("pronosticsMessage");
+      if(messageApresErreur) messageApresErreur.textContent="Erreur de préparation : "+(err.code||err.message||"erreur inconnue");
+    } finally {
+      const boutonApresChargement=document.getElementById("preparerPronosticsBtn");
+      if(boutonApresChargement) boutonApresChargement.disabled=false;
+    }
   }
 
   async function sauvegarderPronostic(matchId) {
