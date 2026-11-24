@@ -15272,18 +15272,22 @@ let notificationsESIVO = [];
 ].join("_")).join("__").replace(/[^a-zA-Z0-9]/g, "_")}`,
   titre: `Jour de match – ${equipe}`,
   message: details.join(" • "),
-  evenements: evenements.map(evenement => {
-  const equipeOrganisatrice = (evenement.equipes || []).find(formation =>
-    formation.nom === evenement.organisateur ||
-    formation.nom.startsWith((evenement.organisateur || "") + " ")
-  );
+  
+      evenements: evenements.map(evenement => {
+        const equipeOrganisatrice = (evenement.equipes || []).find(formation =>
+          formation.nom === evenement.organisateur ||
+          formation.nom.startsWith((evenement.organisateur || "") + " ")
+        );
 
-  return {
-    ...evenement,
-      logo: evenement.logo || equipeOrganisatrice?.logo || ""
+        return {
+          ...evenement,
+          logo: evenement.logo || equipeOrganisatrice?.logo || ""
+        };
+      }),
     };
   });
 }
+
 
 const NOTIFICATIONS_LUES_KEY = "esivo_notifications_lues";
 
