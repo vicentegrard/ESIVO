@@ -36,41 +36,131 @@
     return [home/total,draw/total,away/total];
   };
   const cotesDepuisClassement = async (match) => {
-    let lambdaESIVO=1.25, lambdaAdverse=1.15, source="Estimation neutre — données de classement indisponibles";
+    const version = "poisson-v2";
+    const equipeESIVO = nomClubPronostic(match.equipe);
+    const normaliserNom = value => norm(value).replace(/[^a-z0-9]/g, "");
+    const estESIVO = club => {
+      const nom = normaliserNom(club?.equipe);
+      const cible = normaliserNom(equipeESIVO);
+      if (nom === cible) return true;
+      // Certains classements enregistrent simplement le club sous le nom ESIVO.
+      return cible === "esivo" && nom === "esivo";
+    };
+
+    const statistiques = club => {
+      if (!club) return null;
+      const joues = Math.max(0, Number(club.joues) || 0);
+      const victoires = Math.max(0, Number(club.victoires) || 0);
+      const nuls = Math.max(0, Number(club.nuls) || 0);
+      const defaites = Math.max(0, Number(club.defaites) || 0);
+      const matchsComptes = Math.max(joues, victoires + nuls + defaites);
+      if (!matchsComptes) return null;
+      const butsPour = Math.max(0, Number(club.butsPour) || 0);
+      const butsContre = Math.max(0, Number(club.butsContre) || 0);
+      const points = Number.isFinite(Number(club.points))
+        ? Number(club.points)
+        : victoires * 3 + nuls;
+      const difference = Number.isFinite(Number(club.difference))
+        ? Number(club.difference)
+        : butsPour - butsContre;
+      return {
+        position: Math.max(1, Number(club.position) || 1),
+        joues: matchsComptes, victoires, nuls, defaites,
+        butsPour, butsContre, difference, points,
+        butsMarquesParMatch: butsPour / matchsComptes,
+        butsEncaissesParMatch: butsContre / matchsComptes,
+        pointsParMatch: points / matchsComptes,
+        tauxVictoires: victoires / matchsComptes,
+        tauxDefaites: defaites / matchsComptes,
+        differenceParMatch: difference / matchsComptes
+      };
+    };
+
+    let lambdaESIVO = 1.25;
+    let lambdaAdverse = 1.15;
+    let source = "Estimation neutre — classement indisponible";
+    let statsESIVO = null;
+    let statsAdverse = null;
     try {
       const snap = await db().collection("classements").doc(match.equipe).get();
       if (snap.exists && Array.isArray(snap.data().clubs)) {
-        const clubs=snap.data().clubs;
-        const esivo=clubs.find(c=>norm(c.equipe)==="esivo");
-        const adverse=clubs.find(c=>norm(c.equipe)===norm(match.adversaire))
-          || clubs.find(c=>norm(c.equipe).includes(norm(match.adversaire)) || norm(match.adversaire).includes(norm(c.equipe)));
-        if(esivo && adverse) {
-          const rate = c => {
-            const j=Math.max(1,Number(c.joues)||0);
-            return {
-              gf:(Number(c.butsPour)||0)/j,
-              ga:(Number(c.butsContre)||0)/j,
-              ppg:(Number(c.points)||0)/j,
-              diff:(Number(c.difference)||((Number(c.butsPour)||0)-(Number(c.butsContre)||0)))/j
-            };
+        const clubs = snap.data().clubs;
+        const clubESIVO = clubs.find(estESIVO)
+          || clubs.find(club => normaliserNom(club.equipe).startsWith("esivo"));
+        const nomAdverse = normaliserNom(match.adversaire);
+        const clubAdverse = clubs.find(club => normaliserNom(club.equipe) === nomAdverse)
+          || clubs.find(club => {
+            const nom = normaliserNom(club.equipe);
+            return nom && nomAdverse && (nom.includes(nomAdverse) || nomAdverse.includes(nom));
+          });
+
+        statsESIVO = statistiques(clubESIVO);
+        statsAdverse = statistiques(clubAdverse);
+
+        if (statsESIVO && statsAdverse) {
+          const moyenneButsLigue = clubs.reduce((total, club) => {
+            const s = statistiques(club);
+            return total + (s ? s.butsMarquesParMatch : 0);
+          }, 0) / Math.max(1, clubs.filter(club => statistiques(club)).length);
+
+          const moyenne = Math.max(0.55, moyenneButsLigue || 1.25);
+          const forceClassement = (s) => {
+            const rang = clubs.length > 1
+              ? (clubs.length - Math.min(clubs.length, s.position)) / (clubs.length - 1)
+              : 0.5;
+            const ppg = Math.max(0, Math.min(3, s.pointsParMatch)) / 3;
+            const difference = Math.max(-2, Math.min(2, s.differenceParMatch)) / 2;
+            // Le classement synthétise les résultats ; les statistiques détaillées
+            // permettent de départager les équipes à position proche.
+            return 0.35 * rang
+              + 0.30 * ppg
+              + 0.15 * s.tauxVictoires
+              - 0.10 * s.tauxDefaites
+              + 0.10 * ((difference + 1) / 2);
           };
-          const e=rate(esivo), a=rate(adverse);
-          const domicile = norm(match.domicile).includes("esivo") || match.domicile === true;
-          const avantage = domicile ? 0.16 : -0.08;
-          lambdaESIVO=Math.min(3.2,Math.max(0.35,0.72*e.gf+0.28*a.ga+avantage));
-          lambdaAdverse=Math.min(3.2,Math.max(0.35,0.72*a.gf+0.28*e.ga-avantage));
-          source="Classement officiel : forme statistique globale (buts et points par match)";
+
+          const forceESIVO = forceClassement(statsESIVO);
+          const forceAdverse = forceClassement(statsAdverse);
+          const ecartForce = Math.max(-0.22, Math.min(0.22, (forceESIVO - forceAdverse) * 0.32));
+          const domicileESIVO = match.domicile === true
+            || ["domicile", "home"].includes(norm(match.domicile))
+            || norm(match.domicile).includes("esivo");
+          const avantageDomicile = domicileESIVO ? 1.10 : 0.92;
+
+          const attaqueESIVO = 0.62 * statsESIVO.butsMarquesParMatch + 0.38 * statsAdverse.butsEncaissesParMatch;
+          const attaqueAdverse = 0.62 * statsAdverse.butsMarquesParMatch + 0.38 * statsESIVO.butsEncaissesParMatch;
+
+          lambdaESIVO = Math.max(0.25, Math.min(3.8,
+            (0.72 * attaqueESIVO + 0.28 * moyenne) * (1 + ecartForce) * avantageDomicile
+          ));
+          lambdaAdverse = Math.max(0.25, Math.min(3.8,
+            (0.72 * attaqueAdverse + 0.28 * moyenne) * (1 - ecartForce) / avantageDomicile
+          ));
+          source = "Classement complet : position, points, victoires, défaites, buts marqués et encaissés par match";
         }
       }
-    } catch(err) { console.warn("Calcul des cotes : classement indisponible",err); }
-    const probs=calculerProbabilites(lambdaESIVO,lambdaAdverse);
-    const cotes=probs.map(p=>Math.round((1/Math.max(.05,p))*100)/100);
-    let best=[0,0,0], bestP=-1;
-    for(let h=0;h<=5;h++) for(let a=0;a<=5;a++) {
-      const p=poisson(lambdaESIVO,h)*poisson(lambdaAdverse,a);
-      if(p>bestP){bestP=p;best=[h,a];}
+    } catch(err) {
+      console.warn("Calcul des cotes : classement indisponible", err);
     }
-    return {probabilites:probs.map(p=>Math.round(p*1000)/10),cotes,lambdaESIVO,lambdaAdverse,scoreEstime:best,source,version:"poisson-v1"};
+
+    const probabilites = calculerProbabilites(lambdaESIVO, lambdaAdverse);
+    const cotes = probabilites.map(p => Math.round((1 / Math.max(0.03, p)) * 100) / 100);
+    let scoreEstime = [0, 0];
+    let meilleureProbabilite = -1;
+    for(let butsESIVO = 0; butsESIVO <= 6; butsESIVO++) {
+      for(let butsAdverse = 0; butsAdverse <= 6; butsAdverse++) {
+        const probabilite = poisson(lambdaESIVO, butsESIVO) * poisson(lambdaAdverse, butsAdverse);
+        if(probabilite > meilleureProbabilite) {
+          meilleureProbabilite = probabilite;
+          scoreEstime = [butsESIVO, butsAdverse];
+        }
+      }
+    }
+    return {
+      probabilites: probabilites.map(p => Math.round(p * 1000) / 10),
+      cotes, lambdaESIVO, lambdaAdverse, scoreEstime, source, version,
+      statistiques: { esivo: statsESIVO, adversaire: statsAdverse }
+    };
   };
   const matchDocData = (match, odds, kickoffAt) => ({
     sourceMatchId:match.id, equipe:match.equipe || "", adversaire:match.adversaire || "",
@@ -327,11 +417,23 @@
       for(const match of futures) {
         const ref=db().collection("pronostics").doc(match.id);
         const exists=await ref.get();
+        const odds=await cotesDepuisClassement(match);
         if(exists.exists) {
-          dejaPreparees++;
+          const ancienneVersion = exists.data()?.versionModele || exists.data()?.oddsSnapshot?.version;
+          // Mise à niveau unique des rencontres déjà ouvertes avec le nouveau modèle.
+          // Ensuite, les cotes restent figées pour cette rencontre.
+          if(ancienneVersion !== "poisson-v2") {
+            await ref.set({
+              oddsSnapshot: odds,
+              versionModele: "poisson-v2",
+              oddsUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, {merge:true});
+            dejaPreparees++;
+          } else {
+            dejaPreparees++;
+          }
           continue;
         }
-        const odds=await cotesDepuisClassement(match);
         await ref.set(matchDocData(match,odds,firebase.firestore.Timestamp.fromDate(dateHeure(match))));
         created++;
       }
