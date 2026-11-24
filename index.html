@@ -1377,6 +1377,42 @@ body {
   letter-spacing: 1px;
 }
 
+.communaute-filtres {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(190px, 1fr);
+  gap: 11px;
+  margin: 0 0 16px;
+}
+
+.communaute-recherche,
+.communaute-select {
+  width: 100%;
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid #3A3A46;
+  border-radius: 11px;
+  background: #202027;
+  color: #FFFFFF;
+  font: inherit;
+  outline: none;
+}
+
+.communaute-recherche:focus,
+.communaute-select:focus {
+  border-color: #AA1A24;
+  box-shadow: 0 0 0 2px rgba(170,26,36,.16);
+}
+
+.communaute-recherche::placeholder {
+  color: #92929D;
+}
+
+@media (max-width: 600px) {
+  .communaute-filtres {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .communaute-members {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -10845,6 +10881,23 @@ function showPage(page) {
         <span>DU PLUS ANCIEN AU PLUS RÉCENT</span>
       </div>
 
+      <div class="communaute-filtres">
+        <input
+          id="communauteRecherche"
+          class="communaute-recherche"
+          type="search"
+          placeholder="Rechercher un membre..."
+          aria-label="Rechercher un membre par pseudo ou nom"
+          oninput="filtrerAnnuaireMembres()"
+        >
+        <select id="communauteFiltreStatut" class="communaute-select" aria-label="Filtrer par statut" onchange="filtrerAnnuaireMembres()">
+          <option value="tous">Tous les membres</option>
+          <option value="supporter">Supporters ESIVO</option>
+          <option value="licencie-esivo">Licenciés ESIVO</option>
+          <option value="licencie-autre">Licenciés d'un autre club</option>
+        </select>
+      </div>
+
       <div id="communauteMembres" class="communaute-members">
         <div class="communaute-state">Chargement des membres...</div>
       </div>
@@ -11699,6 +11752,29 @@ function afficherCarteMembre(membre) {
   `;
 }
 
+function obtenirMembresFiltres() {
+  const recherche = (document.getElementById("communauteRecherche")?.value || "")
+    .trim().toLocaleLowerCase("fr-FR");
+  const statut = document.getElementById("communauteFiltreStatut")?.value || "tous";
+
+  return annuaireMembresDonnees.filter(membre => {
+    const nomComplet = membre.afficherNomPrenom
+      ? [membre.prenom, membre.nom].filter(Boolean).join(" ")
+      : "";
+    const correspondRecherche = !recherche ||
+      [membre.pseudo, nomComplet].join(" ").toLocaleLowerCase("fr-FR").includes(recherche);
+    const correspondStatut = statut === "tous" || membre.statut === statut;
+    return correspondRecherche && correspondStatut;
+  });
+}
+
+function filtrerAnnuaireMembres() {
+  annuaireMembresAffiches = 0;
+  const liste = document.getElementById("communauteMembres");
+  if (liste) liste.innerHTML = "";
+  afficherPageAnnuaireMembres();
+}
+
 function afficherPageAnnuaireMembres() {
   const liste = document.getElementById("communauteMembres");
   if (!liste) return;
@@ -11716,7 +11792,8 @@ function afficherPageAnnuaireMembres() {
       "https://ui-avatars.com/api/?name=ESIVO&background=292930&color=fff&size=128";
   }
 
-  const page = annuaireMembresDonnees.slice(
+  const membresFiltres = obtenirMembresFiltres();
+  const page = membresFiltres.slice(
     annuaireMembresAffiches,
     annuaireMembresAffiches + TAILLE_PAGE_ANNUAIRE
   );
@@ -11726,18 +11803,22 @@ function afficherPageAnnuaireMembres() {
       "beforeend",
       page.map(afficherCarteMembre).join("")
     );
+  } else {
+    const rechercheActive = Boolean(
+      document.getElementById("communauteRecherche")?.value.trim()
+    );
+    const filtreActif = (document.getElementById("communauteFiltreStatut")?.value || "tous") !== "tous";
+    liste.innerHTML = `<div class="communaute-state">${rechercheActive || filtreActif
+      ? "Aucun membre ne correspond à ta recherche."
+      : "Aucun membre inscrit pour le moment."}</div>`;
   }
 
   annuaireMembresAffiches += page.length;
 
-  if (annuaireMembresAffiches === 0) {
-    liste.innerHTML = '<div class="communaute-state">Aucun membre inscrit pour le moment.</div>';
-  }
-
   const bouton = document.getElementById("communauteChargerPlus");
   if (bouton) {
     bouton.style.display =
-      annuaireMembresAffiches < annuaireMembresDonnees.length ? "block" : "none";
+      annuaireMembresAffiches < membresFiltres.length ? "block" : "none";
     bouton.disabled = false;
   }
 }
