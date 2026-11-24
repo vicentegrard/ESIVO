@@ -11996,7 +11996,7 @@ if (equipe === "U13") {
           </article>
         `).join("")}
 
-        ${matchs.map(m => {
+        ${matchs.map((m, index) => {
           const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = m;
 
           const dateCourte = new Date(date + "T12:00:00")
