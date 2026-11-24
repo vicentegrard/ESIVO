@@ -5577,6 +5577,15 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
   }
 }
 
+
+/* Reports et pronostics de coupe — responsive PC/mobile */
+.fixture-postponed,.pronostics-postponed{display:inline-flex;align-items:center;justify-content:center;background:rgba(229,189,55,.14);border:1px solid rgba(229,189,55,.55);color:#E5BD37!important;border-radius:999px;padding:6px 10px;font-size:.72rem;font-weight:800;letter-spacing:.04em}
+.pronostics-cup-pick{display:grid;gap:8px;max-width:520px;margin:14px auto;padding:14px;background:#25252c;border:1px solid #555;border-radius:12px}
+.pronostics-cup-pick label{color:#eee;font-size:.84rem;text-align:center}
+.pronostics-cup-pick label strong{color:#E5BD37}
+.pronostics-cup-pick select{width:100%;min-width:0;padding:12px;background:#101014;color:#fff;border:1px solid #666;border-radius:9px;font:inherit}
+.pronostics-postponed{display:flex;width:max-content;max-width:100%;margin:12px auto}
+@media(max-width:560px){.pronostics-cup-pick{width:100%;padding:12px}.fixture-postponed{white-space:normal;text-align:center}}
 </style>
 
 
@@ -8025,6 +8034,7 @@ const logoOrganisateur = equipeOrganisatrice
   return calendrier
     .filter(match =>
       Array.isArray(match) &&
+      match[9] !== "reporte" &&
       new Date(match[0] + "T12:00:00") >= aujourdHui
     )
     .sort((a, b) => a[0].localeCompare(b[0]))[0];
@@ -12481,7 +12491,7 @@ if (equipe === "U13") {
   aujourdHuiU13.setHours(0, 0, 0, 0);
 
   const prochainMatchU13 = matchs
-    .filter(match => new Date(match[0] + "T12:00:00") >= aujourdHuiU13)
+    .filter(match => match[9] !== "reporte" && new Date(match[0] + "T12:00:00") >= aujourdHuiU13)
     .sort((a, b) =>
       a[0].localeCompare(b[0]) ||
       a[1].localeCompare(b[1])
@@ -12725,6 +12735,7 @@ if (equipe === "U13") {
                 <span>${competition}</span>
                 <span>${journee}</span>
                 <span class="mc-location">${domicile ? "DOMICILE" : "EXTÉRIEUR"}</span>
+                ${m[9] === "reporte" ? '<strong class="fixture-postponed">MATCH REPORTÉ</strong>' : ""}
               </div>
 
             </article>
@@ -12791,6 +12802,7 @@ if (equipe === "U13") {
           <div class="fixture-info">
             <span>${competition} · ${journee}</span>
             <span>${domicile ? "DOMICILE" : "EXTÉRIEUR"}</span>
+            ${m[9] === "reporte" ? '<strong class="fixture-postponed">MATCH REPORTÉ</strong>' : ""}
           </div>
           <p class="fixture-venue">📍 ${lieu} · ${ville}</p>
         </article>`;
@@ -12899,6 +12911,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
               <span>${competition}</span>
               <span>${journee}</span>
               <span class="mc-location">${domicile ? "DOMICILE" : "EXTÉRIEUR"}</span>
+              ${m[9] === "reporte" ? '<strong class="fixture-postponed">MATCH REPORTÉ</strong>' : ""}
             </div>
           </article>`;
       }).join("")}
@@ -16128,7 +16141,8 @@ async function chargerCalendriersFirebase() {
     doc.adversaire,
     doc.logo,
     doc.lieu,
-    doc.ville
+    doc.ville,
+    doc.statutMatch || ""
   ]);
 
       const plateaux = documents
@@ -17203,7 +17217,7 @@ async function supprimerNotificationAdmin(id) {
 
 
 </script>
-<script src="pronostics.js?v=99096d1"></script>
+<script src="pronostics.js?v=efc1bce"></script>
 
 </body>
 </html>
