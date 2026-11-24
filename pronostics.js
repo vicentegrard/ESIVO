@@ -241,7 +241,7 @@
   function prochainsMatchsParCategorie(matches,now=new Date()) {
     const prochains=new Map();
     matches
-      .filter(m=>m.type==="match" && m.resultatEnregistre!==true && m.date && dateHeure(m)>now)
+      .filter(m=>m.type==="match" && m.resultatEnregistre!==true && m.statutMatch!=="reporte" && m.date && dateHeure(m)>now)
       .sort((a,b)=>dateHeure(a)-dateHeure(b))
       .forEach(match=>{
         const categorie=String(match.equipe||"Autres");
@@ -254,7 +254,8 @@
 
   function renderMatch(match,meta,pick) {
     const kickoff=dateHeure(match);
-    const locked=kickoff<=new Date();
+    const locked=kickoff<=new Date() || match.statutMatch==="reporte";
+    const estCoupe=match.formatCompetition==="coupe";
     const odds=meta?.oddsSnapshot;
     const score=odds?.scoreEstime;
     const domicile=match.domicile===true || norm(match.domicile).includes("esivo");
@@ -280,9 +281,11 @@
             <small>EXTÉRIEUR</small><strong>${esc(nomExterieur)}</strong>
           </div>
         </div>
+        ${match.statutMatch==="reporte"?`<p class="pronostics-postponed">RENCONTRE REPORTÉE · Pronostics suspendus</p>`:""}
         ${odds?`<div class="pronostics-odds"><span>1 <b>${odds.cotes[0].toFixed(2)}</b><small>${odds.probabilites[0]}%</small></span><span>N <b>${odds.cotes[1].toFixed(2)}</b><small>${odds.probabilites[1]}%</small></span><span>2 <b>${odds.cotes[2].toFixed(2)}</b><small>${odds.probabilites[2]}%</small></span></div><p class="pronostics-model">Score statistique estimé : <strong>${score[0]} – ${score[1]}</strong></p>`: '<p class="pronostics-pending">Pronostics bientôt ouverts par l’administrateur.</p>'}
+        ${estCoupe?`<div class="pronostics-cup-pick"><label for="pick-qualif-${safeId}">Quelle équipe se qualifie ? <strong>+10 points</strong></label><select id="pick-qualif-${safeId}" ${(!meta||locked)?"disabled":""}><option value="">Choisir l’équipe qualifiée</option><option value="esivo" ${pick?.qualifieEquipe==="esivo"?"selected":""}>${esc(nomESIVO)}</option><option value="adversaire" ${pick?.qualifieEquipe==="adversaire"?"selected":""}>${esc(match.adversaire||"Adversaire")}</option></select></div>`:""}
         <div class="pronostics-pick">
-          <label>Ton score ESIVO</label>
+          <label>Ton score ESIVO (90 minutes)</label>
           <input type="number" min="0" max="20" id="pick-home-${safeId}" value="${pick?pick.scoreESIVO:""}" ${(!meta||locked)?"disabled":""} aria-label="Buts ESIVO">
           <span>–</span>
           <input type="number" min="0" max="20" id="pick-away-${safeId}" value="${pick?pick.scoreAdversaire:""}" ${(!meta||locked)?"disabled":""} aria-label="Buts adversaire">
@@ -329,12 +332,13 @@
   const pointsPourPronostic = (pick, resultat, cotes) => {
     const signePronostique = Math.sign(pick.scoreESIVO-pick.scoreAdversaire);
     const signeReel = Math.sign(resultat.butsESIVO-resultat.butsAdversaire);
-    if(signePronostique !== signeReel) return 0;
+    const issueCorrecte = signePronostique === signeReel;
     const indexCote = signePronostique>0?0:signePronostique===0?1:2;
     const cote = Number(cotes?.[indexCote]) || 1;
-    const pointsIssue = Math.max(5,Math.min(50,Math.round(cote*10)));
-    const bonusExact = pick.scoreESIVO===resultat.butsESIVO && pick.scoreAdversaire===resultat.butsAdversaire ? 10 : 0;
-    return pointsIssue+bonusExact;
+    const pointsIssue = issueCorrecte ? Math.max(5,Math.min(50,Math.round(cote*10))) : 0;
+    const bonusExact = issueCorrecte && pick.scoreESIVO===resultat.butsESIVO && pick.scoreAdversaire===resultat.butsAdversaire ? 10 : 0;
+    const bonusQualification = resultat.formatCompetition==="coupe" && pick.qualifieEquipe && pick.qualifieEquipe===resultat.qualifieEquipe ? 10 : 0;
+    return pointsIssue+bonusExact+bonusQualification;
   };
 
   async function calculerPointsResultats() {
@@ -347,7 +351,8 @@
       const matchesSnap=await db().collection("matchs").get();
       const termines=matchesSnap.docs.map(d=>({...d.data(),id:d.id}))
         .filter(m=>m.type==="match" && m.resultatEnregistre===true
-          && Number.isInteger(m.butsESIVO) && Number.isInteger(m.butsAdversaire));
+          && Number.isInteger(m.butsESIVO) && Number.isInteger(m.butsAdversaire)
+          && (m.formatCompetition!=="coupe" || !!m.qualifieEquipe));
       let matchesTraites=0, participations=0;
       for(const match of termines) {
         const metaRef=db().collection("pronostics").doc(match.id);
@@ -455,12 +460,23 @@
     const home=document.getElementById("pick-home-"+matchId);
     const away=document.getElementById("pick-away-"+matchId);
     const scoreESIVO=Number(home?.value), scoreAdversaire=Number(away?.value);
+    const selectQualification=document.getElementById("pick-qualif-"+matchId);
+    const qualifieEquipe=selectQualification?.value || "";
     const message=document.getElementById("pronosticsMessage");
     if(!Number.isInteger(scoreESIVO)||!Number.isInteger(scoreAdversaire)||scoreESIVO<0||scoreESIVO>20||scoreAdversaire<0||scoreAdversaire>20) {
       if(message) message.textContent="Entre deux scores entiers compris entre 0 et 20.";
       return;
     }
     try {
+      const matchDoc=await db().collection("matchs").doc(matchId).get();
+      if(!matchDoc.exists || matchDoc.data().statutMatch==="reporte" || dateHeure(matchDoc.data())<=new Date()) {
+        if(message) message.textContent="Cette rencontre est reportée ou a commencé : les pronostics sont fermés.";
+        return;
+      }
+      if(matchDoc.data().formatCompetition==="coupe" && !qualifieEquipe) {
+        if(message) message.textContent="Choisis également l’équipe que tu vois se qualifier.";
+        return;
+      }
       const pseudo=await pseudoUtilisateur(user);
       const ref=db().collection("pronostics").doc(matchId).collection("participants").doc(user.uid);
       const old=await ref.get();
@@ -468,6 +484,7 @@
         uid:user.uid,
         pseudo:old.exists ? old.data().pseudo : pseudo,
         scoreESIVO,scoreAdversaire,
+        qualifieEquipe: matchDoc.data().formatCompetition==="coupe" ? qualifieEquipe : null,
         updatedAt:firebase.firestore.FieldValue.serverTimestamp()
       };
       data.createdAt=old.exists
