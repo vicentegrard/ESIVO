@@ -121,6 +121,7 @@
         <div class="pronostics-matches">
           ${picks.length?picks.map(({match,meta,pick})=>renderMatch(match,meta,pick)).join(""):'<div class="content-card"><h3>Aucune rencontre ouverte</h3><p>Les prochaines rencontres apparaîtront ici dès que leur calendrier sera disponible et que les pronostics auront été préparés.</p></div>'}
         </div>
+        ${renderStatsPersonnelles(pointsDoc)}
         ${renderClassement(rankingSnap)}
         <div class="content-card pronostics-info"><h3>Comment ça marche ?</h3><p>Fais ton choix avant le coup d’envoi. Les pronostics sont verrouillés automatiquement à l’heure de la rencontre. Les cotes sont calculées à partir des statistiques disponibles et figées à l’ouverture de la rencontre.</p><small>Le score estimé est une projection statistique, pas une certitude ni une prédiction générée par une IA.</small></div>
       `;
@@ -158,6 +159,23 @@
       </article>`;
   }
 
+
+
+  function renderStatsPersonnelles(pointsDoc) {
+    const data=pointsDoc.exists?pointsDoc.data():{};
+    const details=data.details||{};
+    const scores=Object.values(details).map(Number).filter(Number.isFinite);
+    const total=Number(data.total)||0;
+    const reussis=scores.filter(value=>value>0).length;
+    const moyenne=scores.length?Math.round(total/scores.length):0;
+    return `
+      <section class="pronostics-personal-stats">
+        <div><span>TON TOTAL</span><strong>${total}</strong><small>points</small></div>
+        <div><span>PRONOSTICS COMPTABILISÉS</span><strong>${scores.length}</strong><small>rencontres</small></div>
+        <div><span>PRONOSTICS RÉCOMPENSÉS</span><strong>${reussis}</strong><small>issue correcte</small></div>
+        <div><span>MOYENNE</span><strong>${moyenne}</strong><small>points / rencontre</small></div>
+      </section>`;
+  }
 
   function renderClassement(snapshot) {
     const joueurs = snapshot.docs.map(doc => ({id:doc.id,...doc.data()}))
