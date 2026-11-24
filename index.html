@@ -15298,22 +15298,34 @@ async function recupererClassementInitialAdmin(equipe) {
 
   
   async function connecterAdmin() {
-  const email = document.getElementById("adminEmail").value;
+  const email = document.getElementById("adminEmail").value.trim();
   const password = document.getElementById("adminPassword").value;
   const message = document.getElementById("adminMessage");
+
+  message.textContent = "Connexion en cours...";
 
   try {
     const resultat = await window.esivoAuth.signInWithEmailAndPassword(email, password);
 
     if (resultat.user.uid !== ADMIN_UID) {
       await window.esivoAuth.signOut();
-      message.textContent = "Ce compte n'est pas autorisé.";
+      message.textContent = "Connexion réussie, mais ce compte n'est pas autorisé à accéder à l'administration.";
       return;
     }
 
     showPage("Administration");
   } catch (erreur) {
-    message.textContent = "Identifiants incorrects ou erreur de connexion.";
+    console.error("Erreur de connexion administrateur :", erreur);
+    const messages = {
+      "auth/invalid-email": "L'adresse e-mail n'est pas valide.",
+      "auth/user-not-found": "Aucun compte ne correspond à cette adresse e-mail.",
+      "auth/wrong-password": "Le mot de passe est incorrect. Vérifie que tu utilises bien le dernier mot de passe choisi.",
+      "auth/invalid-credential": "Identifiants refusés par Firebase. Vérifie l'adresse e-mail et le dernier mot de passe défini.",
+      "auth/too-many-requests": "Trop de tentatives. Attends quelques minutes avant de réessayer.",
+      "auth/network-request-failed": "Problème de connexion réseau. Réessaie dans quelques instants.",
+      "auth/operation-not-allowed": "La connexion par e-mail et mot de passe n'est pas activée dans Firebase Authentication."
+    };
+    message.textContent = messages[erreur.code] || "Erreur de connexion : " + (erreur.code || erreur.message || "inconnue");
   }
 }
 
