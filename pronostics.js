@@ -90,9 +90,10 @@
       return;
     }
     try {
-      const [matchesSnap, pointsDoc] = await Promise.all([
+      const [matchesSnap, pointsDoc, rankingSnap] = await Promise.all([
         db().collection("matchs").get(),
-        db().collection("pronostics_points").doc(user.uid).get()
+        db().collection("pronostics_points").doc(user.uid).get(),
+        db().collection("pronostics_classement").orderBy("total","desc").limit(20).get()
       ]);
       const now=new Date();
       const matches=matchesSnap.docs.map(d=>({...d.data(),id:d.id}))
@@ -114,15 +115,19 @@
         </div>
         <div class="pronostics-toolbar">
           <p>Pronostics virtuels · Aucun pari d’argent</p>
-          ${admin?'<button class="btn-primary" id="preparerPronosticsBtn">Préparer les nouvelles rencontres</button>':""}
+          ${admin?'<div class="pronostics-admin-actions"><button class="btn-primary" id="preparerPronosticsBtn">Préparer les nouvelles rencontres</button><button class="btn-primary" id="calculerPointsBtn">Calculer les points des résultats</button></div>':""}
         </div>
         <div id="pronosticsMessage" role="status"></div>
         <div class="pronostics-matches">
           ${picks.length?picks.map(({match,meta,pick})=>renderMatch(match,meta,pick)).join(""):'<div class="content-card"><h3>Aucune rencontre ouverte</h3><p>Les prochaines rencontres apparaîtront ici dès que leur calendrier sera disponible et que les pronostics auront été préparés.</p></div>'}
         </div>
+        ${renderClassement(rankingSnap)}
         <div class="content-card pronostics-info"><h3>Comment ça marche ?</h3><p>Fais ton choix avant le coup d’envoi. Les pronostics sont verrouillés automatiquement à l’heure de la rencontre. Les cotes sont calculées à partir des statistiques disponibles et figées à l’ouverture de la rencontre.</p><small>Le score estimé est une projection statistique, pas une certitude ni une prédiction générée par une IA.</small></div>
       `;
-      if(admin) document.getElementById("preparerPronosticsBtn")?.addEventListener("click",preparerRencontres);
+      if(admin) {
+        document.getElementById("preparerPronosticsBtn")?.addEventListener("click",preparerRencontres);
+        document.getElementById("calculerPointsBtn")?.addEventListener("click",calculerPointsResultats);
+      }
       root.querySelectorAll("[data-save-pick]").forEach(button=>button.addEventListener("click",()=>sauvegarderPronostic(button.dataset.savePick)));
     } catch(err) {
       console.error("Pronostics ESIVO",err);
@@ -151,6 +156,94 @@
         </div>
         <div class="pronostics-status">${locked?"Rencontre commencée · pronostic verrouillé":pick?"Ton pronostic est enregistré":meta?"Pronostics ouverts jusqu’au coup d’envoi":"En attente d’ouverture"}</div>
       </article>`;
+  }
+
+
+  function renderClassement(snapshot) {
+    const joueurs = snapshot.docs.map(doc => ({id:doc.id,...doc.data()}))
+      .sort((a,b)=>(Number(b.total)||0)-(Number(a.total)||0));
+    return `
+      <section class="content-card pronostics-leaderboard">
+        <div class="pronostics-section-heading"><div><span>ESIVO · PRONOSTICS</span><h3>CLASSEMENT GÉNÉRAL</h3></div><small>TOP 20</small></div>
+        ${joueurs.length ? `
+          <div class="pronostics-ranking-list">
+            ${joueurs.map((joueur,index)=>`
+              <div class="pronostics-ranking-row ${index<3?"top-three":""}">
+                <span class="pronostics-rank">${index+1}</span>
+                <strong>${esc(joueur.pseudo||"Membre")}</strong>
+                <span>${Number(joueur.total)||0} pts</span>
+              </div>`).join("")}
+          </div>` : '<p class="pronostics-empty-ranking">Le classement apparaîtra après les premiers résultats comptabilisés.</p>'}
+      </section>`;
+  }
+
+  const pointsPourPronostic = (pick, resultat, cotes) => {
+    const signePronostique = Math.sign(pick.scoreESIVO-pick.scoreAdversaire);
+    const signeReel = Math.sign(resultat.butsESIVO-resultat.butsAdversaire);
+    if(signePronostique !== signeReel) return 0;
+    const indexCote = signePronostique>0?0:signePronostique===0?1:2;
+    const cote = Number(cotes?.[indexCote]) || 1;
+    const pointsIssue = Math.max(5,Math.min(50,Math.round(cote*10)));
+    const bonusExact = pick.scoreESIVO===resultat.butsESIVO && pick.scoreAdversaire===resultat.butsAdversaire ? 10 : 0;
+    return pointsIssue+bonusExact;
+  };
+
+  async function calculerPointsResultats() {
+    const user=auth()?.currentUser;
+    if(!user || user.uid!==window.ESIVO_ADMIN_UID) return alert("Accès réservé à l’administrateur.");
+    const btn=document.getElementById("calculerPointsBtn");
+    const message=document.getElementById("pronosticsMessage");
+    if(btn) btn.disabled=true;
+    try {
+      const matchesSnap=await db().collection("matchs").get();
+      const termines=matchesSnap.docs.map(d=>({...d.data(),id:d.id}))
+        .filter(m=>m.type==="match" && m.resultatEnregistre===true
+          && Number.isInteger(m.butsESIVO) && Number.isInteger(m.butsAdversaire));
+      let matchesTraites=0, participations=0;
+      for(const match of termines) {
+        const metaRef=db().collection("pronostics").doc(match.id);
+        const metaSnap=await metaRef.get();
+        if(!metaSnap.exists) continue;
+        const meta=metaSnap.data();
+        const participantsSnap=await metaRef.collection("participants").get();
+        const batch=db().batch();
+        let operations=0;
+        for(const participantDoc of participantsSnap.docs) {
+          const pick=participantDoc.data();
+          if(!Number.isInteger(pick.scoreESIVO)||!Number.isInteger(pick.scoreAdversaire)) continue;
+          const uid=participantDoc.id;
+          const pointsRef=db().collection("pronostics_points").doc(uid);
+          const rankingRef=db().collection("pronostics_classement").doc(uid);
+          const [pointsSnap, membreSnap]=await Promise.all([
+            pointsRef.get(),
+            db().collection("membres").doc(uid).get()
+          ]);
+          const oldData=pointsSnap.exists?pointsSnap.data():{};
+          const details={...(oldData.details||{})};
+          const nouveau=pointsPourPronostic(pick,match,meta.oddsSnapshot?.cotes);
+          const ancien=Number(details[match.id])||0;
+          details[match.id]=nouveau;
+          const total=Math.max(0,(Number(oldData.total)||0)-ancien+nouveau);
+          const pseudo=String(pick.pseudo||(membreSnap.exists?(membreSnap.data().pseudo||membreSnap.data().prenom||"Membre"):"Membre")).slice(0,20);
+          batch.set(pointsRef,{uid,pseudo,total,details,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+          batch.set(rankingRef,{uid,pseudo,total,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+          operations+=2;
+          participations++;
+        }
+        if(operations) await batch.commit();
+        await metaRef.set({
+          resultatComptabilise:true,
+          resultatComptabiliseAt:firebase.firestore.FieldValue.serverTimestamp(),
+          scoreOfficiel:{butsESIVO:match.butsESIVO,butsAdversaire:match.butsAdversaire}
+        },{merge:true});
+        matchesTraites++;
+      }
+      if(message) message.textContent=matchesTraites+" rencontre(s) traitée(s), "+participations+" pronostic(s) recalculé(s). Les corrections de résultats mettent à jour les points sans les cumuler deux fois.";
+      await window.initialiserPronosticsPage();
+    } catch(err) {
+      console.error("Calcul des points",err);
+      if(message) message.textContent="Calcul impossible : "+(err.code||err.message)+". Vérifie les règles Firestore.";
+    } finally { if(btn) btn.disabled=false; }
   }
 
   async function preparerRencontres() {
