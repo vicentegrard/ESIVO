@@ -15657,7 +15657,17 @@ async function connecterAvecGoogle() {
 
   try {
     const resultat = await window.esivoAuth.signInWithPopup(provider);
-    await assurerProfilPublicUtilisateur(resultat.user);
+
+    // Ne créer automatiquement la fiche que pour un compte Google tout juste créé.
+    // Les anciens comptes seront intégrés avec leur vraie date lors de la migration.
+    const creationCompte = new Date(
+      resultat.user.metadata.creationTime
+    ).getTime();
+
+    if (Number.isFinite(creationCompte) && Date.now() - creationCompte < 5 * 60 * 1000) {
+      await assurerProfilPublicUtilisateur(resultat.user);
+    }
+
     showPage("Mon compte");
   } catch (erreur) {
     console.error("Erreur de connexion Google :", erreur);
@@ -15742,7 +15752,6 @@ async function connecterAvecEmail() {
       return;
     }
 
-    await assurerProfilPublicUtilisateur(resultat.user);
     showPage("Mon compte");
 
   } catch (erreur) {
