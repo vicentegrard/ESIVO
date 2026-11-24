@@ -4294,6 +4294,79 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
 }
 
 
+/* SCORE ET STATUT — FICHE RÉSULTAT */
+
+.mc-sheet-result-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 150px;
+  min-width: 0;
+  text-align: center;
+}
+
+.mc-sheet-result-score > strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: clamp(19px, 3vw, 27px);
+  font-weight: 1000;
+  letter-spacing: 1px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.mc-sheet-result-score > span {
+  display: block;
+  max-width: 100%;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.mc-sheet-result-score .match-win {
+  border-left: 0;
+  color: #45B879;
+}
+
+.mc-sheet-result-score .match-loss {
+  border-left: 0;
+  color: #D65B65;
+}
+
+.mc-sheet-result-score .match-draw {
+  border-left: 0;
+  color: #D9A441;
+}
+
+.mc-sheet-result-score > small {
+  display: block;
+  color: #B9B9C1;
+  font-size: 9px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .mc-sheet-result-score {
+    width: 100px;
+    gap: 6px;
+  }
+
+  .mc-sheet-result-score > strong {
+    font-size: 18px;
+  }
+
+  .mc-sheet-result-score > span {
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+}
+
+
+
 /* INFORMATIONS DU MATCH */
 
 .mc-sheet-information {
