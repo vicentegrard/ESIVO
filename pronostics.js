@@ -148,18 +148,38 @@
   // d'une rencontre dans le calendrier, quelle que soit sa catégorie.
   window.synchroniserPronosticMatchModifie = async function(match) {
     if (!match?.id) throw new Error("Identifiant de rencontre manquant.");
-    const ref = db().collection("pronostics").doc(match.id);
-    const odds = await cotesDepuisClassement(match);
-    const kickoff = dateHeure(match);
-    const statut = match.statutMatch === "reporte"
-      ? "suspendu"
-      : kickoff > new Date() ? "ouvert" : "ferme";
+    const ref=db().collection("pronostics").doc(match.id);
+    const kickoff=dateHeure(match);
+    const existant=await ref.get();
+    if(!existant.exists) return null;
+    const donneesCalendrier={
+      sourceMatchId:match.id,
+      equipe:match.equipe||"",
+      adversaire:match.adversaire||"",
+      date:match.date||"",
+      heure:match.heure||"",
+      domicile:match.domicile??"",
+      competition:match.competition||"",
+      lieu:match.lieu||"",
+      ville:match.ville||"",
+      kickoffAt:firebase.firestore.Timestamp.fromDate(kickoff),
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    };
+    // Ne jamais recalculer les cotes d'un match commencé ou dont le résultat
+    // est déjà enregistré : elles servent aussi au calcul des points.
+    if(match.resultatEnregistre===true || kickoff<=new Date()) {
+      await ref.set(donneesCalendrier,{merge:true});
+      return existant.data().oddsSnapshot||null;
+    }
+    const odds=await cotesDepuisClassement(match);
+    const statut=match.statutMatch==="reporte"?"suspendu":"ouvert";
     await ref.set({
-      ...matchDocData(match, odds, firebase.firestore.Timestamp.fromDate(kickoff)),
-      oddsUpdatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      ...donneesCalendrier,
+      oddsSnapshot:odds,
+      versionModele:odds.version||"poisson-v4",
+      oddsUpdatedAt:firebase.firestore.FieldValue.serverTimestamp(),
       statut
-    }, { merge: true });
+    },{merge:true});
     return odds;
   };
 
