@@ -9557,11 +9557,12 @@ async function gererReportMatchAdmin(id, equipe) {
         : "Date de reprogrammation (AAAA-MM-JJ), ou laisser vide si elle est inconnue."
     );
     if (nouvelleDate === null) return;
+    let nouvelleHeure = "";
     if (nouvelleDate.trim()) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(nouvelleDate.trim())) {
         alert("Format attendu : AAAA-MM-JJ."); return;
       }
-      const nouvelleHeure = window.prompt("Nouvelle heure (HH:MM)", match.heure || "15:00");
+      nouvelleHeure = window.prompt("Nouvelle heure (HH:MM)", match.heure || "15:00");
       if (nouvelleHeure === null) return;
       if (!/^\d{1,2}:\d{2}$/.test(nouvelleHeure.trim())) {
         alert("Format attendu : HH:MM."); return;
