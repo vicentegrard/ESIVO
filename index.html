@@ -14230,7 +14230,15 @@ const classementU18 = donneesFirestore.clubs;
         {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"TERRE ET MER",logoDom:"logos/terre-et-mer.png",scoreDom:0,ext:"TROARN",logoExt:"logos/troarn.png",scoreExt:0},
         {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:3,ext:"INTER ODON",logoExt:"logos/inter-odon.png",scoreExt:1},
         {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"LE TRONQUAY",logoDom:"logos/le-tronquay.png",scoreDom:2,ext:"ST VIGOR LE GRAND",logoExt:"logos/st-vigor-le-grand.png",scoreExt:2}
+      ];      const resultatsJ5 = [
+        {date:"Samedi 17 octobre 2026",heure:"19h15",dom:"AVANT GARDE C",logoDom:"logos/avant-garde-c.png",scoreDom:2,ext:"LE TRONQUAY",logoExt:"logos/le-tronquay.png",scoreExt:0},
+        {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"ST VIGOR LE GRAND",logoDom:"logos/st-vigor-le-grand.png",scoreDom:1,ext:"LYSTRIENNE",logoExt:"logos/lystrienne.png",scoreExt:2},
+        {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"TROARN",logoDom:"logos/troarn.png",scoreDom:3,ext:"ESIVO",logoExt:"logos/esivo.png",scoreExt:1},
+        {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"INTER ODON",logoDom:"logos/inter-odon.png",scoreDom:4,ext:"THAON BRETTEVILLE B",logoExt:"logos/thaon-bretteville-b.png",scoreExt:0},
+        {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"MOUEN",logoDom:"logos/mouen.png",scoreDom:0,ext:"IFS B",logoExt:"logos/ifs-b.png",scoreExt:4},
+        {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"BRETTEVILLE/ODON",logoDom:"logos/bretteville-odon.png",scoreDom:1,ext:"TERRE ET MER",logoExt:"logos/terre-et-mer.png",scoreExt:4}
       ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -14311,7 +14319,7 @@ const classementU18 = donneesFirestore.clubs;
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
           <section class="sa-panel">
-            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">24 MATCHS</span></div>
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">30 MATCHS</span></div>
             <div class="sa-round">
               <button type="button" id="sa-prev" aria-label="Journée précédente">‹</button>
               <div><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong id="sa-round-title">Journée 1</strong></div>
@@ -14323,7 +14331,7 @@ const classementU18 = donneesFirestore.clubs;
       `;
       let journeeActive = 1;
       const afficherJournee = () => {
-        const matchs = journeeActive === 1 ? resultatsJ1 : journeeActive === 2 ? resultatsJ2 : journeeActive === 3 ? resultatsJ3 : resultatsJ4;
+        const matchs = [resultatsJ1, resultatsJ2, resultatsJ3, resultatsJ4, resultatsJ5][journeeActive - 1];
         const titre = document.getElementById("sa-round-title");
         const liste = document.getElementById("sa-games");
         if (!titre || !liste) return;
@@ -14338,10 +14346,10 @@ const classementU18 = donneesFirestore.clubs;
             '</div></article>'
         ).join("");
         document.getElementById("sa-prev").disabled = journeeActive === 1;
-        document.getElementById("sa-next").disabled = journeeActive === 4;
+        document.getElementById("sa-next").disabled = journeeActive === 5;
       };
       document.getElementById("sa-prev").addEventListener("click", () => { journeeActive = Math.max(1, journeeActive - 1); afficherJournee(); });
-      document.getElementById("sa-next").addEventListener("click", () => { journeeActive = Math.min(4, journeeActive + 1); afficherJournee(); });
+      document.getElementById("sa-next").addEventListener("click", () => { journeeActive = Math.min(5, journeeActive + 1); afficherJournee(); });
       afficherJournee();
       return;
     }
