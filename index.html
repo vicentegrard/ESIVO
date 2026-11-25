@@ -17518,7 +17518,8 @@ async function ouvrirProfilMembre(uid) {
     const matchsTermines = matchsSnap.docs
       .map(doc => ({ id: doc.id, ...doc.data() }))
       .filter(match => match.type === "match" && match.resultatEnregistre === true
-        && Number.isInteger(match.butsESIVO) && Number.isInteger(match.butsAdversaire)\n        && (match.formatCompetition !== "coupe" || !!match.qualifieEquipe));
+        && Number.isInteger(match.butsESIVO) && Number.isInteger(match.butsAdversaire)
+        && (match.formatCompetition !== "coupe" || !!match.qualifieEquipe));
 
     let pronosticsJoues = 0;
     let issuesTrouvees = 0;
