@@ -14256,6 +14256,15 @@ const resultatsJ7 = [
         {date:"Dimanche 1er novembre 2026",heure:"14h30",dom:"BRETTEVILLE/ODON",logoDom:"logos/bretteville-odon.png",scoreDom:1,ext:"ESIVO",logoExt:"logos/esivo.png",scoreExt:3}
       ];
 
+      const resultatsJ8 = [
+        {date:"Samedi 7 novembre 2026",heure:"18h00",dom:"IFS B",logoDom:"logos/ifs-b.png",scoreDom:2,ext:"TERRE ET MER",logoExt:"logos/terre-et-mer.png",scoreExt:2},
+        {date:"Samedi 7 novembre 2026",heure:"19h00",dom:"THAON BRETTEVILLE B",logoDom:"logos/thaon-bretteville-b.png",scoreDom:5,ext:"ESIVO",logoExt:"logos/esivo.png",scoreExt:1},
+        {date:"Samedi 7 novembre 2026",heure:"19h15",dom:"AVANT GARDE C",logoDom:"logos/avant-garde-c.png",scoreDom:1,ext:"BRETTEVILLE/ODON",logoExt:"logos/bretteville-odon.png",scoreExt:1},
+        {date:"Dimanche 8 novembre 2026",heure:"14h30",dom:"LE TRONQUAY",logoDom:"logos/le-tronquay.png",scoreDom:0,ext:"TROARN",logoExt:"logos/troarn.png",scoreExt:4},
+        {date:"Dimanche 8 novembre 2026",heure:"14h30",dom:"INTER ODON",logoDom:"logos/inter-odon.png",scoreDom:0,ext:"LYSTRIENNE",logoExt:"logos/lystrienne.png",scoreExt:3},
+        {date:"Dimanche 8 novembre 2026",heure:"14h30",dom:"ST VIGOR LE GRAND",logoDom:"logos/st-vigor-le-grand.png",scoreDom:7,ext:"MOUEN",logoExt:"logos/mouen.png",scoreExt:0}
+      ];
+
             contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -14336,7 +14345,7 @@ const resultatsJ7 = [
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
           <section class="sa-panel">
-            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">42 MATCHS</span></div>
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">48 MATCHS</span></div>
             <div class="sa-round">
               <button type="button" id="sa-prev" aria-label="Journée précédente">‹</button>
               <div><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong id="sa-round-title">Journée 1</strong></div>
@@ -14348,7 +14357,7 @@ const resultatsJ7 = [
       `;
       let journeeActive = 1;
       const afficherJournee = () => {
-        const matchs = [resultatsJ1, resultatsJ2, resultatsJ3, resultatsJ4, resultatsJ5, resultatsJ6, resultatsJ7][journeeActive - 1];
+        const matchs = [resultatsJ1, resultatsJ2, resultatsJ3, resultatsJ4, resultatsJ5, resultatsJ6, resultatsJ7, resultatsJ8][journeeActive - 1];
         const titre = document.getElementById("sa-round-title");
         const liste = document.getElementById("sa-games");
         if (!titre || !liste) return;
@@ -14363,10 +14372,10 @@ const resultatsJ7 = [
             '</div></article>'
         ).join("");
         document.getElementById("sa-prev").disabled = journeeActive === 1;
-        document.getElementById("sa-next").disabled = journeeActive === 7;
+        document.getElementById("sa-next").disabled = journeeActive === 8;
       };
       document.getElementById("sa-prev").addEventListener("click", () => { journeeActive = Math.max(1, journeeActive - 1); afficherJournee(); });
-      document.getElementById("sa-next").addEventListener("click", () => { journeeActive = Math.min(7, journeeActive + 1); afficherJournee(); });
+      document.getElementById("sa-next").addEventListener("click", () => { journeeActive = Math.min(8, journeeActive + 1); afficherJournee(); });
       afficherJournee();
       return;
     }
