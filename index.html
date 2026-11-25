@@ -16178,7 +16178,7 @@ async function initialiserDashboardAdmin() {
     const snapshot=await window.esivoDb.collection('matchs').get();
     const evenements=snapshot.docs.map(doc=>({...doc.data(),id:doc.id}));
     const maintenant=new Date();
-    const dateHeure=m=>{const heure=/^\\d{1,2}:\\d{2}$/.test(m.heure||'')?m.heure:'12:00';return new Date((m.date||'')+'T'+heure+':00');};
+      const heure=(m.heure && String(m.heure).includes(':'))?m.heure:'12:00';
     const matchs=evenements.filter(m=>m.type==='match');
     const aVenir=matchs.filter(m=>m.resultatEnregistre!==true && m.statutMatch!=='reporte' && m.date && dateHeure(m)>maintenant).length;
     const resultats=matchs.filter(m=>m.resultatEnregistre===true).length;
