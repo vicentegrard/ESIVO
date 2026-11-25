@@ -17500,7 +17500,7 @@ async function ouvrirProfilMembre(uid) {
       return;
     }
 
-    const profil = { uid: uid, ...profilDoc.data() };
+    const profil = { ...profilDoc.data(), uid };
     const badge = badgeMembreAnnuaire(profil);
     const pseudo = profil.pseudo || "Membre ESIVO";
     const nom = profil.afficherNomPrenom === true
@@ -17518,7 +17518,7 @@ async function ouvrirProfilMembre(uid) {
     const matchsTermines = matchsSnap.docs
       .map(doc => ({ id: doc.id, ...doc.data() }))
       .filter(match => match.type === "match" && match.resultatEnregistre === true
-        && Number.isInteger(match.butsESIVO) && Number.isInteger(match.butsAdversaire));
+        && Number.isInteger(match.butsESIVO) && Number.isInteger(match.butsAdversaire)\n        && (match.formatCompetition !== "coupe" || !!match.qualifieEquipe));
 
     let pronosticsJoues = 0;
     let issuesTrouvees = 0;
