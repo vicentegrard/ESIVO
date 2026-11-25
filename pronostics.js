@@ -216,7 +216,7 @@
         </div>
         <div class="pronostics-toolbar">
           <p>Pronostics virtuels · Aucun pari d’argent</p>
-          ${admin?'<div class="pronostics-admin-actions"><button class="btn-primary" id="preparerPronosticsBtn">Préparer les nouvelles rencontres</button><button class="btn-primary" id="calculerPointsBtn">Calculer les points des résultats</button></div>':""}
+          ${admin?'<div class="pronostics-admin-actions"><button class="btn-primary" id="preparerPronosticsBtn">Actualiser les côtes et préparer les rencontres</button><button class="btn-primary" id="calculerPointsBtn">Calculer les points des résultats</button></div>':""}
         </div>
         <div id="pronosticsMessage" role="status"></div>
         <div class="pronostics-matches">
