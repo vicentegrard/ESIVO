@@ -17467,8 +17467,8 @@ function fermerProfilMembre() {
 
 async function ouvrirProfilMembre(uid) {
   if (!uid || !window.esivoDb) return;
-  window.esivoProfilFocusPrecedent = document.activeElement;
   fermerProfilMembre();
+  window.esivoProfilFocusPrecedent = document.activeElement;
   document.body.style.overflow = "hidden";
 
   const modal = document.createElement("div");
