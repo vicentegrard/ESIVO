@@ -36,7 +36,7 @@
     return [home/total,draw/total,away/total];
   };
   const cotesDepuisClassement = async (match) => {
-    const version = "poisson-v2";
+    const version = "poisson-v3";
     const equipeESIVO = nomClubPronostic(match.equipe);
     const normaliserNom = value => norm(value).replace(/[^a-z0-9]/g, "");
     const estESIVO = club => {
@@ -47,7 +47,7 @@
       return cible === "esivo" && nom === "esivo";
     };
 
-    const statistiques = club => {
+    const statistiques = (club, index = 0) => {
       if (!club) return null;
       const joues = Math.max(0, Number(club.joues) || 0);
       const victoires = Math.max(0, Number(club.victoires) || 0);
@@ -64,7 +64,7 @@
         ? Number(club.difference)
         : butsPour - butsContre;
       return {
-        position: Math.max(1, Number(club.position) || 1),
+        position: Math.max(1, Number(club.position) || (index + 1)),
         joues: matchsComptes, victoires, nuls, defaites,
         butsPour, butsContre, difference, points,
         butsMarquesParMatch: butsPour / matchsComptes,
@@ -94,8 +94,8 @@
             return nom && nomAdverse && (nom.includes(nomAdverse) || nomAdverse.includes(nom));
           });
 
-        statsESIVO = statistiques(clubESIVO);
-        statsAdverse = statistiques(clubAdverse);
+        statsESIVO = statistiques(clubESIVO, clubs.indexOf(clubESIVO));
+        statsAdverse = statistiques(clubAdverse, clubs.indexOf(clubAdverse));
 
         if (statsESIVO && statsAdverse) {
           const moyenneButsLigue = clubs.reduce((total, club) => {
@@ -121,7 +121,9 @@
 
           const forceESIVO = forceClassement(statsESIVO);
           const forceAdverse = forceClassement(statsAdverse);
-          const ecartForce = Math.max(-0.22, Math.min(0.22, (forceESIVO - forceAdverse) * 0.32));
+          // Le classement et les points doivent peser réellement dans l'estimation,
+          // sans effacer les performances offensives/défensives observées.
+          const ecartForce = Math.max(-0.32, Math.min(0.32, (forceESIVO - forceAdverse) * 0.62));
           const domicileESIVO = match.domicile === true
             || ["domicile", "home"].includes(norm(match.domicile))
             || norm(match.domicile).includes("esivo");
@@ -167,8 +169,27 @@
     date:match.date || "", heure:match.heure || "", domicile:match.domicile ?? "",
     competition:match.competition || "", kickoffAt,
     oddsSnapshot:odds, oddsCreatedAt:firebase.firestore.FieldValue.serverTimestamp(),
-    statut:"ouvert", versionModele:odds.version || "poisson-v2"
+    statut:"ouvert", versionModele:odds.version || "poisson-v3"
   });
+
+  // Synchronise les métadonnées et les estimations après toute modification
+  // d'une rencontre dans le calendrier, quelle que soit sa catégorie.
+  window.synchroniserPronosticMatchModifie = async function(match) {
+    if (!match?.id) throw new Error("Identifiant de rencontre manquant.");
+    const ref = db().collection("pronostics").doc(match.id);
+    const odds = await cotesDepuisClassement(match);
+    const kickoff = dateHeure(match);
+    const statut = match.statutMatch === "reporte"
+      ? "suspendu"
+      : kickoff > new Date() ? "ouvert" : "ferme";
+    await ref.set({
+      ...matchDocData(match, odds, firebase.firestore.Timestamp.fromDate(kickoff)),
+      oddsUpdatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      statut
+    }, { merge: true });
+    return odds;
+  };
 
   window.initialiserPronosticsPage = async function() {
     const root=document.getElementById("pronosticsRoot");
@@ -259,6 +280,17 @@
     const odds=meta?.oddsSnapshot;
     const score=odds?.scoreEstime;
     const domicile=match.domicile===true || norm(match.domicile).includes("esivo");
+    // Les cotes du modèle sont stockées dans l'ordre ESIVO / nul / adversaire.
+    // L'affichage 1-N-2 doit, lui, toujours suivre domicile / nul / extérieur.
+    const cotesAffichees = odds?.cotes
+      ? (domicile ? odds.cotes : [odds.cotes[2], odds.cotes[1], odds.cotes[0]])
+      : [];
+    const probabilitesAffichees = odds?.probabilites
+      ? (domicile ? odds.probabilites : [odds.probabilites[2], odds.probabilites[1], odds.probabilites[0]])
+      : [];
+    const scoreAffiche = score
+      ? (domicile ? score : [score[1], score[0]])
+      : null;
     const nomESIVO=nomClubPronostic(match.equipe);
     const nomDomicile=domicile?nomESIVO:(match.adversaire||"À confirmer");
     const nomExterieur=domicile?(match.adversaire||"À confirmer"):nomESIVO;
@@ -282,7 +314,7 @@
           </div>
         </div>
         ${match.statutMatch==="reporte"?`<p class="pronostics-postponed">RENCONTRE REPORTÉE · Pronostics suspendus</p>`:""}
-        ${odds?`<div class="pronostics-odds"><span>1 <b>${odds.cotes[0].toFixed(2)}</b><small>${odds.probabilites[0]}%</small></span><span>N <b>${odds.cotes[1].toFixed(2)}</b><small>${odds.probabilites[1]}%</small></span><span>2 <b>${odds.cotes[2].toFixed(2)}</b><small>${odds.probabilites[2]}%</small></span></div><p class="pronostics-model">Score statistique estimé : <strong>${score[0]} – ${score[1]}</strong></p>`: '<p class="pronostics-pending">Pronostics bientôt ouverts par l’administrateur.</p>'}
+        ${odds?`<div class="pronostics-odds"><span>1 <b>${cotesAffichees[0].toFixed(2)}</b><small>${probabilitesAffichees[0]}%</small></span><span>N <b>${cotesAffichees[1].toFixed(2)}</b><small>${probabilitesAffichees[1]}%</small></span><span>2 <b>${cotesAffichees[2].toFixed(2)}</b><small>${probabilitesAffichees[2]}%</small></span></div><p class="pronostics-model">Score estimé (domicile – extérieur) : <strong>${scoreAffiche[0]} – ${scoreAffiche[1]}</strong></p>`: '<p class="pronostics-pending">Pronostics bientôt ouverts par l’administrateur.</p>'}
         ${estCoupe?`<div class="pronostics-cup-pick"><label for="pick-qualif-${safeId}">Quelle équipe se qualifie ? <strong>+10 points</strong></label><select id="pick-qualif-${safeId}" ${(!meta||locked)?"disabled":""}><option value="">Choisir l’équipe qualifiée</option><option value="esivo" ${pick?.qualifieEquipe==="esivo"?"selected":""}>${esc(nomESIVO)}</option><option value="adversaire" ${pick?.qualifieEquipe==="adversaire"?"selected":""}>${esc(match.adversaire||"Adversaire")}</option></select></div>`:""}
         <div class="pronostics-pick">
           <label>Ton score ESIVO (90 minutes)</label>
@@ -428,7 +460,7 @@
           // rencontres futures déjà ouvertes, sans toucher aux pronostics.
           await ref.set({
             oddsSnapshot: odds,
-            versionModele: "poisson-v2",
+            versionModele: "poisson-v3",
             date: match.date || "",
             heure: match.heure || "",
             kickoffAt: firebase.firestore.Timestamp.fromDate(dateHeure(match)),
