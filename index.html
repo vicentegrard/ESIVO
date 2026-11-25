@@ -14207,6 +14207,14 @@ const classementU18 = donneesFirestore.clubs;
         {date:"Dimanche 6 septembre 2026",heure:"15h00",dom:"MOUEN",logoDom:"logos/mouen.png",scoreDom:1,ext:"TROARN",logoExt:"logos/troarn.png",scoreExt:4},
         {date:"Dimanche 6 septembre 2026",heure:"15h00",dom:"BRETTEVILLE/ODON",logoDom:"logos/bretteville-odon.png",scoreDom:1,ext:"INTER ODON",logoExt:"logos/inter-odon.png",scoreExt:1}
       ];
+      const resultatsJ2 = [
+        {date:"Samedi 19 septembre 2026",heure:"18h00",dom:"IFS B",logoDom:"logos/ifs-b.png",scoreDom:4,ext:"LYSTRIENNE",logoExt:"logos/lystrienne.png",scoreExt:1},
+        {date:"Samedi 19 septembre 2026",heure:"19h00",dom:"THAON BRETTEVILLE B",logoDom:"logos/thaon-bretteville-b.png",scoreDom:3,ext:"ST VIGOR LE GRAND",logoExt:"logos/st-vigor-le-grand.png",scoreExt:1},
+        {date:"Dimanche 20 septembre 2026",heure:"15h00",dom:"TROARN",logoDom:"logos/troarn.png",scoreDom:1,ext:"INTER ODON",logoExt:"logos/inter-odon.png",scoreExt:0},
+        {date:"Dimanche 20 septembre 2026",heure:"15h00",dom:"TERRE ET MER",logoDom:"logos/terre-et-mer.png",scoreDom:2,ext:"MOUEN",logoExt:"logos/mouen.png",scoreExt:2},
+        {date:"Dimanche 20 septembre 2026",heure:"15h00",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:3,ext:"AVANT GARDE C",logoExt:"logos/avant-garde-c.png",scoreExt:3},
+        {date:"Dimanche 20 septembre 2026",heure:"15h00",dom:"LE TRONQUAY",logoDom:"logos/le-tronquay.png",scoreDom:2,ext:"BRETTEVILLE/ODON",logoExt:"logos/bretteville-odon.png",scoreExt:2}
+      ];
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -14284,9 +14292,19 @@ const classementU18 = donneesFirestore.clubs;
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
           <section class="sa-panel">
-            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">6 MATCHS</span></div>
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">12 MATCHS</span></div>
             <div class="sa-round"><button type="button" disabled>‹</button><div><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong>Journée 1</strong></div><button type="button" disabled>›</button></div>
             <div class="sa-games">${resultatsJ1.map(match => `
+              <article class="sa-game ${match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : ""}">
+                <div class="sa-game-meta"><span>${match.date}</span><span>${match.heure}</span></div>
+                <div class="sa-game-teams">
+                  <div class="sa-team"><img src="${match.logoDom}" alt=""><strong>${match.dom}</strong></div>
+                  <div class="sa-score">${match.scoreDom} – ${match.scoreExt}<small>TERMINÉ</small></div>
+                  <div class="sa-team"><img src="${match.logoExt}" alt=""><strong>${match.ext}</strong></div>
+                </div>
+              </article>`).join("")}</div>
+            <div class="sa-round" style="margin-top:18px"><button type="button" disabled>‹</button><div><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong>Journée 2</strong></div><button type="button" disabled>›</button></div>
+            <div class="sa-games">${resultatsJ2.map(match => `
               <article class="sa-game ${match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : ""}">
                 <div class="sa-game-meta"><span>${match.date}</span><span>${match.heure}</span></div>
                 <div class="sa-game-teams">
