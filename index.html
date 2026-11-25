@@ -17491,7 +17491,7 @@ async function ouvrirProfilMembre(uid) {
       window.esivoDb.collection("matchs").get()
     ]);
 
-    if (!document.getElementById("esivoProfilModal")) return;
+    if (document.getElementById("esivoProfilModal") !== modal) return;
     if (!profilDoc.exists) {
       modal.querySelector(".esivo-profil-dialog").innerHTML =
         '<button type="button" class="esivo-profil-close" data-fermer-profil aria-label="Fermer le profil">×</button>' +
