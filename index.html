@@ -5589,6 +5589,20 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
 </style>
 
 
+<style>
+.admin-shell{display:flex;flex-direction:column;gap:18px;margin:10px 0 30px}
+.admin-hero{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:26px 28px;border-radius:18px;background:radial-gradient(circle at 88% 10%,rgba(229,189,55,.13),transparent 28%),linear-gradient(125deg,#292930,#17171e 70%,#45131a);border:1px solid #41414b;border-bottom:3px solid #AA1A24;color:#fff}
+.admin-kicker{font-size:10px;font-weight:900;letter-spacing:2px;color:#E5BD37}.admin-hero h2{font-size:27px;margin:8px 0 6px;color:#fff}.admin-hero p{margin:0;color:#c3c3cc;font-size:13px}
+.admin-logout{background:#AA1A24;color:#fff;border:1px solid #c43b45;border-radius:9px;padding:11px 15px;font-weight:800;cursor:pointer;white-space:nowrap}
+.admin-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.admin-metric{background:linear-gradient(145deg,#262630,#1c1c24);border:1px solid #393943;border-radius:14px;padding:16px;min-width:0}
+.admin-metric span{display:block;color:#b8b8c2;font-size:9px;font-weight:900;letter-spacing:1px}.admin-metric strong{display:block;color:#fff;font-size:29px;font-weight:900;margin:7px 0 2px}.admin-metric small{color:#92929d;font-size:11px}
+.admin-layout{display:grid;grid-template-columns:205px minmax(0,1fr);align-items:start;gap:16px}.admin-sidebar{position:sticky;top:16px;display:flex;flex-direction:column;gap:6px;padding:14px;background:#1c1c24;border:1px solid #393943;border-radius:15px}
+.admin-sidebar-title{color:#E5BD37;font-size:9px;font-weight:900;letter-spacing:1.5px;padding:7px 9px 10px}.admin-sidebar a{display:block;padding:11px 10px;border-radius:9px;color:#d6d6dd;text-decoration:none;font-size:12px;font-weight:700;transition:background .18s,color .18s}.admin-sidebar a:hover{background:rgba(170,26,36,.2);color:#fff}
+.admin-main{min-width:0}.admin-main>.content-card{scroll-margin-top:18px;margin-top:0!important;margin-bottom:16px}
+@media(max-width:800px){.admin-layout{grid-template-columns:1fr}.admin-sidebar{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.admin-sidebar-title{grid-column:1/-1}.admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.admin-hero{align-items:flex-start;flex-direction:column;padding:20px}.admin-hero h2{font-size:23px}.admin-logout{width:100%}.admin-sidebar{grid-template-columns:1fr 1fr}.admin-metric{padding:13px}.admin-metric strong{font-size:25px}}
+</style>
+
 </head>
 
 <body>
@@ -11158,14 +11172,25 @@ function showPage(page) {
 
     if (utilisateur && utilisateur.uid === ADMIN_UID) {
       html += `
-        <div class="content-card">
-          <h3>⚙️ Espace administration</h3>
-          <p>Bienvenue dans l'espace de gestion de l'ESIVO.</p>
-          <button onclick="deconnecterAdmin()">Se déconnecter</button>
-        </div>
-
-        
-<div class="content-card">
+        <div class="admin-shell">
+          <header class="admin-hero">
+            <div><span class="admin-kicker">ESIVO · BACK-OFFICE</span><h2>Centre de pilotage</h2><p>Gère les rencontres, les résultats et la vie du club depuis un seul espace.</p></div>
+            <button type="button" class="admin-logout" onclick="deconnecterAdmin()">Se déconnecter</button>
+          </header>
+          <div class="admin-metrics" id="adminDashboardMetrics">
+            <div class="admin-metric"><span>RENCONTRES À VENIR</span><strong>—</strong><small>Chargement des données</small></div>
+            <div class="admin-metric"><span>RÉSULTATS SAISIS</span><strong>—</strong><small>Cette saison</small></div>
+            <div class="admin-metric"><span>MATCHS REPORTÉS</span><strong>—</strong><small>À reprogrammer</small></div>
+            <div class="admin-metric"><span>CATÉGORIES</span><strong>—</strong><small>Suivies par le club</small></div>
+          </div>
+          <div class="admin-layout">
+            <aside class="admin-sidebar"><span class="admin-sidebar-title">NAVIGATION</span>
+              <a href="#admin-calendriers">📅 Calendriers</a><a href="#admin-resultats">⚽ Résultats</a>
+              <a href="#admin-classements">🏆 Classements</a><a href="#admin-commentaires">🛡️ Modération</a>
+              <a href="#admin-notifications">🔔 Notifications</a>
+            </aside>
+            <div class="admin-main">
+<div class="content-card" id="admin-calendriers">
   <h3>📅 Gestion des calendriers</h3>
   <p>Ajouter, modifier et supprimer les matchs et plateaux de toutes les équipes.</p>
 
@@ -11202,7 +11227,7 @@ function showPage(page) {
 </div>
 </div>
 
-<div class="content-card" style="margin-top:20px;">
+<div class="content-card" id="admin-resultats" style="margin-top:20px;">
   <h3>⚽ Gestion des résultats</h3>
   <p>Enregistrer et modifier les résultats des matchs et les bilans des plateaux.</p>
 
@@ -11231,7 +11256,7 @@ function showPage(page) {
   <p id="adminResultatsMessage"></p>
 </div>
 
-        <div class="content-card" style="margin-top:20px;">
+        <div class="content-card" id="admin-classements" style="margin-top:20px;">
   <h3>🏆 Gestion des classements</h3>
   <p>Gérer les classements des championnats de l'ESIVO.</p>
 
@@ -11265,7 +11290,7 @@ function showPage(page) {
 </div>
 
 
-<div class="content-card" style="margin-top:20px;">
+<div class="content-card" id="admin-commentaires" style="margin-top:20px;">
   <h3>🛡️ Modération des commentaires</h3>
   <p>Consulter et supprimer les commentaires publiés sur les rencontres et les résultats de l'ESIVO.</p>
 
@@ -11285,7 +11310,7 @@ function showPage(page) {
 </div>
 
 
-<div class="content-card" style="margin-top:20px;">
+<div class="content-card" id="admin-notifications" style="margin-top:20px;">
   <h3>🔔 Gestion des notifications</h3>
   <p>Créer et gérer les annonces destinées aux membres de l'ESIVO.</p>
 
@@ -11328,6 +11353,9 @@ function showPage(page) {
     <p>Chargement des notifications...</p>
   </div>
 </div>
+            </div>
+          </div>
+        </div>
 
       `;
     } else {
@@ -11747,6 +11775,10 @@ if (badge) {
 
   if (page === "Pronostics" && typeof window.initialiserPronosticsPage === "function") {
     window.initialiserPronosticsPage();
+  }
+
+  if (page === "Administration" && window.esivoAuth.currentUser?.uid === ADMIN_UID) {
+    initialiserDashboardAdmin();
   }
 
   if (page === "Communauté") {
@@ -16139,6 +16171,25 @@ async function reinitialiserMotDePasse() {
 
 
   
+async function initialiserDashboardAdmin() {
+  const zone=document.getElementById('adminDashboardMetrics');
+  if(!zone || !window.esivoDb) return;
+  try {
+    const snapshot=await window.esivoDb.collection('matchs').get();
+    const evenements=snapshot.docs.map(doc=>({...doc.data(),id:doc.id}));
+    const maintenant=new Date();
+    const dateHeure=m=>{const heure=/^\\d{1,2}:\\d{2}$/.test(m.heure||'')?m.heure:'12:00';return new Date((m.date||'')+'T'+heure+':00');};
+    const matchs=evenements.filter(m=>m.type==='match');
+    const aVenir=matchs.filter(m=>m.resultatEnregistre!==true && m.statutMatch!=='reporte' && m.date && dateHeure(m)>maintenant).length;
+    const resultats=matchs.filter(m=>m.resultatEnregistre===true).length;
+    const reportes=matchs.filter(m=>m.statutMatch==='reporte').length;
+    const categories=new Set(evenements.map(m=>m.equipe).filter(Boolean)).size;
+    zone.innerHTML='<div class="admin-metric"><span>RENCONTRES À VENIR</span><strong>'+aVenir+'</strong><small>Matchs programmés</small></div>'+
+      '<div class="admin-metric"><span>RÉSULTATS SAISIS</span><strong>'+resultats+'</strong><small>Matchs terminés enregistrés</small></div>'+
+      '<div class="admin-metric"><span>MATCHS REPORTÉS</span><strong>'+reportes+'</strong><small>À reprogrammer</small></div>'+
+      '<div class="admin-metric"><span>CATÉGORIES</span><strong>'+categories+'</strong><small>Présentes dans le calendrier</small></div>';
+  } catch(erreur) {console.error('Tableau de bord administration :',erreur);zone.innerHTML='<div class="admin-metric"><span>TABLEAU DE BORD</span><strong>—</strong><small>Statistiques momentanément indisponibles</small></div>';}
+}
 async function chargerCalendriersFirebase() {
   try {
     const snapshot = await window.esivoDb
