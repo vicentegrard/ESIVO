@@ -13337,15 +13337,6 @@ const boutonFermer = overlay.querySelector(".mc-match-close");
       .sort((a, b) => new Date(a.date) - new Date(b.date));
 
     if (matchs.length === 0) {
-      const resultatsJ6 = [
-        {date:"Vendredi 23 octobre 2026",heure:"20h00",dom:"THAON BRETTEVILLE B",logoDom:"logos/thaon-bretteville-b.png",scoreDom:3,ext:"TROARN",logoExt:"logos/troarn.png",scoreExt:1},
-        {date:"Samedi 24 octobre 2026",heure:"19h00",dom:"IFS B",logoDom:"logos/ifs-b.png",scoreDom:0,ext:"INTER ODON",logoExt:"logos/inter-odon.png",scoreExt:3},
-        {date:"Dimanche 25 octobre 2026",heure:"12h30",dom:"AVANT GARDE C",logoDom:"logos/avant-garde-c.png",scoreDom:0,ext:"LYSTRIENNE",logoExt:"logos/lystrienne.png",scoreExt:0},
-        {date:"Dimanche 25 octobre 2026",heure:"15h00",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:3,ext:"TERRE ET MER",logoExt:"logos/terre-et-mer.png",scoreExt:2},
-        {date:"Dimanche 25 octobre 2026",heure:"15h00",dom:"LE TRONQUAY",logoDom:"logos/le-tronquay.png",scoreDom:3,ext:"MOUEN",logoExt:"logos/mouen.png",scoreExt:2},
-        {date:"Dimanche 25 octobre 2026",heure:"15h00",dom:"ST VIGOR LE GRAND",logoDom:"logos/st-vigor-le-grand.png",scoreDom:4,ext:"BRETTEVILLE/ODON",logoExt:"logos/bretteville-odon.png",scoreExt:0}
-      ];
-
       contenu.innerHTML = `
         <strong>${page} · ${equipe}</strong>
         <p>Aucun match de démonstration prévu pour cette équipe.</p>
@@ -14246,6 +14237,14 @@ const classementU18 = donneesFirestore.clubs;
         {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"INTER ODON",logoDom:"logos/inter-odon.png",scoreDom:4,ext:"THAON BRETTEVILLE B",logoExt:"logos/thaon-bretteville-b.png",scoreExt:0},
         {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"MOUEN",logoDom:"logos/mouen.png",scoreDom:0,ext:"IFS B",logoExt:"logos/ifs-b.png",scoreExt:4},
         {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"BRETTEVILLE/ODON",logoDom:"logos/bretteville-odon.png",scoreDom:1,ext:"TERRE ET MER",logoExt:"logos/terre-et-mer.png",scoreExt:4}
+      ];
+      const resultatsJ6 = [
+        {date:"Vendredi 23 octobre 2026",heure:"20h00",dom:"THAON BRETTEVILLE B",logoDom:"logos/thaon-bretteville-b.png",scoreDom:3,ext:"TROARN",logoExt:"logos/troarn.png",scoreExt:1},
+        {date:"Samedi 24 octobre 2026",heure:"19h00",dom:"IFS B",logoDom:"logos/ifs-b.png",scoreDom:0,ext:"INTER ODON",logoExt:"logos/inter-odon.png",scoreExt:3},
+        {date:"Dimanche 25 octobre 2026",heure:"12h30",dom:"AVANT GARDE C",logoDom:"logos/avant-garde-c.png",scoreDom:0,ext:"LYSTRIENNE",logoExt:"logos/lystrienne.png",scoreExt:0},
+        {date:"Dimanche 25 octobre 2026",heure:"15h00",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:3,ext:"TERRE ET MER",logoExt:"logos/terre-et-mer.png",scoreExt:2},
+        {date:"Dimanche 25 octobre 2026",heure:"15h00",dom:"LE TRONQUAY",logoDom:"logos/le-tronquay.png",scoreDom:3,ext:"MOUEN",logoExt:"logos/mouen.png",scoreExt:2},
+        {date:"Dimanche 25 octobre 2026",heure:"15h00",dom:"ST VIGOR LE GRAND",logoDom:"logos/st-vigor-le-grand.png",scoreDom:4,ext:"BRETTEVILLE/ODON",logoExt:"logos/bretteville-odon.png",scoreExt:0}
       ];
 
       contenu.innerHTML = `
