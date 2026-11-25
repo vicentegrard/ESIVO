@@ -565,3 +565,5 @@
     }
   }
 })();
+
+;document.addEventListener("DOMContentLoaded",()=>{const s=document.createElement("script");s.src="seniors-a.js?v=20261125";document.body.appendChild(s);});
