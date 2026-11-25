@@ -5601,6 +5601,33 @@ button[onclick="enregistrerNotificationAdmin()"]:hover {
 .admin-main{min-width:0}.admin-main>.content-card{scroll-margin-top:18px;margin-top:0!important;margin-bottom:16px}
 @media(max-width:800px){.admin-layout{grid-template-columns:1fr}.admin-sidebar{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.admin-sidebar-title{grid-column:1/-1}.admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.admin-hero{align-items:flex-start;flex-direction:column;padding:20px}.admin-hero h2{font-size:23px}.admin-logout{width:100%}.admin-sidebar{grid-template-columns:1fr 1fr}.admin-metric{padding:13px}.admin-metric strong{font-size:25px}}
+
+/* Harmonisation : tous les boutons de l'espace administration en rouge ESIVO */
+.admin-shell button,
+.admin-shell input[type="button"],
+.admin-shell input[type="submit"]{
+  background:#AA1A24 !important;
+  background-color:#AA1A24 !important;
+  color:#FFFFFF !important;
+  border:1px solid #AA1A24 !important;
+  border-radius:9px;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.admin-shell button:hover:not(:disabled),
+.admin-shell input[type="button"]:hover:not(:disabled),
+.admin-shell input[type="submit"]:hover:not(:disabled){
+  background:#80131B !important;
+  background-color:#80131B !important;
+  border-color:#80131B !important;
+}
+.admin-shell button:disabled,
+.admin-shell input[type="button"]:disabled,
+.admin-shell input[type="submit"]:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
 </style>
 
 </head>
