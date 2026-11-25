@@ -14239,6 +14239,7 @@ const classementU18 = donneesFirestore.clubs;
           .sa-round button{width:34px;height:34px;border-radius:9px;border:1px solid #4a4c57;background:#393a45;color:#fff;font-size:22px;opacity:.35}
           .sa-games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
           .sa-game{padding:13px;border:1px solid #3c3e49;border-radius:12px;background:#292a34;min-width:0}
+          .sa-game-esivo{border:2px solid #b52b38;background:linear-gradient(145deg,#43232a,#2b252e);box-shadow:0 0 0 1px #b52b3833,0 5px 18px #a91c2b22}
           .sa-game-meta{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#aeb0bb;border-bottom:1px solid #41434d;padding-bottom:10px}
           .sa-game-teams{display:grid;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);align-items:center;gap:6px;padding-top:12px}
           .sa-team{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-width:0}
@@ -14286,7 +14287,7 @@ const classementU18 = donneesFirestore.clubs;
             <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">6 MATCHS</span></div>
             <div class="sa-round"><button type="button" disabled>‹</button><div><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong>Journée 1</strong></div><button type="button" disabled>›</button></div>
             <div class="sa-games">${resultatsJ1.map(match => `
-              <article class="sa-game">
+              <article class="sa-game ${match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : ""}">
                 <div class="sa-game-meta"><span>${match.date}</span><span>${match.heure}</span></div>
                 <div class="sa-game-teams">
                   <div class="sa-team"><img src="${match.logoDom}" alt=""><strong>${match.dom}</strong></div>
