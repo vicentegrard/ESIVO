@@ -141,7 +141,7 @@
     date:match.date || "", heure:match.heure || "", domicile:match.domicile ?? "",
     competition:match.competition || "", kickoffAt,
     oddsSnapshot:odds, oddsCreatedAt:firebase.firestore.FieldValue.serverTimestamp(),
-    statut:"ouvert", versionModele:odds.version || "poisson-v3"
+    statut:"ouvert", versionModele:odds.version || "poisson-v4"
   });
 
   // Synchronise les métadonnées et les estimations après toute modification
