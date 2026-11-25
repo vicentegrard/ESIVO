@@ -198,8 +198,18 @@
       const [matchesSnap, pointsDoc, rankingSnap] = await Promise.all([
         db().collection("matchs").get(),
         db().collection("pronostics_points").doc(user.uid).get(),
-        db().collection("pronostics_classement").orderBy("total","desc").limit(20).get()
+        db().collection("pronostics_classement").orderBy("total","desc").get()
       ]);
+      const joueursClassement=rankingSnap.docs.map(doc=>({id:doc.id,...doc.data()}))
+        .sort((a,b)=>(Number(b.total)||0)-(Number(a.total)||0));
+      const profilsTop=await Promise.all(joueursClassement.slice(0,20).map(async joueur=>{
+        try {
+          const profil=await db().collection("profils_publics").doc(joueur.id).get();
+          return [joueur.id,profil.exists?profil.data():null];
+        } catch(_) { return [joueur.id,null]; }
+      }));
+      const profilsParUid=Object.fromEntries(profilsTop);
+      const rangPersonnel=joueursClassement.findIndex(joueur=>joueur.id===user.uid)+1;
       const now=new Date();
       const matches=prochainsMatchsParCategorie(matchesSnap.docs.map(d=>({...d.data(),id:d.id})),now);
       const picks=await Promise.all(matches.map(async m=>{
@@ -224,8 +234,8 @@
         <div class="pronostics-matches">
           ${picks.length?picks.map(({match,meta,pick})=>renderMatch(match,meta,pick)).join(""):'<div class="content-card"><h3>Aucune rencontre ouverte</h3><p>Les prochaines rencontres apparaîtront ici dès que leur calendrier sera disponible et que les pronostics auront été préparés.</p></div>'}
         </div>
-        ${renderStatsPersonnelles(pointsDoc)}
-        ${renderClassement(rankingSnap)}
+        ${renderStatsPersonnelles(pointsDoc,rangPersonnel)}
+        ${renderClassement(rankingSnap,profilsParUid,user.uid)}
         <div class="content-card pronostics-info"><h3>Comment ça marche ?</h3><p>Fais ton choix avant le coup d’envoi. Les pronostics sont verrouillés automatiquement à l’heure de la rencontre. Les cotes sont calculées à partir des statistiques disponibles et figées à l’ouverture de la rencontre.</p><small>Le score estimé est une projection statistique, pas une certitude ni une prédiction générée par une IA.</small></div>
       `;
       if(admin) {
@@ -321,37 +331,63 @@
       </article>`;
   }
 
-  function renderStatsPersonnelles(pointsDoc) {
+  function renderStatsPersonnelles(pointsDoc, rangPersonnel) {
     const data=pointsDoc.exists?pointsDoc.data():{};
     const details=data.details||{};
     const scores=Object.values(details).map(Number).filter(Number.isFinite);
     const total=Number(data.total)||0;
     const reussis=scores.filter(value=>value>0).length;
     const moyenne=scores.length?Math.round(total/scores.length):0;
+    const meilleurScore=scores.length?Math.max(...scores):0;
     return `
       <section class="pronostics-personal-stats">
         <div><span>TON TOTAL</span><strong>${total}</strong><small>points</small></div>
+        <div><span>TON CLASSEMENT</span><strong>${rangPersonnel>0?"#"+rangPersonnel:"—"}</strong><small>rang général</small></div>
         <div><span>PRONOSTICS COMPTABILISÉS</span><strong>${scores.length}</strong><small>rencontres</small></div>
-        <div><span>PRONOSTICS RÉCOMPENSÉS</span><strong>${reussis}</strong><small>issue correcte</small></div>
+        <div><span>PRONOSTICS RÉCOMPENSÉS</span><strong>${reussis}</strong><small>avec points</small></div>
+        <div><span>MEILLEUR GAIN</span><strong>${meilleurScore}</strong><small>points sur un match</small></div>
         <div><span>MOYENNE</span><strong>${moyenne}</strong><small>points / rencontre</small></div>
       </section>`;
   }
 
-  function renderClassement(snapshot) {
+  function badgeClassement(joueur, profil) {
+    if (joueur.id === window.ESIVO_ADMIN_UID) return {texte:"FONDATEUR DU SITE ESIVO",fond:"#2687E8",couleur:"#FFFFFF"};
+    const badges = {
+      supporter:{texte:"SUPPORTER ESIVO",fond:"#E5BD37",couleur:"#19191D"},
+      "licencie-esivo":{texte:"LICENCIÉ AU CLUB ESIVO",fond:"#AA1A24",couleur:"#FFFFFF"},
+      "licencie-autre":{texte:"LICENCIÉ D'UN AUTRE CLUB",fond:"#268B57",couleur:"#FFFFFF"}
+    };
+    return badges[profil?.statut] || badges.supporter;
+  }
+
+  function renderClassement(snapshot, profilsParUid, currentUid) {
     const joueurs = snapshot.docs.map(doc => ({id:doc.id,...doc.data()}))
       .sort((a,b)=>(Number(b.total)||0)-(Number(a.total)||0));
+    const rangPersonnel=joueurs.findIndex(joueur=>joueur.id===currentUid)+1;
+    const top=joueurs.slice(0,20);
+    const lignes=top.map((joueur,index)=>{
+      const badge=badgeClassement(joueur,profilsParUid[joueur.id]);
+      const rang=index+1;
+      const medaille=rang===1?"🥇":rang===2?"🥈":rang===3?"🥉":"";
+      return `
+        <article class="pronostics-ranking-row ${index<3?"top-three":""} ${joueur.id===currentUid?"current-player":""}"
+          data-profil-uid="${esc(joueur.id)}" role="button" tabindex="0"
+          aria-label="Voir le profil de ${esc(joueur.pseudo||"Membre")}">
+          <span class="pronostics-rank">${medaille||rang}</span>
+          <div class="pronostics-ranking-member">
+            <strong>${esc(joueur.pseudo||"Membre")}</strong>
+            <span class="pronostics-ranking-badge" style="background:${badge.fond};color:${badge.couleur}">${esc(badge.texte)}</span>
+          </div>
+          <span class="pronostics-ranking-points">${Number(joueur.total)||0} pts</span>
+        </article>`;
+    }).join("");
+    const rangHTML=rangPersonnel>20
+      ? `<p class="pronostics-your-rank">Ta position : <strong>#${rangPersonnel}</strong> sur ${joueurs.length} membre(s) · ${Number(joueurs[rangPersonnel-1]?.total)||0} points</p>`
+      : "";
     return `
       <section class="content-card pronostics-leaderboard">
-        <div class="pronostics-section-heading"><div><span>ESIVO · PRONOSTICS</span><h3>CLASSEMENT GÉNÉRAL</h3></div><small>TOP 20</small></div>
-        ${joueurs.length ? `
-          <div class="pronostics-ranking-list">
-            ${joueurs.map((joueur,index)=>`
-              <div class="pronostics-ranking-row ${index<3?"top-three":""}">
-                <span class="pronostics-rank">${index+1}</span>
-                <strong>${esc(joueur.pseudo||"Membre")}</strong>
-                <span>${Number(joueur.total)||0} pts</span>
-              </div>`).join("")}
-          </div>` : '<p class="pronostics-empty-ranking">Le classement apparaîtra après les premiers résultats comptabilisés.</p>'}
+        <div class="pronostics-section-heading"><div><span>ESIVO · PRONOSTICS</span><h3>CLASSEMENT GÉNÉRAL</h3></div><small>${Math.min(joueurs.length,20)} / ${joueurs.length} MEMBRES</small></div>
+        ${joueurs.length ? `<div class="pronostics-ranking-list">${lignes}</div>${rangHTML}` : '<p class="pronostics-empty-ranking">Le classement apparaîtra après les premiers résultats comptabilisés.</p>'}
       </section>`;
   }
 
