@@ -14293,29 +14293,37 @@ const classementU18 = donneesFirestore.clubs;
           </section>
           <section class="sa-panel">
             <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">12 MATCHS</span></div>
-            <div class="sa-round"><button type="button" disabled>‹</button><div><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong>Journée 1</strong></div><button type="button" disabled>›</button></div>
-            <div class="sa-games">${resultatsJ1.map(match => `
-              <article class="sa-game ${match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : ""}">
-                <div class="sa-game-meta"><span>${match.date}</span><span>${match.heure}</span></div>
-                <div class="sa-game-teams">
-                  <div class="sa-team"><img src="${match.logoDom}" alt=""><strong>${match.dom}</strong></div>
-                  <div class="sa-score">${match.scoreDom} – ${match.scoreExt}<small>TERMINÉ</small></div>
-                  <div class="sa-team"><img src="${match.logoExt}" alt=""><strong>${match.ext}</strong></div>
-                </div>
-              </article>`).join("")}</div>
-            <div class="sa-round" style="margin-top:18px"><button type="button" disabled>‹</button><div><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong>Journée 2</strong></div><button type="button" disabled>›</button></div>
-            <div class="sa-games">${resultatsJ2.map(match => `
-              <article class="sa-game ${match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : ""}">
-                <div class="sa-game-meta"><span>${match.date}</span><span>${match.heure}</span></div>
-                <div class="sa-game-teams">
-                  <div class="sa-team"><img src="${match.logoDom}" alt=""><strong>${match.dom}</strong></div>
-                  <div class="sa-score">${match.scoreDom} – ${match.scoreExt}<small>TERMINÉ</small></div>
-                  <div class="sa-team"><img src="${match.logoExt}" alt=""><strong>${match.ext}</strong></div>
-                </div>
-              </article>`).join("")}</div>
+            <div class="sa-round">
+              <button type="button" id="sa-prev" aria-label="Journée précédente">‹</button>
+              <div><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong id="sa-round-title">Journée 1</strong></div>
+              <button type="button" id="sa-next" aria-label="Journée suivante">›</button>
+            </div>
+            <div class="sa-games" id="sa-games"></div>
           </section>
         </div>
       `;
+      let journeeActive = 1;
+      const afficherJournee = () => {
+        const matchs = journeeActive === 1 ? resultatsJ1 : resultatsJ2;
+        const titre = document.getElementById("sa-round-title");
+        const liste = document.getElementById("sa-games");
+        if (!titre || !liste) return;
+        titre.textContent = "Journée " + journeeActive;
+        liste.innerHTML = matchs.map(match =>
+          '<article class="sa-game ' + (match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : "") + '">' +
+            '<div class="sa-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
+            '<div class="sa-game-teams">' +
+              '<div class="sa-team"><img src="' + match.logoDom + '" alt=""><strong>' + match.dom + '</strong></div>' +
+              '<div class="sa-score">' + match.scoreDom + ' – ' + match.scoreExt + '<small>TERMINÉ</small></div>' +
+              '<div class="sa-team"><img src="' + match.logoExt + '" alt=""><strong>' + match.ext + '</strong></div>' +
+            '</div></article>'
+        ).join("");
+        document.getElementById("sa-prev").disabled = journeeActive === 1;
+        document.getElementById("sa-next").disabled = journeeActive === 2;
+      };
+      document.getElementById("sa-prev").addEventListener("click", () => { journeeActive = 1; afficherJournee(); });
+      document.getElementById("sa-next").addEventListener("click", () => { journeeActive = 2; afficherJournee(); });
+      afficherJournee();
       return;
     }
 
