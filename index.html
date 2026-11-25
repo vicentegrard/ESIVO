@@ -14224,6 +14224,15 @@ const classementU18 = donneesFirestore.clubs;
         {date:"Dimanche 4 octobre 2026",heure:"15h00",dom:"MOUEN",logoDom:"logos/mouen.png",scoreDom:1,ext:"ESIVO",logoExt:"logos/esivo.png",scoreExt:3}
       ];
       contenu.innerHTML = `
+      const resultatsJ4 = [
+        {date:"Vendredi 9 octobre 2026",heure:"20h00",dom:"THAON BRETTEVILLE B",logoDom:"logos/thaon-bretteville-b.png",scoreDom:5,ext:"MOUEN",logoExt:"logos/mouen.png",scoreExt:2},
+        {date:"Samedi 10 octobre 2026",heure:"16h00",dom:"IFS B",logoDom:"logos/ifs-b.png",scoreDom:2,ext:"AVANT GARDE C",logoExt:"logos/avant-garde-c.png",scoreExt:1},
+        {date:"Samedi 10 octobre 2026",heure:"18h30",dom:"LYSTRIENNE",logoDom:"logos/lystrienne.png",scoreDom:2,ext:"BRETTEVILLE/ODON",logoExt:"logos/bretteville-odon.png",scoreExt:0},
+        {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"TERRE ET MER",logoDom:"logos/terre-et-mer.png",scoreDom:0,ext:"TROARN",logoExt:"logos/troarn.png",scoreExt:0},
+        {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:3,ext:"INTER ODON",logoExt:"logos/inter-odon.png",scoreExt:1},
+        {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"LE TRONQUAY",logoDom:"logos/le-tronquay.png",scoreDom:2,ext:"ST VIGOR LE GRAND",logoExt:"logos/st-vigor-le-grand.png",scoreExt:2}
+      ];
+      contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
           .sa-hero{padding:24px;border:1px solid #55343a;border-radius:18px;background:radial-gradient(circle at 88% 10%,#a91c2b55,transparent 35%),linear-gradient(125deg,#2b1b21,#171820 72%,#28212a)}
@@ -14303,7 +14312,7 @@ const classementU18 = donneesFirestore.clubs;
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
           <section class="sa-panel">
-            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">18 MATCHS</span></div>
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">24 MATCHS</span></div>
             <div class="sa-round">
               <button type="button" id="sa-prev" aria-label="Journée précédente">‹</button>
               <div><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong id="sa-round-title">Journée 1</strong></div>
@@ -14315,7 +14324,7 @@ const classementU18 = donneesFirestore.clubs;
       `;
       let journeeActive = 1;
       const afficherJournee = () => {
-        const matchs = journeeActive === 1 ? resultatsJ1 : journeeActive === 2 ? resultatsJ2 : resultatsJ3;
+        const matchs = journeeActive === 1 ? resultatsJ1 : journeeActive === 2 ? resultatsJ2 : journeeActive === 3 ? resultatsJ3 : resultatsJ4;
         const titre = document.getElementById("sa-round-title");
         const liste = document.getElementById("sa-games");
         if (!titre || !liste) return;
@@ -14330,10 +14339,10 @@ const classementU18 = donneesFirestore.clubs;
             '</div></article>'
         ).join("");
         document.getElementById("sa-prev").disabled = journeeActive === 1;
-        document.getElementById("sa-next").disabled = journeeActive === 3;
+        document.getElementById("sa-next").disabled = journeeActive === 4;
       };
       document.getElementById("sa-prev").addEventListener("click", () => { journeeActive = Math.max(1, journeeActive - 1); afficherJournee(); });
-      document.getElementById("sa-next").addEventListener("click", () => { journeeActive = Math.min(3, journeeActive + 1); afficherJournee(); });
+      document.getElementById("sa-next").addEventListener("click", () => { journeeActive = Math.min(4, journeeActive + 1); afficherJournee(); });
       afficherJournee();
       return;
     }
