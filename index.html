@@ -9868,6 +9868,7 @@ async function enregistrerModificationMatchAdmin(id, equipe) {
 
     await chargerCalendriersFirebase();
     await chargerListeCalendrierAdmin(equipe);
+    await initialiserDashboardAdmin();
 
     message.textContent = "Modification enregistrée et vérifiée : date, horaire, terrain et informations du match sont à jour." + messagePronostics;
 
@@ -9939,12 +9940,21 @@ const equipes = Array.from(lignes)
   }
 
   try {
-    await window.esivoDb
-      .collection("matchs")
-      .doc(id)
-      .update(plateau);
+    const referencePlateau = window.esivoDb.collection("matchs").doc(id);
+    await referencePlateau.set({
+      ...plateau,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    const verificationPlateau = await referencePlateau.get();
+    if (!verificationPlateau.exists) throw new Error("Le plateau est introuvable après l'enregistrement.");
+    const plateauEnregistre = verificationPlateau.data();
+    const champsPlateau = ["date","heure","organisateur","lieu","ville"];
+    const champPlateauIncoherent = champsPlateau.find(c =>
+      String(plateauEnregistre[c] ?? "") !== String(plateau[c] ?? "")
+    );
+    if (champPlateauIncoherent) throw new Error("Le champ « " + champPlateauIncoherent + " » n'a pas été confirmé par Firestore.");
 
-    message.textContent = "Plateau modifié avec succès !";
+    message.textContent = "Modification du plateau enregistrée et vérifiée.";
 
     const titre = document.querySelector("#adminCalendrierFormulaire h4");
     if (titre) titre.textContent = "Ajouter un plateau — " + equipe;
@@ -9957,6 +9967,7 @@ const equipes = Array.from(lignes)
 
     await chargerListeCalendrierAdmin(equipe);
     await chargerCalendriersFirebase();
+    await initialiserDashboardAdmin();
 
   } catch (erreur) {
     console.error("Erreur de modification du plateau :", erreur);
