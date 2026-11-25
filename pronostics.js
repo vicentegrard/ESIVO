@@ -39,11 +39,6 @@
     const version = "poisson-v4";
     const equipeESIVO = nomClubPronostic(match.equipe);
     const normaliserNom = value => norm(value).replace(/[^a-z0-9]/g, "");
-    const correspondanceNom = (a,b) => {
-      const x=normaliserNom(a), y=normaliserNom(b);
-      if(!x || !y) return false;
-      return x===y || (x.length>=5 && y.length>=5 && (x.startsWith(y) || y.startsWith(x)));
-    };
     const statistiques = (club,index=0) => {
       if(!club) return null;
       const joues=Math.max(0,Number(club.joues)||0);
@@ -76,8 +71,15 @@
       if(snap.exists && Array.isArray(snap.data().clubs)) {
         const clubs=snap.data().clubs;
         const cibleESIVO=normaliserNom(equipeESIVO);
-        const candidatsESIVO=clubs.map((club,index)=>({club,index,nom:normaliserNom(club.equipe)}))
+        let candidatsESIVO=clubs.map((club,index)=>({club,index,nom:normaliserNom(club.equipe)}))
           .filter(x=>x.nom===cibleESIVO || (x.nom.startsWith(cibleESIVO) && cibleESIVO.length>=5));
+        // Certaines feuilles de classement nomment simplement le club « ESIVO »,
+        // même pour les équipes B ou C : on ne prend cet alias que si aucun nom
+        // propre à l'équipe n'a été trouvé dans le classement de cette catégorie.
+        if(!candidatsESIVO.length && ["esivob","esivoc"].includes(cibleESIVO)) {
+          candidatsESIVO=clubs.map((club,index)=>({club,index,nom:normaliserNom(club.equipe)}))
+            .filter(x=>x.nom==="esivo");
+        }
         const clubESIVO=candidatsESIVO.length
           ? candidatsESIVO.sort((a,b)=>a.nom.length-b.nom.length)[0].club
           : null;
