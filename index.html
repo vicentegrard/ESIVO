@@ -9573,6 +9573,12 @@ async function gererReportMatchAdmin(id, equipe) {
         statutMatch: "programme",
         reportMisAJourAt: firebase.firestore.FieldValue.serverTimestamp()
       });
+      if (typeof window.synchroniserPronosticMatchModifie === "function") {
+        await window.synchroniserPronosticMatchModifie({
+          ...match, id, equipe, date: nouvelleDate.trim(),
+          heure: nouvelleHeure.trim(), statutMatch: "programme"
+        });
+      }
       alert("Match reprogrammé. Les pronostics seront ouverts jusqu’au nouveau coup d’envoi.");
     } else {
       await ref.update({
@@ -9602,6 +9608,7 @@ async function gererReportMatchAdmin(id, equipe) {
     }
     await chargerListeCalendrierAdmin(equipe);
     await chargerCalendriersFirebase();
+    await initialiserDashboardAdmin();
     if (typeof window.initialiserPronosticsPage === "function") await window.initialiserPronosticsPage();
   } catch (erreur) {
     console.error("Gestion du report :", erreur);
