@@ -14244,7 +14244,10 @@ const classementU18 = donneesFirestore.clubs;
           .sa-round strong,.sa-round small{display:block}
           .sa-round strong{color:#fff;font-size:19px}
           .sa-round small{color:#aeb0bb;font-size:9px;letter-spacing:1px}
-          .sa-round button{width:34px;height:34px;border-radius:9px;border:1px solid #4a4c57;background:#393a45;color:#fff;font-size:22px;opacity:.35}
+          .sa-round button{width:34px;height:34px;border-radius:9px;border:1px solid #4a4c57;background:#393a45;color:#fff;font-size:22px;opacity:.55;cursor:pointer;transition:background .2s ease,border-color .2s ease,box-shadow .2s ease,opacity .2s ease,transform .2s ease}
+          .sa-round button:not(:disabled):hover,.sa-round button:not(:disabled):focus-visible{background:#AA1A24;border-color:#E56B73;box-shadow:0 0 0 3px rgba(170,26,36,.22),0 0 14px rgba(229,107,115,.55);opacity:1;transform:scale(1.08);outline:none}
+          .sa-round button:not(:disabled):active{transform:scale(.98)}
+          .sa-round button:disabled{opacity:.22;cursor:default;box-shadow:none;transform:none}
           .sa-games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
           .sa-game{padding:13px;border:1px solid #3c3e49;border-radius:12px;background:#292a34;min-width:0}
           .sa-game-esivo{border:2px solid #b52b38;background:linear-gradient(145deg,#43232a,#2b252e);box-shadow:0 0 0 1px #b52b3833,0 5px 18px #a91c2b22}
