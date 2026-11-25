@@ -9574,10 +9574,15 @@ async function gererReportMatchAdmin(id, equipe) {
         reportMisAJourAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       if (typeof window.synchroniserPronosticMatchModifie === "function") {
-        await window.synchroniserPronosticMatchModifie({
-          ...match, id, equipe, date: nouvelleDate.trim(),
-          heure: nouvelleHeure.trim(), statutMatch: "programme"
-        });
+        try {
+          await window.synchroniserPronosticMatchModifie({
+            ...match, id, equipe, date: nouvelleDate.trim(),
+            heure: nouvelleHeure.trim(), statutMatch: "programme"
+          });
+        } catch (erreurPronostics) {
+          console.error("Actualisation des pronostics après reprogrammation :", erreurPronostics);
+          alert("Le match est reprogrammé, mais les côtes n'ont pas pu être actualisées automatiquement.");
+        }
       }
       alert("Match reprogrammé. Les pronostics seront ouverts jusqu’au nouveau coup d’envoi.");
     } else {
