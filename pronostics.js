@@ -36,132 +36,104 @@
     return [home/total,draw/total,away/total];
   };
   const cotesDepuisClassement = async (match) => {
-    const version = "poisson-v3";
+    const version = "poisson-v4";
     const equipeESIVO = nomClubPronostic(match.equipe);
     const normaliserNom = value => norm(value).replace(/[^a-z0-9]/g, "");
-    const estESIVO = club => {
-      const nom = normaliserNom(club?.equipe);
-      const cible = normaliserNom(equipeESIVO);
-      if (nom === cible) return true;
-      // Certains classements enregistrent simplement le club sous le nom ESIVO.
-      return cible === "esivo" && nom === "esivo";
+    const correspondanceNom = (a,b) => {
+      const x=normaliserNom(a), y=normaliserNom(b);
+      if(!x || !y) return false;
+      return x===y || (x.length>=5 && y.length>=5 && (x.startsWith(y) || y.startsWith(x)));
     };
-
-    const statistiques = (club, index = 0) => {
-      if (!club) return null;
-      const joues = Math.max(0, Number(club.joues) || 0);
-      const victoires = Math.max(0, Number(club.victoires) || 0);
-      const nuls = Math.max(0, Number(club.nuls) || 0);
-      const defaites = Math.max(0, Number(club.defaites) || 0);
-      const matchsComptes = Math.max(joues, victoires + nuls + defaites);
-      if (!matchsComptes) return null;
-      const butsPour = Math.max(0, Number(club.butsPour) || 0);
-      const butsContre = Math.max(0, Number(club.butsContre) || 0);
-      const points = Number.isFinite(Number(club.points))
-        ? Number(club.points)
-        : victoires * 3 + nuls;
-      const difference = Number.isFinite(Number(club.difference))
-        ? Number(club.difference)
-        : butsPour - butsContre;
+    const statistiques = (club,index=0) => {
+      if(!club) return null;
+      const joues=Math.max(0,Number(club.joues)||0);
+      const victoires=Math.max(0,Number(club.victoires)||0);
+      const nuls=Math.max(0,Number(club.nuls)||0);
+      const defaites=Math.max(0,Number(club.defaites)||0);
+      const matchs=Math.max(joues,victoires+nuls+defaites);
+      if(!matchs) return null;
+      const butsPour=Math.max(0,Number(club.butsPour)||0);
+      const butsContre=Math.max(0,Number(club.butsContre)||0);
+      const points=Number.isFinite(Number(club.points))?Number(club.points):victoires*3+nuls;
+      const difference=Number.isFinite(Number(club.difference))?Number(club.difference):butsPour-butsContre;
       return {
-        position: Math.max(1, Number(club.position) || (index + 1)),
-        joues: matchsComptes, victoires, nuls, defaites,
-        butsPour, butsContre, difference, points,
-        butsMarquesParMatch: butsPour / matchsComptes,
-        butsEncaissesParMatch: butsContre / matchsComptes,
-        pointsParMatch: points / matchsComptes,
-        tauxVictoires: victoires / matchsComptes,
-        tauxDefaites: defaites / matchsComptes,
-        differenceParMatch: difference / matchsComptes
+        position:Math.max(1,Number(club.position)||index+1),
+        joues:matchs,victoires,nuls,defaites,butsPour,butsContre,points,difference,
+        butsMarquesParMatch:butsPour/matchs,
+        butsEncaissesParMatch:butsContre/matchs,
+        pointsParMatch:points/matchs,
+        tauxVictoires:victoires/matchs,
+        tauxNuls:nuls/matchs,
+        tauxDefaites:defaites/matchs,
+        differenceParMatch:difference/matchs
       };
     };
-
-    let lambdaESIVO = 1.25;
-    let lambdaAdverse = 1.15;
-    let source = "Estimation neutre — classement indisponible";
-    let statsESIVO = null;
-    let statsAdverse = null;
+    let lambdaESIVO=1.25, lambdaAdverse=1.15;
+    let source="Estimation neutre — classement de la catégorie indisponible";
+    let statsESIVO=null, statsAdverse=null;
     try {
-      const snap = await db().collection("classements").doc(match.equipe).get();
-      if (snap.exists && Array.isArray(snap.data().clubs)) {
-        const clubs = snap.data().clubs;
-        const clubESIVO = clubs.find(estESIVO)
-          || clubs.find(club => normaliserNom(club.equipe).startsWith("esivo"));
-        const nomAdverse = normaliserNom(match.adversaire);
-        const clubAdverse = clubs.find(club => normaliserNom(club.equipe) === nomAdverse)
-          || clubs.find(club => {
-            const nom = normaliserNom(club.equipe);
-            return nom && nomAdverse && (nom.includes(nomAdverse) || nomAdverse.includes(nom));
-          });
-
-        statsESIVO = statistiques(clubESIVO, clubs.indexOf(clubESIVO));
-        statsAdverse = statistiques(clubAdverse, clubs.indexOf(clubAdverse));
-
-        if (statsESIVO && statsAdverse) {
-          const moyenneButsLigue = clubs.reduce((total, club) => {
-            const s = statistiques(club);
-            return total + (s ? s.butsMarquesParMatch : 0);
-          }, 0) / Math.max(1, clubs.filter(club => statistiques(club)).length);
-
-          const moyenne = Math.max(0.55, moyenneButsLigue || 1.25);
-          const forceClassement = (s) => {
-            const rang = clubs.length > 1
-              ? (clubs.length - Math.min(clubs.length, s.position)) / (clubs.length - 1)
-              : 0.5;
-            const ppg = Math.max(0, Math.min(3, s.pointsParMatch)) / 3;
-            const difference = Math.max(-2, Math.min(2, s.differenceParMatch)) / 2;
-            // Le classement synthétise les résultats ; les statistiques détaillées
-            // permettent de départager les équipes à position proche.
-            return 0.35 * rang
-              + 0.30 * ppg
-              + 0.15 * s.tauxVictoires
-              - 0.10 * s.tauxDefaites
-              + 0.10 * ((difference + 1) / 2);
+      const snap=await db().collection("classements").doc(match.equipe).get();
+      if(snap.exists && Array.isArray(snap.data().clubs)) {
+        const clubs=snap.data().clubs;
+        const cibleESIVO=normaliserNom(equipeESIVO);
+        const candidatsESIVO=clubs.map((club,index)=>({club,index,nom:normaliserNom(club.equipe)}))
+          .filter(x=>x.nom===cibleESIVO || (x.nom.startsWith(cibleESIVO) && cibleESIVO.length>=5));
+        const clubESIVO=candidatsESIVO.length
+          ? candidatsESIVO.sort((a,b)=>a.nom.length-b.nom.length)[0].club
+          : null;
+        const cibleAdverse=normaliserNom(match.adversaire);
+        const candidatsAdverses=clubs.map((club,index)=>({club,index,nom:normaliserNom(club.equipe)}))
+          .filter(x=>x.nom===cibleAdverse || (x.nom.length>=5 && cibleAdverse.length>=5 && (x.nom.includes(cibleAdverse)||cibleAdverse.includes(x.nom))));
+        const clubAdverse=candidatsAdverses.length
+          ? candidatsAdverses.sort((a,b)=>Math.abs(a.nom.length-cibleAdverse.length)-Math.abs(b.nom.length-cibleAdverse.length))[0].club
+          : null;
+        statsESIVO=statistiques(clubESIVO,clubs.indexOf(clubESIVO));
+        statsAdverse=statistiques(clubAdverse,clubs.indexOf(clubAdverse));
+        const clubsAvecStats=clubs.map((club,index)=>statistiques(club,index)).filter(Boolean);
+        if(statsESIVO && statsAdverse && clubsAvecStats.length>=2) {
+          const moyenneButs=clubsAvecStats.reduce((s,x)=>s+x.butsMarquesParMatch,0)/clubsAvecStats.length;
+          const moyenne=Math.max(0.55,moyenneButs||1.25);
+          // Les statistiques de chaque équipe sont ramenées progressivement vers
+          // la moyenne du championnat lorsque peu de rencontres ont été jouées.
+          const stabiliser=(valeur,moyenneLigue,n)=>valeur*(n/(n+4))+moyenneLigue*(4/(n+4));
+          const force=(s)=>{
+            const rang=clubs.length>1?1-(Math.min(clubs.length,Math.max(1,s.position))-1)/(clubs.length-1):0.5;
+            const ppg=Math.max(0,Math.min(3,s.pointsParMatch))/3;
+            const diff=Math.max(-2,Math.min(2,s.differenceParMatch))/4+0.5;
+            const victoire=Math.max(0,Math.min(1,s.tauxVictoires));
+            const regularite=1-Math.max(0,Math.min(1,s.tauxDefaites));
+            return 0.38*ppg+0.22*rang+0.18*diff+0.14*victoire+0.08*regularite;
           };
-
-          const forceESIVO = forceClassement(statsESIVO);
-          const forceAdverse = forceClassement(statsAdverse);
-          // Le classement et les points doivent peser réellement dans l'estimation,
-          // sans effacer les performances offensives/défensives observées.
-          const ecartForce = Math.max(-0.32, Math.min(0.32, (forceESIVO - forceAdverse) * 0.62));
-          const domicileESIVO = match.domicile === true
-            || ["domicile", "home"].includes(norm(match.domicile))
-            || norm(match.domicile).includes("esivo");
-          const avantageDomicile = domicileESIVO ? 1.10 : 0.92;
-
-          const attaqueESIVO = 0.62 * statsESIVO.butsMarquesParMatch + 0.38 * statsAdverse.butsEncaissesParMatch;
-          const attaqueAdverse = 0.62 * statsAdverse.butsMarquesParMatch + 0.38 * statsESIVO.butsEncaissesParMatch;
-
-          lambdaESIVO = Math.max(0.25, Math.min(3.8,
-            (0.72 * attaqueESIVO + 0.28 * moyenne) * (1 + ecartForce) * avantageDomicile
-          ));
-          lambdaAdverse = Math.max(0.25, Math.min(3.8,
-            (0.72 * attaqueAdverse + 0.28 * moyenne) * (1 - ecartForce) / avantageDomicile
-          ));
-          source = "Classement complet : position, points, victoires, défaites, buts marqués et encaissés par match";
+          const ecartForce=Math.max(-0.42,Math.min(0.42,(force(statsESIVO)-force(statsAdverse))*1.25));
+          const butsPourESIVO=stabiliser(statsESIVO.butsMarquesParMatch,moyenne,statsESIVO.joues);
+          const butsContreESIVO=stabiliser(statsESIVO.butsEncaissesParMatch,moyenne,statsESIVO.joues);
+          const butsPourAdverse=stabiliser(statsAdverse.butsMarquesParMatch,moyenne,statsAdverse.joues);
+          const butsContreAdverse=stabiliser(statsAdverse.butsEncaissesParMatch,moyenne,statsAdverse.joues);
+          const domicileESIVO=match.domicile===true || ["domicile","home"].includes(norm(match.domicile)) || norm(match.domicile).includes("esivo");
+          const avantageDomicile=domicileESIVO?1.08:0.93;
+          const attaqueESIVO=0.55*butsPourESIVO+0.45*butsContreAdverse;
+          const attaqueAdverse=0.55*butsPourAdverse+0.45*butsContreESIVO;
+          lambdaESIVO=Math.max(0.25,Math.min(4.2,(0.65*attaqueESIVO+0.35*moyenne)*Math.exp(ecartForce)*avantageDomicile));
+          lambdaAdverse=Math.max(0.25,Math.min(4.2,(0.65*attaqueAdverse+0.35*moyenne)*Math.exp(-ecartForce)/avantageDomicile));
+          source="Classement actualisé : rang, points par match, victoires, défaites, différence et buts par match";
+        } else {
+          source="Classement partiel — statistiques d'une des deux équipes introuvables";
         }
       }
     } catch(err) {
-      console.warn("Calcul des cotes : classement indisponible", err);
+      console.warn("Calcul des cotes : classement indisponible",err);
     }
-
-    const probabilites = calculerProbabilites(lambdaESIVO, lambdaAdverse);
-    const cotes = probabilites.map(p => Math.round((1 / Math.max(0.03, p)) * 100) / 100);
-    let scoreEstime = [0, 0];
-    let meilleureProbabilite = -1;
-    for(let butsESIVO = 0; butsESIVO <= 6; butsESIVO++) {
-      for(let butsAdverse = 0; butsAdverse <= 6; butsAdverse++) {
-        const probabilite = poisson(lambdaESIVO, butsESIVO) * poisson(lambdaAdverse, butsAdverse);
-        if(probabilite > meilleureProbabilite) {
-          meilleureProbabilite = probabilite;
-          scoreEstime = [butsESIVO, butsAdverse];
-        }
-      }
+    const probabilites=calculerProbabilites(lambdaESIVO,lambdaAdverse);
+    const cotes=probabilites.map(p=>Math.round((1/Math.max(0.025,p))*100)/100);
+    let scoreEstime=[0,0], meilleureProbabilite=-1;
+    for(let butsESIVO=0;butsESIVO<=7;butsESIVO++) for(let butsAdverse=0;butsAdverse<=7;butsAdverse++) {
+      const probabilite=poisson(lambdaESIVO,butsESIVO)*poisson(lambdaAdverse,butsAdverse);
+      if(probabilite>meilleureProbabilite){meilleureProbabilite=probabilite;scoreEstime=[butsESIVO,butsAdverse];}
     }
     return {
-      probabilites: probabilites.map(p => Math.round(p * 1000) / 10),
-      cotes, lambdaESIVO, lambdaAdverse, scoreEstime, source, version,
-      statistiques: { esivo: statsESIVO, adversaire: statsAdverse }
+      probabilites:probabilites.map(p=>Math.round(p*1000)/10),
+      cotes,lambdaESIVO,lambdaAdverse,scoreEstime,source,version,
+      statistiques:{esivo:statsESIVO,adversaire:statsAdverse}
     };
   };
   const matchDocData = (match, odds, kickoffAt) => ({
@@ -460,7 +432,7 @@
           // rencontres futures déjà ouvertes, sans toucher aux pronostics.
           await ref.set({
             oddsSnapshot: odds,
-            versionModele: "poisson-v3",
+            versionModele: odds.version || "poisson-v4",
             date: match.date || "",
             heure: match.heure || "",
             kickoffAt: firebase.firestore.Timestamp.fromDate(dateHeure(match)),
