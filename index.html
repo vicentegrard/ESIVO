@@ -9773,9 +9773,7 @@ apercuLogo.src = fichierLogo.startsWith("http")
 
     const titre = document.querySelector("#adminCalendrierFormulaire h4");
 if (titre) {
-  titre.textContent = equipe === "U13"
-    ? "Ajouter un Challenge — U13"
-    : "Ajouter un plateau — " + equipe;
+  titre.textContent = "Modifier un match — " + equipe;
 }
 
     const bouton = document.querySelector("#adminCalendrierFormulaire button");
@@ -9821,15 +9819,43 @@ async function enregistrerModificationMatchAdmin(id, equipe) {
   }
 
   try {
-    await window.esivoDb
-      .collection("matchs")
-      .doc(id)
-      .update(match);
+    const referenceMatch = window.esivoDb.collection("matchs").doc(id);
+    await referenceMatch.set({
+      ...match,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
 
-    message.textContent = "Match modifié avec succès !";
+    // Relire le document réellement enregistré avant de confirmer la modification.
+    const verification = await referenceMatch.get();
+    if (!verification.exists) throw new Error("La rencontre est introuvable après l'enregistrement.");
+    const donneesEnregistrees = verification.data();
+    const champsAControler = ["date","heure","competition","adversaire","lieu","ville","logo"];
+    const champIncoherent = champsAControler.find(c =>
+      String(donneesEnregistrees[c] ?? "") !== String(match[c] ?? "")
+    );
+    if (champIncoherent) {
+      throw new Error("La modification du champ « " + champIncoherent + " » n'a pas été confirmée par Firestore.");
+    }
 
-    await chargerListeCalendrierAdmin(equipe);
+    let messagePronostics = "";
+    if (typeof window.synchroniserPronosticMatchModifie === "function") {
+      try {
+        await window.synchroniserPronosticMatchModifie({
+          ...donneesEnregistrees,
+          id,
+          equipe,
+          resultatEnregistre: donneesEnregistrees.resultatEnregistre === true
+        });
+      } catch (erreurPronostics) {
+        console.error("Synchronisation des pronostics après modification :", erreurPronostics);
+        messagePronostics = " Le calendrier est à jour, mais l'actualisation des pronostics a échoué.";
+      }
+    }
+
     await chargerCalendriersFirebase();
+    await chargerListeCalendrierAdmin(equipe);
+
+    message.textContent = "Modification enregistrée et vérifiée : date, horaire, terrain et informations du match sont à jour." + messagePronostics;
 
     const titre = document.querySelector("#adminCalendrierFormulaire h4");
     if (titre) titre.textContent = "Ajouter un match — " + equipe;
@@ -9840,9 +9866,12 @@ async function enregistrerModificationMatchAdmin(id, equipe) {
       bouton.onclick = () => enregistrerMatchAdmin();
     }
 
+    if (typeof window.initialiserPronosticsPage === "function") {
+      await window.initialiserPronosticsPage();
+    }
   } catch (erreur) {
     console.error("Erreur de modification :", erreur);
-    message.textContent = "Erreur lors de la modification du match.";
+    message.textContent = "La modification n'a pas pu être confirmée : " + (erreur.message || "erreur inconnue");
   }
 }
 
@@ -17235,7 +17264,7 @@ async function supprimerNotificationAdmin(id) {
 
 
 </script>
-<script src="pronostics.js?v=8eebd31"></script>
+<script src="pronostics.js?v=3422b5e"></script>
 
 </body>
 </html>
