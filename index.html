@@ -14561,7 +14561,16 @@ const resultatsJ7 = [
         {date:"Dimanche 20 septembre 2026",heure:"15h00",dom:"BAIE DE L'ORNE",logoDom:"logos/baie-de-l-orne.png",scoreDom:3,ext:"ESIVO B",logoExt:"logos/esivo.png",scoreExt:0},
         {date:"Dimanche 20 septembre 2026",heure:"15h00",dom:"THAON BRETTEVILLE C",logoDom:"logos/thaon-bretteville-b.png",scoreDom:4,ext:"TERRE ET MER B",logoExt:"logos/terre-et-mer.png",scoreExt:2},
         {date:"Dimanche 20 septembre 2026",heure:"15h00",dom:"BRETTEVILLE/ODON B",logoDom:"logos/bretteville-odon.png",scoreDom:2,ext:"TRÉVIÈRES",logoExt:"logos/trevieres.png",scoreExt:0}
-      ];
+      ]
+
+      const resultatsJ3B = [
+        {date:"Samedi 3 octobre 2026",heure:"18h30",dom:"AJS COLL. OUISTREHAM B",logoDom:"logos/ajs-ouistreham-c.png",scoreDom:3,ext:"BAIE DE L'ORNE",logoExt:"logos/baie-de-l-orne.png",scoreExt:3},
+        {date:"Dimanche 4 octobre 2026",heure:"15h00",dom:"TERRE ET MER B",logoDom:"logos/terre-et-mer.png",scoreDom:3,ext:"BRETTEVILLE/ODON B",logoExt:"logos/bretteville-odon.png",scoreExt:2},
+        {date:"Dimanche 4 octobre 2026",heure:"15h00",dom:"TRÉVIÈRES",logoDom:"logos/trevieres.png",scoreDom:1,ext:"COURSEULLES B",logoExt:"logos/courseulles.png",scoreExt:3},
+        {date:"Dimanche 4 octobre 2026",heure:"15h00",dom:"ESIVO B",logoDom:"logos/esivo.png",scoreDom:1,ext:"THAON BRETTEVILLE C",logoExt:"logos/thaon-bretteville-b.png",scoreExt:6},
+        {date:"Dimanche 4 octobre 2026",heure:"15h00",dom:"CHEMIN VERT B",logoDom:"logos/chemin-vert.png",scoreDom:0,ext:"ES PORTAISE",logoExt:"logos/es-portaise.png",scoreExt:1},
+        {date:"Dimanche 4 octobre 2026",heure:"15h00",dom:"BASLY",logoDom:"logos/basly.png",scoreDom:7,ext:"HASTINGS",logoExt:"logos/hastings.png",scoreExt:2}
+      ];;
 
       contenu.innerHTML = `
         <style>
@@ -14658,6 +14667,7 @@ const resultatsJ7 = [
                 <select id="sb-round-select" aria-label="Choisir une journée de championnat">
                   <option value="1" selected>Journée 1</option>
                   <option value="2">Journée 2</option>
+                  <option value="3">Journée 3</option>
                 </select>
               </label>
             </div>
@@ -14672,7 +14682,7 @@ const resultatsJ7 = [
         const compteur = document.getElementById("sb-round-count");
         if (!titre || !liste || !select) return;
         const journee = Number(select.value);
-        const journees = { 1: resultatsJ1, 2: resultatsJ2B };
+        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B };
         const matchs = journees[journee] || resultatsJ1;
         titre.textContent = "Journée " + journee;
         if (compteur) compteur.textContent = matchs.length + " MATCHS";
