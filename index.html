@@ -14440,7 +14440,7 @@ const resultatsJ7 = [
             '</div></article>'
         ).join("");
         document.getElementById("sa-prev").disabled = journeeActive === 1;
-        document.getElementById("sa-next").disabled = journeeActive === 14;
+        document.getElementById("sa-next").disabled = journeeActive === 15;
       };
       document.getElementById("sa-prev").addEventListener("click", () => { journeeActive = Math.max(1, journeeActive - 1); afficherJournee(); });
       document.getElementById("sa-next").addEventListener("click", () => { journeeActive = Math.min(15, journeeActive + 1); afficherJournee(); });
