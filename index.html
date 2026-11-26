@@ -14389,6 +14389,15 @@ const resultatsJ7 = [
 
 
 
+      const resultatsJ4B = [
+        {date:"Samedi 10 octobre 2026",heure:"18h30",dom:"COURSEULLES B",logoDom:"logos/courseulles.png",scoreDom:2,ext:"TERRE ET MER B",logoExt:"logos/terre-et-mer.png",scoreExt:0},
+        {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"HASTINGS",logoDom:"logos/hastings.png",scoreDom:2,ext:"ES PORTAISE",logoExt:"logos/es-portaise.png",scoreExt:3},
+        {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"BAIE DE L'ORNE",logoDom:"logos/baie-de-l-orne.png",scoreDom:1,ext:"BASLY",logoExt:"logos/basly.png",scoreExt:0},
+        {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"THAON BRETTEVILLE C",logoDom:"logos/thaon-bretteville-b.png",scoreDom:0,ext:"AJS COLL. OUISTREHAM B",logoExt:"logos/ajs-ouistreham-c.png",scoreExt:3,note:"Pénalité"},
+        {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"BRETTEVILLE/ODON B",logoDom:"logos/bretteville-odon.png",scoreDom:3,ext:"ESIVO B",logoExt:"logos/esivo.png",scoreExt:2},
+        {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"TRÉVIÈRES",logoDom:"logos/trevieres.png",scoreDom:4,ext:"CHEMIN VERT B",logoExt:"logos/chemin-vert.png",scoreExt:3}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -14439,6 +14448,7 @@ const resultatsJ7 = [
       .sa-score small{color:#63c38d}
       .sa-score small.sa-upcoming{color:#e56b73}
       .sa-score small.sa-finished{color:#63c38d}
+      .sa-score small.sa-penalty{color:#e5bd37;font-size:7px;margin-top:3px}
           @media(max-width:700px){
             .sa-champ{gap:14px}.sa-hero{padding:18px}.sa-hero img{width:54px;height:54px}.sa-panel{padding:14px}.sa-panel h3{font-size:19px}
             .sa-table-wrap{display:none}.sa-mobile-table{display:grid;gap:8px}
@@ -14668,6 +14678,7 @@ const resultatsJ7 = [
                   <option value="1" selected>Journée 1</option>
                   <option value="2">Journée 2</option>
                   <option value="3">Journée 3</option>
+                  <option value="4">Journée 4</option>
                 </select>
               </label>
             </div>
@@ -14682,7 +14693,7 @@ const resultatsJ7 = [
         const compteur = document.getElementById("sb-round-count");
         if (!titre || !liste || !select) return;
         const journee = Number(select.value);
-        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B };
+        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B };
         const matchs = journees[journee] || resultatsJ1;
         const totalMatchs = Object.values(journees).reduce(
           (total, matchsJournee) => total + matchsJournee.length,
@@ -14695,7 +14706,7 @@ const resultatsJ7 = [
             '<div class="sa-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
             '<div class="sa-game-teams">' +
               '<div class="sa-team"><img src="' + match.logoDom + '" alt=""><strong>' + match.dom + '</strong></div>' +
-              '<div class="sa-score">' + match.scoreDom + ' – ' + match.scoreExt + '<small class="sa-finished">TERMINÉ</small></div>' +
+              '<div class="sa-score">' + match.scoreDom + ' – ' + match.scoreExt + '<small class="sa-finished">TERMINÉ</small>' + (match.note ? '<small class="sa-penalty">' + match.note.toUpperCase() + '</small>' : '') + '</div>' +
               '<div class="sa-team"><img src="' + match.logoExt + '" alt=""><strong>' + match.ext + '</strong></div>' +
             '</div></article>'
         ).join("");
