@@ -14340,6 +14340,16 @@ const resultatsJ7 = [
         {date:"Dimanche 4 avril 2027",heure:"15h",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:null,ext:"BRETTEVILLE/ODON",logoExt:"logos/bretteville-odon.png",scoreExt:null}
       ];
 
+
+      const resultatsJ18 = [
+        {date:"Dimanche 11 avril 2027",heure:"15h",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:null,ext:"THAON BRETTEVILLE B",logoExt:"logos/thaon-bretteville-b.png",scoreExt:null},
+        {date:"Dimanche 11 avril 2027",heure:"15h",dom:"TERRE ET MER",logoDom:"logos/terre-et-mer.png",scoreDom:null,ext:"IFS B",logoExt:"logos/ifs-b.png",scoreExt:null},
+        {date:"Dimanche 11 avril 2027",heure:"15h",dom:"TROARN",logoDom:"logos/troarn.png",scoreDom:null,ext:"LE TRONQUAY",logoExt:"logos/le-tronquay.png",scoreExt:null},
+        {date:"Dimanche 11 avril 2027",heure:"15h",dom:"LYSTRIENNE",logoDom:"logos/lystrienne.png",scoreDom:null,ext:"INTER ODON",logoExt:"logos/inter-odon.png",scoreExt:null},
+        {date:"Dimanche 11 avril 2027",heure:"15h",dom:"MOUEN",logoDom:"logos/mouen.png",scoreDom:null,ext:"ST VIGOR LE GRAND",logoExt:"logos/st-vigor-le-grand.png",scoreExt:null},
+        {date:"Dimanche 11 avril 2027",heure:"15h",dom:"BRETTEVILLE/ODON",logoDom:"logos/bretteville-odon.png",scoreDom:null,ext:"AVANT GARDE C",logoExt:"logos/avant-garde-c.png",scoreExt:null}
+      ];
+
       const resultatsJ14 = [
         {date:"Samedi 13 février 2027",heure:"19h15",dom:"AVANT GARDE C",logoDom:"logos/avant-garde-c.png",scoreDom:null,ext:"IFS B",logoExt:"logos/ifs-b.png",scoreExt:null},
         {date:"Dimanche 14 février 2027",heure:"14h30",dom:"TROARN",logoDom:"logos/troarn.png",scoreDom:null,ext:"TERRE ET MER",logoExt:"logos/terre-et-mer.png",scoreExt:null},
@@ -14431,7 +14441,7 @@ const resultatsJ7 = [
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
           <section class="sa-panel">
-            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">102 MATCHS</span></div>
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">108 MATCHS</span></div>
             <div class="sa-round">
               <button type="button" id="sa-prev" aria-label="Journée précédente">‹</button>
               <div><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong id="sa-round-title">Journée 1</strong></div>
@@ -14443,7 +14453,7 @@ const resultatsJ7 = [
       `;
       let journeeActive = 1;
       const afficherJournee = () => {
-        const matchs = [resultatsJ1, resultatsJ2, resultatsJ3, resultatsJ4, resultatsJ5, resultatsJ6, resultatsJ7, resultatsJ8, resultatsJ9, resultatsJ10, resultatsJ11, resultatsJ12, resultatsJ13, resultatsJ14, resultatsJ15, resultatsJ16, resultatsJ17][journeeActive - 1];
+        const matchs = [resultatsJ1, resultatsJ2, resultatsJ3, resultatsJ4, resultatsJ5, resultatsJ6, resultatsJ7, resultatsJ8, resultatsJ9, resultatsJ10, resultatsJ11, resultatsJ12, resultatsJ13, resultatsJ14, resultatsJ15, resultatsJ16, resultatsJ17, resultatsJ18][journeeActive - 1];
         const titre = document.getElementById("sa-round-title");
         const liste = document.getElementById("sa-games");
         if (!titre || !liste) return;
@@ -14458,10 +14468,10 @@ const resultatsJ7 = [
             '</div></article>'
         ).join("");
         document.getElementById("sa-prev").disabled = journeeActive === 1;
-        document.getElementById("sa-next").disabled = journeeActive === 17;
+        document.getElementById("sa-next").disabled = journeeActive === 18;
       };
       document.getElementById("sa-prev").addEventListener("click", () => { journeeActive = Math.max(1, journeeActive - 1); afficherJournee(); });
-      document.getElementById("sa-next").addEventListener("click", () => { journeeActive = Math.min(17, journeeActive + 1); afficherJournee(); });
+      document.getElementById("sa-next").addEventListener("click", () => { journeeActive = Math.min(18, journeeActive + 1); afficherJournee(); });
       afficherJournee();
       return;
     }
