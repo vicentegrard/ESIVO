@@ -14684,8 +14684,12 @@ const resultatsJ7 = [
         const journee = Number(select.value);
         const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B };
         const matchs = journees[journee] || resultatsJ1;
+        const totalMatchs = Object.values(journees).reduce(
+          (total, matchsJournee) => total + matchsJournee.length,
+          0
+        );
         titre.textContent = "Journée " + journee;
-        if (compteur) compteur.textContent = matchs.length + " MATCHS";
+        if (compteur) compteur.textContent = totalMatchs + " MATCHS";
         liste.innerHTML = matchs.map(match =>
           '<article class="sa-game ' + (match.dom === "ESIVO B" || match.ext === "ESIVO B" ? "sa-game-esivo" : "") + '">' +
             '<div class="sa-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
