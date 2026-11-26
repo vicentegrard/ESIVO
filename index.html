@@ -14388,7 +14388,7 @@ const resultatsJ7 = [
       ];
 
 
-      const resultatsJ2 = [
+      const resultatsJ2B = [
         {date:"Samedi 19 septembre 2026",heure:"18h30",dom:"COURSEULLES B",logoDom:"logos/courseulles.png",scoreDom:1,ext:"CHEMIN VERT B",logoExt:"logos/chemin-vert.png",scoreExt:0},
         {date:"Dimanche 20 septembre 2026",heure:"15h00",dom:"ES PORTAISE",logoDom:"logos/es-portaise.png",scoreDom:9,ext:"BASLY",logoExt:"logos/basly.png",scoreExt:2},
         {date:"Dimanche 20 septembre 2026",heure:"15h00",dom:"HASTINGS",logoDom:"logos/hastings.png",scoreDom:2,ext:"AJS COLL. OUISTREHAM B",logoExt:"logos/ajs-ouistreham-c.png",scoreExt:1},
@@ -14668,7 +14668,7 @@ const resultatsJ7 = [
         const select = document.getElementById("sb-round-select");
         if (!titre || !liste || !select) return;
         const journee = Number(select.value);
-        const matchs = journee === 2 ? resultatsJ2 : resultatsJ1;
+        const matchs = journee === 2 ? resultatsJ2B : resultatsJ1;
         titre.textContent = "Journée " + journee;
         liste.innerHTML = matchs.map(match =>
           '<article class="sa-game ' + (match.dom === "ESIVO B" || match.ext === "ESIVO B" ? "sa-game-esivo" : "") + '">' +
