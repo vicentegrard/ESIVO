@@ -7945,7 +7945,7 @@ async function ouvrirFicheMatchAccueil(match, nomEquipe, donneesFraiches = false
 
   const eventId = genererIdEvenement("match", [
   nomEquipe,
-  ...match
+  ...match.slice(0, 10)
 ]);
 
   document.querySelector(".mc-match-overlay")?.remove();
@@ -13216,7 +13216,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
 
     const eventId = genererIdEvenement("match", [
   equipe,
-  ...match
+  ...match.slice(0, 10)
 ]);
     
     const ancienneFiche = contenu.querySelector(".mc-match-overlay");
@@ -22860,7 +22860,7 @@ async function ouvrirFicheMatchAccueil(match, nomEquipe, donneesFraiches = false
 
   const eventId = genererIdEvenement("match", [
   nomEquipe,
-  ...match
+  ...match.slice(0, 10)
 ]);
 
   document.querySelector(".mc-match-overlay")?.remove();
@@ -28138,7 +28138,7 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
 
     const eventId = genererIdEvenement("match", [
   equipe,
-  ...match
+  ...match.slice(0, 10)
 ]);
     
     const ancienneFiche = contenu.querySelector(".mc-match-overlay");
@@ -32142,9 +32142,9 @@ async function initialiserDashboardAdmin() {
     const maintenant=new Date();
     const dateHeure=m=>{const heure=(m.heure && String(m.heure).includes(':'))?m.heure:'12:00';return new Date((m.date||'')+'T'+heure+':00');};
     const matchs=evenements.filter(m=>m.type==='match');
-    const aVenir=matchs.filter(m=>m.resultatEnregistre!==true && m.statutMatch!=='reporte' && m.date && dateHeure(m)>maintenant).length;
+    const aVenir=matchs.filter(m=>m.resultatEnregistre!==true && !estMatchReporte(m) && m.date && dateHeure(m)>maintenant).length;
     const resultats=matchs.filter(m=>m.resultatEnregistre===true).length;
-    const reportes=matchs.filter(m=>m.statutMatch==='reporte').length;
+    const reportes=matchs.filter(m=>estMatchReporte(m)).length;
     const categories=new Set(evenements.map(m=>m.equipe).filter(Boolean)).size;
     zone.innerHTML='<div class="admin-metric"><span>RENCONTRES À VENIR</span><strong>'+aVenir+'</strong><small>Matchs programmés</small></div>'+
       '<div class="admin-metric"><span>RÉSULTATS SAISIS</span><strong>'+resultats+'</strong><small>Matchs terminés enregistrés</small></div>'+
