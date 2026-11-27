@@ -14378,6 +14378,15 @@ const resultatsJ7 = [
         {date:"Dimanche 9 mai 2027",heure:"15h",dom:"BRETTEVILLE/ODON",logoDom:"logos/bretteville-odon.png",scoreDom:null,ext:"IFS B",logoExt:"logos/ifs-b.png",scoreExt:null}
       ];
 
+      const resultatsJ22 = [
+        {date:"Samedi 22 mai 2027",heure:"18h",dom:"IFS B",logoDom:"logos/ifs-b.png",scoreDom:null,ext:"LE TRONQUAY",logoExt:"logos/le-tronquay.png",scoreExt:null},
+        {date:"Samedi 22 mai 2027",heure:"19h",dom:"THAON BRETTEVILLE B",logoDom:"logos/thaon-bretteville-b.png",scoreDom:null,ext:"LYSTRIENNE",logoExt:"logos/lystrienne.png",scoreExt:null},
+        {date:"Dimanche 23 mai 2027",heure:"15h",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:null,ext:"ST VIGOR LE GRAND",logoExt:"logos/st-vigor-le-grand.png",scoreExt:null},
+        {date:"Dimanche 23 mai 2027",heure:"15h",dom:"TERRE ET MER",logoDom:"logos/terre-et-mer.png",scoreDom:null,ext:"AVANT GARDE C",logoExt:"logos/avant-garde-c.png",scoreExt:null},
+        {date:"Dimanche 23 mai 2027",heure:"15h",dom:"TROARN",logoDom:"logos/troarn.png",scoreDom:null,ext:"MOUEN",logoExt:"logos/mouen.png",scoreExt:null},
+        {date:"Dimanche 23 mai 2027",heure:"15h",dom:"INTER ODON",logoDom:"logos/inter-odon.png",scoreDom:null,ext:"BRETTEVILLE/ODON",logoExt:"logos/bretteville-odon.png",scoreExt:null}
+      ];
+
       const resultatsJ14 = [
         {date:"Samedi 13 février 2027",heure:"19h15",dom:"AVANT GARDE C",logoDom:"logos/avant-garde-c.png",scoreDom:null,ext:"IFS B",logoExt:"logos/ifs-b.png",scoreExt:null},
         {date:"Dimanche 14 février 2027",heure:"14h30",dom:"TROARN",logoDom:"logos/troarn.png",scoreDom:null,ext:"TERRE ET MER",logoExt:"logos/terre-et-mer.png",scoreExt:null},
@@ -14475,7 +14484,7 @@ const resultatsJ7 = [
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
           <section class="sa-panel">
-            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">126 MATCHS</span></div>
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">132 MATCHS</span></div>
             <div class="sa-round">
               <div class="sa-round-heading"><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong id="sa-round-title">Choisir une journée</strong></div>
               <label class="sa-round-select-wrap" for="sa-round-select">
@@ -14502,6 +14511,7 @@ const resultatsJ7 = [
                   <option value="19">Journée 19</option>
                   <option value="20">Journée 20</option>
                   <option value="21">Journée 21</option>
+                  <option value="22">Journée 22</option>
                 </select>
               </label>
             </div>
@@ -14511,7 +14521,7 @@ const resultatsJ7 = [
       `;
       let journeeActive = 1;
       const afficherJournee = () => {
-        const matchs = [resultatsJ1, resultatsJ2, resultatsJ3, resultatsJ4, resultatsJ5, resultatsJ6, resultatsJ7, resultatsJ8, resultatsJ9, resultatsJ10, resultatsJ11, resultatsJ12, resultatsJ13, resultatsJ14, resultatsJ15, resultatsJ16, resultatsJ17, resultatsJ18, resultatsJ19, resultatsJ20, resultatsJ21][journeeActive - 1];
+        const matchs = [resultatsJ1, resultatsJ2, resultatsJ3, resultatsJ4, resultatsJ5, resultatsJ6, resultatsJ7, resultatsJ8, resultatsJ9, resultatsJ10, resultatsJ11, resultatsJ12, resultatsJ13, resultatsJ14, resultatsJ15, resultatsJ16, resultatsJ17, resultatsJ18, resultatsJ19, resultatsJ20, resultatsJ21, resultatsJ22][journeeActive - 1];
         const titre = document.getElementById("sa-round-title");
         const liste = document.getElementById("sa-games");
         if (!titre || !liste) return;
@@ -29242,6 +29252,15 @@ const resultatsJ7 = [
         {date:"Dimanche 9 mai 2027",heure:"15h",dom:"BRETTEVILLE/ODON",logoDom:"logos/bretteville-odon.png",scoreDom:null,ext:"IFS B",logoExt:"logos/ifs-b.png",scoreExt:null}
       ];
 
+      const resultatsJ22 = [
+        {date:"Samedi 22 mai 2027",heure:"18h",dom:"IFS B",logoDom:"logos/ifs-b.png",scoreDom:null,ext:"LE TRONQUAY",logoExt:"logos/le-tronquay.png",scoreExt:null},
+        {date:"Samedi 22 mai 2027",heure:"19h",dom:"THAON BRETTEVILLE B",logoDom:"logos/thaon-bretteville-b.png",scoreDom:null,ext:"LYSTRIENNE",logoExt:"logos/lystrienne.png",scoreExt:null},
+        {date:"Dimanche 23 mai 2027",heure:"15h",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:null,ext:"ST VIGOR LE GRAND",logoExt:"logos/st-vigor-le-grand.png",scoreExt:null},
+        {date:"Dimanche 23 mai 2027",heure:"15h",dom:"TERRE ET MER",logoDom:"logos/terre-et-mer.png",scoreDom:null,ext:"AVANT GARDE C",logoExt:"logos/avant-garde-c.png",scoreExt:null},
+        {date:"Dimanche 23 mai 2027",heure:"15h",dom:"TROARN",logoDom:"logos/troarn.png",scoreDom:null,ext:"MOUEN",logoExt:"logos/mouen.png",scoreExt:null},
+        {date:"Dimanche 23 mai 2027",heure:"15h",dom:"INTER ODON",logoDom:"logos/inter-odon.png",scoreDom:null,ext:"BRETTEVILLE/ODON",logoExt:"logos/bretteville-odon.png",scoreExt:null}
+      ];
+
       const resultatsJ14 = [
         {date:"Samedi 13 février 2027",heure:"19h15",dom:"AVANT GARDE C",logoDom:"logos/avant-garde-c.png",scoreDom:null,ext:"IFS B",logoExt:"logos/ifs-b.png",scoreExt:null},
         {date:"Dimanche 14 février 2027",heure:"14h30",dom:"TROARN",logoDom:"logos/troarn.png",scoreDom:null,ext:"TERRE ET MER",logoExt:"logos/terre-et-mer.png",scoreExt:null},
@@ -29339,7 +29358,7 @@ const resultatsJ7 = [
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
           <section class="sa-panel">
-            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">126 MATCHS</span></div>
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip">132 MATCHS</span></div>
             <div class="sa-round">
               <div class="sa-round-heading"><small>DÉPARTEMENTAL 1 · GROUPE A</small><strong id="sa-round-title">Choisir une journée</strong></div>
               <label class="sa-round-select-wrap" for="sa-round-select">
@@ -29366,6 +29385,7 @@ const resultatsJ7 = [
                   <option value="19">Journée 19</option>
                   <option value="20">Journée 20</option>
                   <option value="21">Journée 21</option>
+                  <option value="22">Journée 22</option>
                 </select>
               </label>
             </div>
@@ -29375,7 +29395,7 @@ const resultatsJ7 = [
       `;
       let journeeActive = 1;
       const afficherJournee = () => {
-        const matchs = [resultatsJ1, resultatsJ2, resultatsJ3, resultatsJ4, resultatsJ5, resultatsJ6, resultatsJ7, resultatsJ8, resultatsJ9, resultatsJ10, resultatsJ11, resultatsJ12, resultatsJ13, resultatsJ14, resultatsJ15, resultatsJ16, resultatsJ17, resultatsJ18, resultatsJ19, resultatsJ20, resultatsJ21][journeeActive - 1];
+        const matchs = [resultatsJ1, resultatsJ2, resultatsJ3, resultatsJ4, resultatsJ5, resultatsJ6, resultatsJ7, resultatsJ8, resultatsJ9, resultatsJ10, resultatsJ11, resultatsJ12, resultatsJ13, resultatsJ14, resultatsJ15, resultatsJ16, resultatsJ17, resultatsJ18, resultatsJ19, resultatsJ20, resultatsJ21, resultatsJ22][journeeActive - 1];
         const titre = document.getElementById("sa-round-title");
         const liste = document.getElementById("sa-games");
         if (!titre || !liste) return;
