@@ -30121,87 +30121,53 @@ const classementFeminines = donneesFirestore.clubs;
     
     if (equipe === "Seniors Vétérans") {
       const donneesFirestore = await chargerClassementFirestore(equipe);
-const classementVeterans = donneesFirestore.clubs;
+      const classementVeterans = donneesFirestore.clubs || [];
 
       contenu.innerHTML = `
-        <strong>${page} · ${equipe}</strong>
-        <div class="content-card">
-          <h3>🏆 Championnat Seniors Vétérans · Groupe F</h3>
-          <p>Classement du championnat 2026–2027</p>
-
-          <div class="classement-tableau">
-            <div style="overflow-x:auto; margin-top:18px;">
-              <table style="width:100%; border-collapse:collapse; min-width:780px; font-size:12px;">
-                <thead>
-                  <tr style="color:#B8B8C2; border-bottom:1px solid #454550;">
-                    <th style="padding:12px 7px;">Pos.</th>
-                    <th style="padding:12px 7px; text-align:left;">Équipe</th>
-                    <th>Pts</th><th>J</th><th>V</th><th>N</th><th>D</th>
-                    <th>Forf.</th><th>BP</th><th>BC</th><th>Diff.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${classementVeterans.map(club => `
-                    <tr style="
-                      background:${club.equipe === "ESIVO" ? "rgba(170,26,36,.22)" : "transparent"};
-                      border-bottom:1px solid #393943;
-                      font-weight:${club.equipe === "ESIVO" ? "800" : "500"};
-                      color:${club.equipe === "ESIVO" ? "#FFFFFF" : "#D0D0D8"};
-                    ">
-                      <td style="padding:12px 7px; text-align:center;">${club.position}</td>
-                      <td style="padding:10px 7px; white-space:nowrap;">
-                        <div style="display:flex; align-items:center; gap:9px;">
-                          <img src="${club.logo}" alt="Logo ${club.equipe}" style="width:30px; height:30px; object-fit:contain;">
-                          <span>${club.equipe}</span>
-                        </div>
-                      </td>
-                      <td style="text-align:center; font-weight:900; color:#FFFFFF; font-size:14px;">${club.points}</td>
-                      <td style="text-align:center;">${club.joues}</td>
-                      <td style="text-align:center;">${club.victoires}</td>
-                      <td style="text-align:center;">${club.nuls}</td>
-                      <td style="text-align:center;">${club.defaites}</td>
-                      <td style="text-align:center;">${club.forfait}</td>
-                      <td style="text-align:center;">${club.butsPour}</td>
-                      <td style="text-align:center;">${club.butsContre}</td>
-                      <td style="text-align:center;">${club.difference}</td>
-                    </tr>
-                  `).join("")}
+        <section class="sa-classement">
+          <div class="sa-hero-line">
+            <div><h2>Départemental Vétérans</h2><p>Seniors Vétérans · Groupe F · District du Calvados</p></div>
+            <img src="logo-esivo-transparent.png" alt="ESIVO">
+          </div>
+          <div class="sa-panel">
+            <div class="sa-panel-head">
+              <div><span class="sa-eyebrow">LE CHAMPIONNAT</span><h3>Classement général</h3></div>
+              <span class="sa-chip">${classementVeterans.length} ÉQUIPES</span>
+            </div>
+            <div class="sa-desktop-table">
+              <table class="sa-table">
+                <thead><tr>
+                  <th>Pos.</th><th>Équipe</th><th>Pts</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Forf.</th><th>BP</th><th>BC</th><th>Diff.</th>
+                </tr></thead>
+                <tbody>${classementVeterans.map(club => `
+                  <tr class="${club.equipe === "ESIVO" ? "sa-esivo-row" : ""}">
+                    <td>${club.position}</td>
+                    <td><div class="sa-team-cell"><img src="${club.logo}" alt=""><strong>${club.equipe}</strong></div></td>
+                    <td class="sa-points">${club.points}</td><td>${club.joues}</td><td>${club.victoires}</td><td>${club.nuls}</td><td>${club.defaites}</td><td>${club.forfait}</td><td>${club.butsPour}</td><td>${club.butsContre}</td><td>${club.difference}</td>
+                  </tr>`).join("")}
                 </tbody>
               </table>
             </div>
+            <div class="sa-mobile-table">
+              ${classementVeterans.map(club => `
+                <article class="sa-mobile-row ${club.equipe === "ESIVO" ? "sa-esivo-row" : ""}">
+                  <div class="sa-mobile-team">
+                    <span class="sa-mobile-position">${club.position}</span>
+                    <img src="${club.logo}" alt="">
+                    <strong>${club.equipe}</strong>
+                    <span class="sa-mobile-points">${club.points} pts</span>
+                  </div>
+                  <div class="sa-mobile-stats">
+                    <span>J <b>${club.joues}</b></span><span>V <b>${club.victoires}</b></span><span>N <b>${club.nuls}</b></span><span>D <b>${club.defaites}</b></span><span>Forf. <b>${club.forfait}</b></span><span>BP <b>${club.butsPour}</b></span><span>BC <b>${club.butsContre}</b></span><span>Diff. <b>${club.difference}</b></span>
+                  </div>
+                </article>`).join("")}
+            </div>
+            <p class="sa-table-note">J : matchs joués · Forf. : forfaits · BP : buts pour · BC : buts contre · Diff. : différence de buts</p>
           </div>
-
-          <div class="classement-cartes">
-            ${classementVeterans.map(club => `
-              <div class="club-mobile ${club.equipe === "ESIVO" ? "club-esivo" : ""}">
-                <div class="club-mobile-entete">
-                  <span class="club-mobile-position">${club.position}</span>
-                  <img src="${club.logo}" alt="Logo ${club.equipe}">
-                  <strong>${club.equipe}</strong>
-                  <span class="club-mobile-points">${club.points} ${club.points === 0 || Math.abs(club.points) === 1 ? "pt" : "pts"}</span>
-                </div>
-                <div class="club-mobile-stats">
-                  <span>Joués : ${club.joues}</span>
-                  <span>V : ${club.victoires}</span>
-                  <span>N : ${club.nuls}</span>
-                  <span>D : ${club.defaites}</span>
-                  <span>Forf. : ${club.forfait}</span>
-                  <span>BP : ${club.butsPour}</span>
-                  <span>BC : ${club.butsContre}</span>
-                  <span>Diff. : ${club.difference}</span>
-                </div>
-              </div>
-            `).join("")}
-          </div>
-
-          <p style="margin-top:14px; color:#B8B8C2; font-size:11px;">
-            J : matchs joués · Forf. : forfaits · BP : buts pour · BC : buts contre · Diff. : différence de buts
-          </p>
-        </div>
+        </section>
       `;
       return;
     }
-
 
     if (equipe === "U13") {
       const donneesFirestore = await chargerClassementFirestore(equipe);
