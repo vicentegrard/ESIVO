@@ -14434,7 +14434,7 @@ const resultatsJ7 = [
           .sa-game-teams{display:grid;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);align-items:center;gap:6px;padding-top:12px}
           .sa-team{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-width:0}
           .sa-team img{width:40px;height:40px;object-fit:contain}
-          .sa-team strong{font-size:10px;color:#f1f1f4;overflow-wrap:anywhere}
+          .sa-team strong{font-size:10px;color:#f1f1f4;overflow-wrap:normal;word-break:normal;hyphens:none}
           .sa-score{text-align:center;color:#fff;font-size:23px;font-weight:900;white-space:nowrap}
           .sa-score small{display:block;color:#63c38d;font-size:8px;letter-spacing:1px;margin-top:5px}
       .sa-score small{color:#63c38d}
@@ -14582,6 +14582,15 @@ const resultatsJ7 = [
         {date:"Dimanche 11 octobre 2026",heure:"15h00",dom:"TRÉVIÈRES",logoDom:"logos/trevieres.png",scoreDom:4,ext:"CHEMIN VERT B",logoExt:"logos/chemin-vert.png",scoreExt:3}
       ];
 
+      const resultatsJ5B = [
+        {date:"Samedi 17 octobre 2026",heure:"18h30",dom:"AJS COLL. OUISTREHAM B",logoDom:"logos/ajs-ouistreham-c.png",scoreDom:4,ext:"BRETTEVILLE/ODON B",logoExt:"logos/bretteville-odon.png",scoreExt:1},
+        {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"TERRE ET MER B",logoDom:"logos/terre-et-mer.png",scoreDom:1,ext:"TRÉVIÈRES",logoExt:"logos/trevieres.png",scoreExt:1},
+        {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"ESIVO B",logoDom:"logos/esivo.png",scoreDom:1,ext:"COURSEULLES B",logoExt:"logos/courseulles.png",scoreExt:7},
+        {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"ES PORTAISE",logoDom:"logos/es-portaise.png",scoreDom:5,ext:"BAIE DE L'ORNE",logoExt:"logos/baie-de-l-orne.png",scoreExt:0},
+        {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"BASLY",logoDom:"logos/basly.png",scoreDom:1,ext:"THAON BRETTEVILLE C",logoExt:"logos/thaon-bretteville-b.png",scoreExt:1},
+        {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"CHEMIN VERT B",logoDom:"logos/chemin-vert.png",scoreDom:0,ext:"HASTINGS",logoExt:"logos/hastings.png",scoreExt:3,note:"Pénalité"}
+      ];
+
 
       contenu.innerHTML = `
         <style>
@@ -14627,7 +14636,7 @@ const resultatsJ7 = [
           .sa-game-teams{display:grid;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);align-items:center;gap:6px;padding-top:12px}
           .sa-team{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-width:0}
           .sa-team img{width:40px;height:40px;object-fit:contain}
-          .sa-team strong{font-size:10px;color:#f1f1f4;overflow-wrap:anywhere}
+          .sa-team strong{font-size:10px;color:#f1f1f4;overflow-wrap:normal;word-break:normal;hyphens:none}
           .sa-score{text-align:center;color:#fff;font-size:23px;font-weight:900;white-space:nowrap}
           .sa-score small{display:block;color:#63c38d;font-size:8px;letter-spacing:1px;margin-top:5px}
       .sa-score small{color:#63c38d}
@@ -14680,6 +14689,7 @@ const resultatsJ7 = [
                   <option value="2">Journée 2</option>
                   <option value="3">Journée 3</option>
                   <option value="4">Journée 4</option>
+                  <option value="5">Journée 5</option>
                 </select>
               </label>
             </div>
@@ -14694,7 +14704,7 @@ const resultatsJ7 = [
         const compteur = document.getElementById("sb-round-count");
         if (!titre || !liste || !select) return;
         const journee = Number(select.value);
-        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B };
+        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B, 5: resultatsJ5B };
         const matchs = journees[journee] || resultatsJ1;
         const totalMatchs = Object.values(journees).reduce(
           (total, matchsJournee) => total + matchsJournee.length,
