@@ -30002,7 +30002,7 @@ const resultatsJ7 = [
             <div class="sa-round">
               <div class="sa-round-heading"><small>DÉPARTEMENTAL 4 · GROUPE B</small><strong id="sc-round-title">Journée 1</strong></div>
               <label class="sa-round-select-wrap" for="sc-round-select"><span>Afficher la journée</span>
-                <select id="sc-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option><option value="4">Journée 4</option><option value="5">Journée 5</option><option value="6">Journée 6</option><option value="7">Journée 7</option><option value="8">Journée 8</option><option value="9">Journée 9</option><option value="10">Journée 10</option><option value="11">Journée 11</option><option value="12">Journée 12</option><option value="13">Journée 13</option><option value="14">Journée 14</option></select>
+                <select id="sc-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option><option value="3">Journée 3</option><option value="4">Journée 4</option><option value="5">Journée 5</option><option value="6">Journée 6</option><option value="7">Journée 7</option><option value="8">Journée 8</option><option value="9">Journée 9</option><option value="10">Journée 10</option><option value="11">Journée 11</option><option value="12">Journée 12</option><option value="13">Journée 13</option><option value="14">Journée 14</option></select>
               </label>
             </div>
             <div class="sc-games" id="sc-games"></div>
@@ -30141,6 +30141,15 @@ const classementFeminines = donneesFirestore.clubs;
         {date:"Dimanche 27 septembre 2026",heure:"10h",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:8,ext:"CONDÉ PÉTRUVIENNE",logoExt:"logos/conde-petruvienne.png",scoreExt:0}
       ];
 
+      const resultatsJ3V = [
+        {date:"Dimanche 11 octobre 2026",heure:"10h",dom:"BAIE DE L'ORNE",logoDom:"logos/baie-de-l-orne.png",scoreDom:2,ext:"ESIVO",logoExt:"logos/esivo.png",scoreExt:0},
+        {date:"Dimanche 11 octobre 2026",heure:"10h",dom:"CINGAL",logoDom:"logos/cingal.png",scoreDom:3,ext:"POTIGNY",logoExt:"logos/potigny.png",scoreExt:1},
+        {date:"Dimanche 11 octobre 2026",heure:"10h",dom:"FCB2LC",logoDom:"logos/fcb2lc.png",scoreDom:1,ext:"ROCQUANCOURT",logoExt:"logos/rocquancourt.png",scoreExt:0},
+        {date:"Dimanche 11 octobre 2026",heure:"10h",dom:"CASTELET",logoDom:"logos/castelet-st-sylvain.png",scoreDom:4,ext:"FALAISE",logoExt:"logos/falaise.png",scoreExt:6},
+        {date:"Dimanche 11 octobre 2026",heure:"10h",dom:"CONDÉ PÉTRUVIENNE",logoDom:"logos/conde-petruvienne.png",scoreDom:2,ext:"MUANCE-CAGNY",logoExt:"logos/muance-cagny.png",scoreExt:3}
+      ];
+
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -30273,11 +30282,11 @@ const classementFeminines = donneesFirestore.clubs;
         const liste = document.getElementById("sv-games");
         const select = document.getElementById("sv-round-select");
         if (!liste || !select) return;
-        const matchs = select.value === "1" ? resultatsJ1V : select.value === "2" ? resultatsJ2V : [];
+        const matchs = select.value === "1" ? resultatsJ1V : select.value === "2" ? resultatsJ2V : select.value === "3" ? resultatsJ3V : [];
         const compteur = document.getElementById("sv-round-count");
         const titre = document.getElementById("sv-round-title");
         if (titre) titre.textContent = "Journée " + select.value;
-        const totalMatchs = resultatsJ1V.length + resultatsJ2V.length;
+        const totalMatchs = resultatsJ1V.length + resultatsJ2V.length + resultatsJ3V.length;
         if (compteur) compteur.textContent = totalMatchs + " MATCHS";
         liste.innerHTML = matchs.map(match =>
           '<article class="sa-game ' + (match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : "") + '">' +
