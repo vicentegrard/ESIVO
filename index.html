@@ -30125,84 +30125,121 @@ const classementFeminines = donneesFirestore.clubs;
 
       contenu.innerHTML = `
         <style>
-          .sa-veterans{display:grid;gap:18px;margin-top:14px}
-          .sa-veterans .sa-hero-line{display:flex;align-items:center;justify-content:space-between;gap:12px}
-          .sa-veterans .sa-hero-line>img{display:block;width:54px;height:54px;max-width:54px;max-height:54px;object-fit:contain;flex:0 0 54px}
-          .sa-veterans .sa-panel{padding:20px;border:1px solid #393b46;border-radius:16px;background:linear-gradient(145deg,#24252d,#1b1c23);min-width:0}
-          .sa-veterans .sa-panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}
-          .sa-veterans .sa-eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:900;color:#d9a5aa}
-          .sa-veterans .sa-chip{font-size:10px;font-weight:900;color:#f4dfe1;background:#aa1a243b;border:1px solid #c84b574d;border-radius:30px;padding:7px 10px;white-space:nowrap}
-          .sa-veterans .sa-panel h3{margin:5px 0 0;color:#fff;font-size:22px}
-          .sa-veterans .sa-desktop-table{display:block;overflow-x:auto;border:1px solid #3a3c47;border-radius:11px}
-          .sa-veterans .sa-table{width:100%;min-width:760px;border-collapse:collapse;text-align:center;font-size:12px}
-          .sa-veterans .sa-table th{background:#2c2d37;color:#b9bbc5;padding:12px 8px;font-size:10px;text-transform:uppercase}
-          .sa-veterans .sa-table td{padding:11px 8px;border-top:1px solid #383a44;color:#d9d9df}
-          .sa-veterans .sa-table .sa-team-cell{display:flex;align-items:center;gap:9px;white-space:nowrap;text-align:left}
-          .sa-veterans .sa-table .sa-team-cell img{display:block;width:30px;height:30px;max-width:30px;max-height:30px;object-fit:contain;flex:0 0 30px}
-          .sa-veterans .sa-table strong,.sa-veterans .sa-mobile-team strong{color:#fff}
-          .sa-veterans .sa-points,.sa-veterans .sa-mobile-points{color:#E5BD37;font-weight:900}
-          .sa-veterans .sa-esivo-row{background:#a91c2b2b}
-          .sa-veterans .sa-mobile-table{display:none}
-          .sa-veterans .sa-table-note{font-size:10px;color:#999ba6;margin:12px 0 0}
+          .sa-champ{display:grid;gap:18px;margin-top:14px}
+          .sa-hero{padding:24px;border:1px solid #55343a;border-radius:18px;background:radial-gradient(circle at 88% 10%,#a91c2b55,transparent 35%),linear-gradient(125deg,#2b1b21,#171820 72%,#28212a)}
+          .sa-eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:900;color:#d9a5aa}
+          .sa-hero-line{display:flex;align-items:center;justify-content:space-between;gap:12px}
+          .sa-chip{font-size:10px;font-weight:900;color:#f4dfe1;background:#aa1a243b;border:1px solid #c84b574d;border-radius:30px;padding:7px 10px}
+          .sa-hero h2{font-size:clamp(25px,4vw,38px);margin:15px 0 5px;color:#fff}
+          .sa-hero p{color:#c7bdc2;margin:0;font-size:13px}
+          .sa-hero img{width:64px;height:64px;object-fit:contain;background:#ffffff12;border-radius:14px;padding:7px}
+          .sa-panel{padding:20px;border:1px solid #393b46;border-radius:16px;background:linear-gradient(145deg,#24252d,#1b1c23);min-width:0}
+          .sa-panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}
+          .sa-panel h3{margin:5px 0 0;color:#fff;font-size:22px}
+          .sa-table-wrap{overflow:auto;border:1px solid #3a3c47;border-radius:11px}
+          .sa-table{width:100%;min-width:760px;border-collapse:collapse;text-align:center;font-size:12px}
+          .sa-table th{background:#2c2d37;color:#b9bbc5;padding:12px 8px;font-size:10px;text-transform:uppercase}
+          .sa-table th:nth-child(2){text-align:left}
+          .sa-table td{padding:11px 8px;border-top:1px solid #383a44;color:#d9d9df}
+          .sa-table tr.sa-highlight{background:#a91c2b2b}
+          .sa-club{display:flex;align-items:center;gap:9px;white-space:nowrap;text-align:left}
+          .sa-club img{width:31px;height:31px;object-fit:contain}
+          .sa-club strong{color:#fff}
+          .sa-rank{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:#353641;font-weight:900}
+          .sa-mobile-table{display:none}
+          .sc-games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+          .sc-game{padding:13px;border:1px solid #3c3e49;border-radius:12px;background:#292a34;min-width:0}
+          .sc-game.sc-esivo{border:2px solid #b52b38;background:linear-gradient(145deg,#43232a,#2b252e)}
+          .sc-game-meta{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#aeb0bb;border-bottom:1px solid #41434d;padding-bottom:10px}
+          .sc-game-teams{display:grid;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);align-items:center;gap:6px;padding-top:12px}
+          .sc-team{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-width:0}
+          .sc-team img{width:40px;height:40px;object-fit:contain}
+          .sc-team strong{font-size:10px;color:#f1f1f4}
+          .sc-score{text-align:center;color:#fff;font-size:23px;font-weight:900;white-space:nowrap}
+          @media(max-width:700px){.sc-games{grid-template-columns:1fr;gap:8px}.sc-game{padding:11px}.sc-team img{width:36px;height:36px}.sc-team strong{font-size:9px}.sc-score{font-size:21px}}
+
+          .sa-note{font-size:10px;color:#999ba6;margin:12px 0 0}
+          .sa-round{display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(120deg,#2b2c36,#24252e);border:1px solid #41434e;border-radius:13px;padding:16px 18px;margin-bottom:12px}
+          .sa-round-heading{display:flex;flex-direction:column;gap:6px;min-width:0}
+          .sa-round strong,.sa-round small{display:block}
+          .sa-round strong{color:#fff;font-size:19px;line-height:1.2}
+          .sa-round small{color:#aeb0bb;font-size:9px;letter-spacing:1px;font-weight:800}
+          .sa-round-select-wrap{display:flex;align-items:center;gap:12px;min-width:230px}
+          .sa-round-select-wrap span{color:#c5c6ce;font-size:11px;font-weight:700;white-space:nowrap}
+          .sa-round-select-wrap select{appearance:none;-webkit-appearance:none;width:100%;min-height:46px;padding:0 42px 0 14px;border:1px solid #555865;border-radius:10px;background-color:#191a21;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23E56B73' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;color:#fff;font:inherit;font-size:14px;font-weight:800;cursor:pointer;transition:border-color .2s ease,box-shadow .2s ease}
+          .sa-round-select-wrap select:hover{border-color:#a9434c}
+          .sa-round-select-wrap select:focus-visible{outline:none;border-color:#E56B73;box-shadow:0 0 0 3px rgba(170,26,36,.25)}
+          .sa-round-select-wrap select option{background:#191a21;color:#fff}
+          @media(max-width:560px){.sa-round{align-items:stretch;flex-direction:column;gap:13px;padding:14px}.sa-round-heading{gap:5px}.sa-round strong{font-size:17px}.sa-round-select-wrap{min-width:0;width:100%;align-items:center;justify-content:space-between}.sa-round-select-wrap select{flex:1;min-width:0}}
+          .sa-games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+          .sa-game{padding:13px;border:1px solid #3c3e49;border-radius:12px;background:#292a34;min-width:0}
+          .sa-game-esivo{border:2px solid #b52b38;background:linear-gradient(145deg,#43232a,#2b252e);box-shadow:0 0 0 1px #b52b3833,0 5px 18px #a91c2b22}
+          .sa-game-meta{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#aeb0bb;border-bottom:1px solid #41434d;padding-bottom:10px}
+          .sa-game-teams{display:grid;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);align-items:center;gap:6px;padding-top:12px}
+          .sa-team{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-width:0}
+          .sa-team img{width:40px;height:40px;object-fit:contain}
+          .sa-team strong{font-size:10px;color:#f1f1f4;overflow-wrap:normal;word-break:normal;hyphens:none}
+          .sa-score{text-align:center;color:#fff;font-size:23px;font-weight:900;white-space:nowrap}
+          .sa-score small{display:block;color:#63c38d;font-size:8px;letter-spacing:1px;margin-top:5px}
+      .sa-score small{color:#63c38d}
+      .sa-score small.sa-upcoming{color:#e56b73}
+      .sa-score small.sa-finished{color:#63c38d}
           @media(max-width:700px){
-            .sa-veterans{gap:14px}
-            .sa-veterans .sa-panel{padding:14px}
-            .sa-veterans .sa-panel h3{font-size:19px}
-            .sa-veterans .sa-desktop-table{display:none}
-            .sa-veterans .sa-mobile-table{display:grid;gap:8px}
-            .sa-veterans .sa-mobile-row{padding:11px;border:1px solid #41434d;border-radius:11px;background:#2a2b35}
-            .sa-veterans .sa-mobile-row.sa-esivo-row{border-color:#b33a45;background:#43242b}
-            .sa-veterans .sa-mobile-team{display:flex;align-items:center;gap:8px;min-width:0}
-            .sa-veterans .sa-mobile-team img{display:block;width:30px;height:30px;max-width:30px;max-height:30px;object-fit:contain;flex:0 0 30px}
-            .sa-veterans .sa-mobile-position{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:#353641;color:#fff;font-size:12px;font-weight:900;flex:0 0 26px}
-            .sa-veterans .sa-mobile-team strong{flex:1;min-width:0;font-size:12px}
-            .sa-veterans .sa-mobile-points{font-size:12px;white-space:nowrap}
-            .sa-veterans .sa-mobile-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;text-align:center;margin-top:10px;padding-top:9px;border-top:1px solid #ffffff18;color:#a6a8b3;font-size:9px}
-            .sa-veterans .sa-mobile-stats span{display:flex;flex-direction:column;gap:3px}
-            .sa-veterans .sa-mobile-stats b{color:#eee;font-size:11px}
+            .sa-champ{gap:14px}.sa-hero{padding:18px}.sa-hero img{width:54px;height:54px}.sa-panel{padding:14px}.sa-panel h3{font-size:19px}
+            .sa-table-wrap{display:none}.sa-mobile-table{display:grid;gap:8px}
+            .sa-mobile-row{padding:11px;border:1px solid #41434d;border-radius:11px;background:#2a2b35}
+            .sa-mobile-row.sa-highlight{border-color:#b33a45;background:#43242b}
+            .sa-mobile-top{display:flex;align-items:center;gap:8px}.sa-mobile-top img{width:32px;height:32px;object-fit:contain}
+            .sa-mobile-top strong{flex:1;min-width:0;color:#fff;font-size:12px}.sa-mobile-top b{color:#fff;font-size:13px;white-space:nowrap}
+            .sa-mobile-stats{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;text-align:center;margin-top:10px;padding-top:9px;border-top:1px solid #ffffff18}
+            .sa-mobile-stats span{display:flex;flex-direction:column;gap:3px}.sa-mobile-stats b{color:#eee;font-size:11px}.sa-mobile-stats small{color:#a6a8b3;font-size:8px}
+            .sa-games{grid-template-columns:1fr;gap:8px}.sa-game{padding:11px}.sa-team img{width:36px;height:36px}.sa-team strong{font-size:9px}.sa-score{font-size:21px}
           }
+          @media(max-width:380px){.sa-mobile-stats{grid-template-columns:repeat(4,1fr);row-gap:8px}.sa-game-teams{grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr)}}
         </style>
-        <section class="sa-classement sa-veterans">
-          <div class="sa-hero-line">
-            <div><h2>Départemental Vétérans</h2><p>Seniors Vétérans · Groupe F · District du Calvados</p></div>
-            <img src="logo-esivo-transparent.png" alt="ESIVO">
-          </div>
-          <div class="sa-panel">
+        <div class="sa-champ">
+          <section class="sa-hero">
+            <div class="sa-hero-line">
+              <span class="sa-eyebrow">CHAMPIONNAT 2026–2027</span>
+              <span class="sa-chip">GROUPE F</span>
+            </div>
+            <div class="sa-hero-line">
+              <div><h2>Départemental Vétérans</h2><p>Seniors Vétérans · District du Calvados</p></div>
+              <img src="logo-esivo-transparent.png" alt="ESIVO">
+            </div>
+          </section>
+          <section class="sa-panel">
             <div class="sa-panel-head">
               <div><span class="sa-eyebrow">LE CHAMPIONNAT</span><h3>Classement général</h3></div>
               <span class="sa-chip">${classementVeterans.length} ÉQUIPES</span>
             </div>
-            <div class="sa-desktop-table">
+            <div class="sa-table-wrap">
               <table class="sa-table">
-                <thead><tr>
-                  <th>Pos.</th><th>Équipe</th><th>Pts</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Forf.</th><th>BP</th><th>BC</th><th>Diff.</th>
-                </tr></thead>
-                <tbody>${classementVeterans.map(club => `
-                  <tr class="${club.equipe === "ESIVO" ? "sa-esivo-row" : ""}">
-                    <td>${club.position}</td>
-                    <td><div class="sa-team-cell"><img src="${club.logo}" alt=""><strong>${club.equipe}</strong></div></td>
-                    <td class="sa-points">${club.points}</td><td>${club.joues}</td><td>${club.victoires}</td><td>${club.nuls}</td><td>${club.defaites}</td><td>${club.forfait}</td><td>${club.butsPour}</td><td>${club.butsContre}</td><td>${club.difference}</td>
-                  </tr>`).join("")}
+                <thead><tr><th>#</th><th>Club</th><th>Pts</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Forf.</th><th>BP</th><th>BC</th><th>Diff.</th></tr></thead>
+                <tbody>
+                  ${classementVeterans.map(club => `
+                    <tr class="${club.equipe === "ESIVO" ? "sa-highlight" : ""}">
+                      <td><span class="sa-rank">${club.position}</span></td>
+                      <td><div class="sa-club"><img src="${club.logo}" alt=""><strong>${club.equipe}</strong></div></td>
+                      <td><strong>${club.points}</strong></td><td>${club.joues}</td><td>${club.victoires}</td><td>${club.nuls}</td><td>${club.defaites}</td><td>${club.forfait}</td><td>${club.butsPour}</td><td>${club.butsContre}</td><td>${club.difference}</td>
+                    </tr>
+                  `).join("")}
                 </tbody>
               </table>
             </div>
             <div class="sa-mobile-table">
               ${classementVeterans.map(club => `
-                <article class="sa-mobile-row ${club.equipe === "ESIVO" ? "sa-esivo-row" : ""}">
-                  <div class="sa-mobile-team">
-                    <span class="sa-mobile-position">${club.position}</span>
-                    <img src="${club.logo}" alt="">
-                    <strong>${club.equipe}</strong>
-                    <span class="sa-mobile-points">${club.points} pts</span>
-                  </div>
+                <article class="sa-mobile-row ${club.equipe === "ESIVO" ? "sa-highlight" : ""}">
+                  <div class="sa-mobile-top"><span class="sa-rank">${club.position}</span><img src="${club.logo}" alt=""><strong>${club.equipe}</strong><b>${club.points} pts</b></div>
                   <div class="sa-mobile-stats">
-                    <span>J <b>${club.joues}</b></span><span>V <b>${club.victoires}</b></span><span>N <b>${club.nuls}</b></span><span>D <b>${club.defaites}</b></span><span>Forf. <b>${club.forfait}</b></span><span>BP <b>${club.butsPour}</b></span><span>BC <b>${club.butsContre}</b></span><span>Diff. <b>${club.difference}</b></span>
+                    ${[["joues","J"],["victoires","V"],["nuls","N"],["defaites","D"],["forfait","F"],["butsPour","BP"],["butsContre","BC"],["difference","Diff."]].map(([key,label]) => `<span><b>${club[key] ?? 0}</b><small>${label}</small></span>`).join("")}
                   </div>
-                </article>`).join("")}
+                </article>
+              `).join("")}
             </div>
-            <p class="sa-table-note">J : matchs joués · Forf. : forfaits · BP : buts pour · BC : buts contre · Diff. : différence de buts</p>
-          </div>
-        </section>
+            <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
+          </section>
+        </div>
       `;
       return;
     }
