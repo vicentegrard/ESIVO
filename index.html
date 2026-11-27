@@ -12721,7 +12721,11 @@ const descriptionsOrganisateurs = {
   "U13": u13Calendrier
 };
 
-const calendrier = calendriersEquipes[equipe];
+const calendrierSource = calendriersEquipes[equipe];
+const calendrier = calendrierSource.filter(match =>
+  Array.isArray(match) &&
+  !estMatchReporte({ statutMatch: match[9] })
+);
 
     
 if (equipe === "U13") {
@@ -27642,7 +27646,11 @@ const descriptionsOrganisateurs = {
   "U13": u13Calendrier
 };
 
-const calendrier = calendriersEquipes[equipe];
+const calendrierSource = calendriersEquipes[equipe];
+const calendrier = calendrierSource.filter(match =>
+  Array.isArray(match) &&
+  !estMatchReporte({ statutMatch: match[9] })
+);
 
     
 if (equipe === "U13") {
