@@ -7896,8 +7896,24 @@ async function initialiserCommentaires(type, eventId, conteneur) {
 }
 
   
-function ouvrirFicheMatchAccueil(match, nomEquipe) {
+async function ouvrirFicheMatchAccueil(match, nomEquipe, donneesFraiches = false) {
   if (!match) return;
+  const idMatch = match[10];
+  if (idMatch && !donneesFraiches && window.esivoDb) {
+    try {
+      const doc = await window.esivoDb.collection("matchs").doc(idMatch).get();
+      if (doc.exists) {
+        const data = doc.data();
+        return ouvrirFicheMatchAccueil([
+          data.date, data.heure, data.competition, data.journee,
+          data.domicile, data.adversaire, data.logo, data.lieu, data.ville,
+          data.statutMatch || "", doc.id
+        ], nomEquipe, true);
+      }
+    } catch (erreur) {
+      console.error("Actualisation de la fiche du match :", erreur);
+    }
+  }
 
   const [
     date, heure, competition, journee,
@@ -8169,7 +8185,7 @@ const logoOrganisateur = equipeOrganisatrice
   return calendrier
     .filter(match =>
       Array.isArray(match) &&
-      match[9] !== "reporte" &&
+      !estMatchReporte({ statutMatch: match[9] }) &&
       new Date(match[0] + "T12:00:00") >= aujourdHui
     )
     .sort((a, b) => a[0].localeCompare(b[0]))[0];
@@ -8515,8 +8531,16 @@ const derniersPlateaux = ["U7", "U9", "U11", "U13"]
 
   
   // Fiche détaillée d'un résultat depuis l'accueil
-  const ouvrirFicheResultatAccueil = resultat => {
+  const ouvrirFicheResultatAccueil = async resultat => {
     if (!resultat) return;
+    if (resultat.id && window.esivoDb) {
+      try {
+        const doc = await window.esivoDb.collection("matchs").doc(resultat.id).get();
+        if (doc.exists) resultat = { ...doc.data(), id: doc.id };
+      } catch (erreur) {
+        console.error("Actualisation de la fiche du résultat depuis l'accueil :", erreur);
+      }
+    }
 
     const domicile = resultat.domicile;
     const nomDomicile = domicile ? "ESIVO" : resultat.adversaire;
@@ -9611,7 +9635,7 @@ if (item.type === "plateau" && equipe === "U13") {
       carte.appendChild(nom);
       carte.appendChild(details);
 
-      if (item.type === "match" && item.statutMatch === "reporte") {
+      if (item.type === "match" && estMatchReporte(item)) {
         const statut = document.createElement("p");
         statut.textContent = "⚠️ MATCH REPORTÉ — Pronostics suspendus";
         statut.style.cssText = "color:#E5BD37;font-weight:800;margin:8px 0;";
@@ -9646,7 +9670,7 @@ if (item.type === "plateau" && equipe === "U13") {
       if (item.type === "match") {
         const boutonReport = document.createElement("button");
         boutonReport.type = "button";
-        boutonReport.textContent = item.statutMatch === "reporte" ? "Reprogrammer" : "Reporter";
+        boutonReport.textContent = estMatchReporte(item) ? "Reprogrammer" : "Reporter";
         boutonReport.onclick = () => gererReportMatchAdmin(item.id, equipe);
         carte.appendChild(boutonReport);
       }
@@ -9671,7 +9695,7 @@ async function gererReportMatchAdmin(id, equipe) {
     const snap = await ref.get();
     if (!snap.exists) return alert("Cette rencontre n'existe plus.");
     const match = snap.data();
-    const estDejaReporte = match.statutMatch === "reporte";
+    const estDejaReporte = estMatchReporte(match);
     const nouvelleDate = window.prompt(
       estDejaReporte
         ? "Nouvelle date (AAAA-MM-JJ), ou laisser vide pour maintenir le report."
@@ -12716,7 +12740,7 @@ if (equipe === "U13") {
   aujourdHuiU13.setHours(0, 0, 0, 0);
 
   const prochainMatchU13 = matchs
-    .filter(match => match[9] !== "reporte" && new Date(match[0] + "T12:00:00") >= aujourdHuiU13)
+    .filter(match => !estMatchReporte({ statutMatch: match[9] }) && new Date(match[0] + "T12:00:00") >= aujourdHuiU13)
     .sort((a, b) =>
       a[0].localeCompare(b[0]) ||
       a[1].localeCompare(b[1])
@@ -13153,9 +13177,25 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
     return logo.startsWith("http") ? logo : "logos/" + logo;
   };
 
-  const ouvrirFicheMatch = index => {
-    const match = calendrier[index];
+  const ouvrirFicheMatch = async index => {
+    let match = calendrier[index];
     if (!match) return;
+    const idMatch = match[10];
+    if (idMatch && window.esivoDb) {
+      try {
+        const doc = await window.esivoDb.collection("matchs").doc(idMatch).get();
+        if (doc.exists) {
+          const data = doc.data();
+          match = [
+            data.date, data.heure, data.competition, data.journee,
+            data.domicile, data.adversaire, data.logo, data.lieu, data.ville,
+            data.statutMatch || "", doc.id
+          ];
+        }
+      } catch (erreur) {
+        console.error("Actualisation de la fiche du match :", erreur);
+      }
+    }
 
     const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = match;
 
@@ -13634,8 +13674,16 @@ const cheminLogoMatchResultat = logo => {
   return logo.startsWith("http") ? logo : "logos/" + logo;
 };
 
-const ouvrirFicheResultat = resultat => {
+const ouvrirFicheResultat = async resultat => {
   if (!resultat) return;
+  if (resultat.id && window.esivoDb) {
+    try {
+      const doc = await window.esivoDb.collection("matchs").doc(resultat.id).get();
+      if (doc.exists) resultat = { ...doc.data(), id: doc.id };
+    } catch (erreur) {
+      console.error("Actualisation de la fiche du résultat :", erreur);
+    }
+  }
 
   const domicile = resultat.domicile;
   const nomDomicile = domicile ? "ESIVO" : resultat.adversaire;
@@ -22763,8 +22811,24 @@ async function initialiserCommentaires(type, eventId, conteneur) {
 }
 
   
-function ouvrirFicheMatchAccueil(match, nomEquipe) {
+async function ouvrirFicheMatchAccueil(match, nomEquipe, donneesFraiches = false) {
   if (!match) return;
+  const idMatch = match[10];
+  if (idMatch && !donneesFraiches && window.esivoDb) {
+    try {
+      const doc = await window.esivoDb.collection("matchs").doc(idMatch).get();
+      if (doc.exists) {
+        const data = doc.data();
+        return ouvrirFicheMatchAccueil([
+          data.date, data.heure, data.competition, data.journee,
+          data.domicile, data.adversaire, data.logo, data.lieu, data.ville,
+          data.statutMatch || "", doc.id
+        ], nomEquipe, true);
+      }
+    } catch (erreur) {
+      console.error("Actualisation de la fiche du match :", erreur);
+    }
+  }
 
   const [
     date, heure, competition, journee,
@@ -23036,7 +23100,7 @@ const logoOrganisateur = equipeOrganisatrice
   return calendrier
     .filter(match =>
       Array.isArray(match) &&
-      match[9] !== "reporte" &&
+      !estMatchReporte({ statutMatch: match[9] }) &&
       new Date(match[0] + "T12:00:00") >= aujourdHui
     )
     .sort((a, b) => a[0].localeCompare(b[0]))[0];
@@ -23382,8 +23446,16 @@ const derniersPlateaux = ["U7", "U9", "U11", "U13"]
 
   
   // Fiche détaillée d'un résultat depuis l'accueil
-  const ouvrirFicheResultatAccueil = resultat => {
+  const ouvrirFicheResultatAccueil = async resultat => {
     if (!resultat) return;
+    if (resultat.id && window.esivoDb) {
+      try {
+        const doc = await window.esivoDb.collection("matchs").doc(resultat.id).get();
+        if (doc.exists) resultat = { ...doc.data(), id: doc.id };
+      } catch (erreur) {
+        console.error("Actualisation de la fiche du résultat depuis l'accueil :", erreur);
+      }
+    }
 
     const domicile = resultat.domicile;
     const nomDomicile = domicile ? "ESIVO" : resultat.adversaire;
@@ -24485,7 +24557,7 @@ if (item.type === "plateau" && equipe === "U13") {
       carte.appendChild(nom);
       carte.appendChild(details);
 
-      if (item.type === "match" && item.statutMatch === "reporte") {
+      if (item.type === "match" && estMatchReporte(item)) {
         const statut = document.createElement("p");
         statut.textContent = "⚠️ MATCH REPORTÉ — Pronostics suspendus";
         statut.style.cssText = "color:#E5BD37;font-weight:800;margin:8px 0;";
@@ -24520,7 +24592,7 @@ if (item.type === "plateau" && equipe === "U13") {
       if (item.type === "match") {
         const boutonReport = document.createElement("button");
         boutonReport.type = "button";
-        boutonReport.textContent = item.statutMatch === "reporte" ? "Reprogrammer" : "Reporter";
+        boutonReport.textContent = estMatchReporte(item) ? "Reprogrammer" : "Reporter";
         boutonReport.onclick = () => gererReportMatchAdmin(item.id, equipe);
         carte.appendChild(boutonReport);
       }
@@ -24545,7 +24617,7 @@ async function gererReportMatchAdmin(id, equipe) {
     const snap = await ref.get();
     if (!snap.exists) return alert("Cette rencontre n'existe plus.");
     const match = snap.data();
-    const estDejaReporte = match.statutMatch === "reporte";
+    const estDejaReporte = estMatchReporte(match);
     const nouvelleDate = window.prompt(
       estDejaReporte
         ? "Nouvelle date (AAAA-MM-JJ), ou laisser vide pour maintenir le report."
@@ -27590,7 +27662,7 @@ if (equipe === "U13") {
   aujourdHuiU13.setHours(0, 0, 0, 0);
 
   const prochainMatchU13 = matchs
-    .filter(match => match[9] !== "reporte" && new Date(match[0] + "T12:00:00") >= aujourdHuiU13)
+    .filter(match => !estMatchReporte({ statutMatch: match[9] }) && new Date(match[0] + "T12:00:00") >= aujourdHuiU13)
     .sort((a, b) =>
       a[0].localeCompare(b[0]) ||
       a[1].localeCompare(b[1])
@@ -28027,9 +28099,25 @@ ${afficherEquipe(domicilePremier ? premier[5] : nomEquipe, domicilePremier ? pre
     return logo.startsWith("http") ? logo : "logos/" + logo;
   };
 
-  const ouvrirFicheMatch = index => {
-    const match = calendrier[index];
+  const ouvrirFicheMatch = async index => {
+    let match = calendrier[index];
     if (!match) return;
+    const idMatch = match[10];
+    if (idMatch && window.esivoDb) {
+      try {
+        const doc = await window.esivoDb.collection("matchs").doc(idMatch).get();
+        if (doc.exists) {
+          const data = doc.data();
+          match = [
+            data.date, data.heure, data.competition, data.journee,
+            data.domicile, data.adversaire, data.logo, data.lieu, data.ville,
+            data.statutMatch || "", doc.id
+          ];
+        }
+      } catch (erreur) {
+        console.error("Actualisation de la fiche du match :", erreur);
+      }
+    }
 
     const [date, heure, competition, journee, domicile, adversaire, logo, lieu, ville] = match;
 
@@ -28508,8 +28596,16 @@ const cheminLogoMatchResultat = logo => {
   return logo.startsWith("http") ? logo : "logos/" + logo;
 };
 
-const ouvrirFicheResultat = resultat => {
+const ouvrirFicheResultat = async resultat => {
   if (!resultat) return;
+  if (resultat.id && window.esivoDb) {
+    try {
+      const doc = await window.esivoDb.collection("matchs").doc(resultat.id).get();
+      if (doc.exists) resultat = { ...doc.data(), id: doc.id };
+    } catch (erreur) {
+      console.error("Actualisation de la fiche du résultat :", erreur);
+    }
+  }
 
   const domicile = resultat.domicile;
   const nomDomicile = domicile ? "ESIVO" : resultat.adversaire;
@@ -32056,6 +32152,13 @@ async function initialiserDashboardAdmin() {
       '<div class="admin-metric"><span>CATÉGORIES</span><strong>'+categories+'</strong><small>Présentes dans le calendrier</small></div>';
   } catch(erreur) {console.error('Tableau de bord administration :',erreur);zone.innerHTML='<div class="admin-metric"><span>TABLEAU DE BORD</span><strong>—</strong><small>Statistiques momentanément indisponibles</small></div>';}
 }
+function estMatchReporte(match) {
+  const statut = String(match?.statutMatch ?? match?.statut ?? match?.etat ?? "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().trim();
+  return ["reporte", "reportee", "report", "postpone", "postponed"].includes(statut);
+}
+
 async function chargerCalendriersFirebase() {
   try {
     const snapshot = await window.esivoDb
@@ -32095,8 +32198,7 @@ async function chargerCalendriersFirebase() {
     doc.equipe === nomEquipe &&
     doc.type === "match" &&
     doc.resultatEnregistre !== true &&
-    doc.statutMatch !== "reporte" &&
-    doc.statutMatch !== "reporté"
+    !estMatchReporte(doc)
   )
   .map(doc => [
     doc.date,
@@ -32108,7 +32210,8 @@ async function chargerCalendriersFirebase() {
     doc.logo,
     doc.lieu,
     doc.ville,
-    doc.statutMatch || ""
+    doc.statutMatch || "",
+    doc.id
   ]);
 
       const plateaux = documents
@@ -33183,7 +33286,7 @@ async function supprimerNotificationAdmin(id) {
 
 
 </script>
-<script src="pronostics.js?v=20261127-report-filter"></script>
+<script src="pronostics.js?v=20261127-report-modal-sync"></script>
 <script>
 /* PROFILS PUBLICS ESIVO */
 function echapperHTMLProfil(valeur) {
