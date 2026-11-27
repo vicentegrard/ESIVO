@@ -29818,6 +29818,13 @@ const resultatsJ7 = [
         {date:"Dimanche 18 octobre 2026",heure:"15h00",dom:"LA GRAVERIE B",logoDom:"logos/la-graverie-b.png",scoreDom:9,ext:"ESIVO C",logoExt:"logos/esivo.png",scoreExt:0}
       ];
 
+      const resultatsJ6C = [
+        {date:"Samedi 7 novembre 2026",heure:"19h15",dom:"CONDÉ EN NORMANDIE B",logoDom:"logos/conde-normandie-b.png",scoreDom:1,ext:"LA GRAVERIE B",logoExt:"logos/la-graverie-b.png",scoreExt:2},
+        {date:"Dimanche 8 novembre 2026",heure:"14h30",dom:"J.S DU BOCAGE B",logoDom:"logos/js-du-bocage-b.png",scoreDom:3,ext:"ESIVO C",logoExt:"logos/esivo.png",scoreExt:0,note:"Forfait"},
+        {date:"Dimanche 8 novembre 2026",heure:"14h30",dom:"INTER ODON B",logoDom:"logos/inter-odon.png",scoreDom:1,ext:"CAMPEAUX",logoExt:"logos/campeaux.png",scoreExt:1},
+        {date:"Dimanche 8 novembre 2026",heure:"14h30",dom:"LE TOURNEUR",logoDom:"logos/le-tourneur.png",scoreDom:4,ext:"SAINT GERMAIN B",logoExt:"logos/saint-germain-b.png",scoreExt:2}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -29939,7 +29946,7 @@ const resultatsJ7 = [
             <div class="sa-round">
               <div class="sa-round-heading"><small>DÉPARTEMENTAL 4 · GROUPE B</small><strong id="sc-round-title">Journée 1</strong></div>
               <label class="sa-round-select-wrap" for="sc-round-select"><span>Afficher la journée</span>
-                <select id="sc-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option><option value="4">Journée 4</option><option value="5">Journée 5</option></select>
+                <select id="sc-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option><option value="4">Journée 4</option><option value="5">Journée 5</option><option value="6">Journée 6</option></select>
               </label>
             </div>
             <div class="sc-games" id="sc-games"></div>
@@ -29950,18 +29957,18 @@ const resultatsJ7 = [
         const liste = document.getElementById("sc-games");
         const select = document.getElementById("sc-round-select");
         if (!liste || !select) return;
-        const matchs = select.value === "1" ? resultatsJ1C : select.value === "2" ? resultatsJ2C : select.value === "3" ? resultatsJ3C : select.value === "4" ? resultatsJ4C : select.value === "5" ? resultatsJ5C : [];
+        const matchs = select.value === "1" ? resultatsJ1C : select.value === "2" ? resultatsJ2C : select.value === "3" ? resultatsJ3C : select.value === "4" ? resultatsJ4C : select.value === "5" ? resultatsJ5C : select.value === "6" ? resultatsJ6C : [];
         const compteur = document.getElementById("sc-round-count");
         const titre = document.getElementById("sc-round-title");
         if (titre) titre.textContent = "Journée " + select.value;
-        const totalMatchs = resultatsJ1C.length + resultatsJ2C.length + resultatsJ3C.length + resultatsJ4C.length + resultatsJ5C.length;
+        const totalMatchs = resultatsJ1C.length + resultatsJ2C.length + resultatsJ3C.length + resultatsJ4C.length + resultatsJ5C.length + resultatsJ6C.length;
         if (compteur) compteur.textContent = totalMatchs + " MATCHS";
         liste.innerHTML = matchs.map(match =>
           '<article class="sc-game ' + (match.dom === "ESIVO C" || match.ext === "ESIVO C" ? "sc-esivo" : "") + '">' +
             '<div class="sc-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
             '<div class="sc-game-teams">' +
               '<div class="sc-team"><img src="' + match.logoDom + '" alt=""><strong>' + match.dom + '</strong></div>' +
-              '<div class="sc-score">' + match.scoreDom + ' – ' + match.scoreExt + '<small style="display:block;color:#63c38d;font-size:8px;letter-spacing:1px;margin-top:5px">TERMINÉ</small></div>' +
+              '<div class="sc-score">' + match.scoreDom + ' – ' + match.scoreExt + '<small style="display:block;color:#63c38d;font-size:8px;letter-spacing:1px;margin-top:5px">TERMINÉ</small>' + (match.note ? '<small style="display:block;color:#f0c36d;font-size:8px;letter-spacing:1px;margin-top:4px">' + match.note.toUpperCase() + '</small>' : '') + '</div>' +
               '<div class="sc-team"><img src="' + match.logoExt + '" alt=""><strong>' + match.ext + '</strong></div>' +
             '</div></article>'
         ).join("");
