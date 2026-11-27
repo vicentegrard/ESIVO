@@ -13,6 +13,7 @@
     weekday:"long",day:"numeric",month:"long",year:"numeric"
   }) || "Date à confirmer";
   const norm = value => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+  const matchReporte = match => ["reporte","reportee","report","postpone","postponed"].includes(norm(match?.statutMatch ?? match?.statut ?? match?.etat));
   const pseudoUtilisateur = async user => {
     if (user.displayName) return user.displayName.slice(0,20);
     try {
@@ -266,7 +267,7 @@
   function prochainsMatchsParCategorie(matches,now=new Date()) {
     const prochains=new Map();
     matches
-      .filter(m=>m.type==="match" && m.resultatEnregistre!==true && norm(m.statutMatch)!=="reporte" && m.date && dateHeure(m)>now)
+      .filter(m=>m.type==="match" && m.resultatEnregistre!==true && !matchReporte(m) && m.date && dateHeure(m)>now)
       .sort((a,b)=>dateHeure(a)-dateHeure(b))
       .forEach(match=>{
         const categorie=String(match.equipe||"Autres");
@@ -535,7 +536,7 @@
     }
     try {
       const matchDoc=await db().collection("matchs").doc(matchId).get();
-      if(!matchDoc.exists || matchDoc.data().statutMatch==="reporte" || dateHeure(matchDoc.data())<=new Date()) {
+      if(!matchDoc.exists || matchReporte(matchDoc.data()) || dateHeure(matchDoc.data())<=new Date()) {
         if(message) message.textContent="Cette rencontre est reportée ou a commencé : les pronostics sont fermés.";
         return;
       }
