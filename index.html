@@ -30124,7 +30124,45 @@ const classementFeminines = donneesFirestore.clubs;
       const classementVeterans = donneesFirestore.clubs || [];
 
       contenu.innerHTML = `
-        <section class="sa-classement">
+        <style>
+          .sa-veterans{display:grid;gap:18px;margin-top:14px}
+          .sa-veterans .sa-hero-line{display:flex;align-items:center;justify-content:space-between;gap:12px}
+          .sa-veterans .sa-hero-line>img{display:block;width:54px;height:54px;max-width:54px;max-height:54px;object-fit:contain;flex:0 0 54px}
+          .sa-veterans .sa-panel{padding:20px;border:1px solid #393b46;border-radius:16px;background:linear-gradient(145deg,#24252d,#1b1c23);min-width:0}
+          .sa-veterans .sa-panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}
+          .sa-veterans .sa-eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:900;color:#d9a5aa}
+          .sa-veterans .sa-chip{font-size:10px;font-weight:900;color:#f4dfe1;background:#aa1a243b;border:1px solid #c84b574d;border-radius:30px;padding:7px 10px;white-space:nowrap}
+          .sa-veterans .sa-panel h3{margin:5px 0 0;color:#fff;font-size:22px}
+          .sa-veterans .sa-desktop-table{display:block;overflow-x:auto;border:1px solid #3a3c47;border-radius:11px}
+          .sa-veterans .sa-table{width:100%;min-width:760px;border-collapse:collapse;text-align:center;font-size:12px}
+          .sa-veterans .sa-table th{background:#2c2d37;color:#b9bbc5;padding:12px 8px;font-size:10px;text-transform:uppercase}
+          .sa-veterans .sa-table td{padding:11px 8px;border-top:1px solid #383a44;color:#d9d9df}
+          .sa-veterans .sa-table .sa-team-cell{display:flex;align-items:center;gap:9px;white-space:nowrap;text-align:left}
+          .sa-veterans .sa-table .sa-team-cell img{display:block;width:30px;height:30px;max-width:30px;max-height:30px;object-fit:contain;flex:0 0 30px}
+          .sa-veterans .sa-table strong,.sa-veterans .sa-mobile-team strong{color:#fff}
+          .sa-veterans .sa-points,.sa-veterans .sa-mobile-points{color:#E5BD37;font-weight:900}
+          .sa-veterans .sa-esivo-row{background:#a91c2b2b}
+          .sa-veterans .sa-mobile-table{display:none}
+          .sa-veterans .sa-table-note{font-size:10px;color:#999ba6;margin:12px 0 0}
+          @media(max-width:700px){
+            .sa-veterans{gap:14px}
+            .sa-veterans .sa-panel{padding:14px}
+            .sa-veterans .sa-panel h3{font-size:19px}
+            .sa-veterans .sa-desktop-table{display:none}
+            .sa-veterans .sa-mobile-table{display:grid;gap:8px}
+            .sa-veterans .sa-mobile-row{padding:11px;border:1px solid #41434d;border-radius:11px;background:#2a2b35}
+            .sa-veterans .sa-mobile-row.sa-esivo-row{border-color:#b33a45;background:#43242b}
+            .sa-veterans .sa-mobile-team{display:flex;align-items:center;gap:8px;min-width:0}
+            .sa-veterans .sa-mobile-team img{display:block;width:30px;height:30px;max-width:30px;max-height:30px;object-fit:contain;flex:0 0 30px}
+            .sa-veterans .sa-mobile-position{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:#353641;color:#fff;font-size:12px;font-weight:900;flex:0 0 26px}
+            .sa-veterans .sa-mobile-team strong{flex:1;min-width:0;font-size:12px}
+            .sa-veterans .sa-mobile-points{font-size:12px;white-space:nowrap}
+            .sa-veterans .sa-mobile-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;text-align:center;margin-top:10px;padding-top:9px;border-top:1px solid #ffffff18;color:#a6a8b3;font-size:9px}
+            .sa-veterans .sa-mobile-stats span{display:flex;flex-direction:column;gap:3px}
+            .sa-veterans .sa-mobile-stats b{color:#eee;font-size:11px}
+          }
+        </style>
+        <section class="sa-classement sa-veterans">
           <div class="sa-hero-line">
             <div><h2>Départemental Vétérans</h2><p>Seniors Vétérans · Groupe F · District du Calvados</p></div>
             <img src="logo-esivo-transparent.png" alt="ESIVO">
