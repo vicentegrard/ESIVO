@@ -29940,7 +29940,8 @@ const resultatsJ7 = [
         const compteur = document.getElementById("sc-round-count");
         const titre = document.getElementById("sc-round-title");
         if (titre) titre.textContent = "Journée " + select.value;
-        if (compteur) compteur.textContent = matchs.length + " MATCHS";
+        const totalMatchs = resultatsJ1C.length + resultatsJ2C.length + resultatsJ3C.length;
+        if (compteur) compteur.textContent = totalMatchs + " MATCHS";
         liste.innerHTML = matchs.map(match =>
           '<article class="sc-game ' + (match.dom === "ESIVO C" || match.ext === "ESIVO C" ? "sc-esivo" : "") + '">' +
             '<div class="sc-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
