@@ -266,7 +266,7 @@
   function prochainsMatchsParCategorie(matches,now=new Date()) {
     const prochains=new Map();
     matches
-      .filter(m=>m.type==="match" && m.resultatEnregistre!==true && m.statutMatch!=="reporte" && m.date && dateHeure(m)>now)
+      .filter(m=>m.type==="match" && m.resultatEnregistre!==true && norm(m.statutMatch)!=="reporte" && m.date && dateHeure(m)>now)
       .sort((a,b)=>dateHeure(a)-dateHeure(b))
       .forEach(match=>{
         const categorie=String(match.equipe||"Autres");
