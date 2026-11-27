@@ -29797,6 +29797,13 @@ const resultatsJ7 = [
         {date:"Dimanche 20 septembre 2026",heure:"15h00",dom:"J.S DU BOCAGE B",logoDom:"logos/js-du-bocage-b.png",scoreDom:5,ext:"LE TOURNEUR",logoExt:"logos/le-tourneur.png",scoreExt:0}
       ];
 
+      const resultatsJ3C = [
+        {date:"Samedi 3 octobre 2026",heure:"19h15",dom:"CONDÉ EN NORMANDIE B",logoDom:"logos/conde-normandie-b.png",scoreDom:3,ext:"J.S DU BOCAGE B",logoExt:"logos/js-du-bocage-b.png",scoreExt:2},
+        {date:"Dimanche 4 octobre 2026",heure:"15h00",dom:"LE TOURNEUR",logoDom:"logos/le-tourneur.png",scoreDom:1,ext:"INTER ODON B",logoExt:"logos/inter-odon.png",scoreExt:5},
+        {date:"Dimanche 4 octobre 2026",heure:"15h00",dom:"SAINT GERMAIN B",logoDom:"logos/saint-germain-b.png",scoreDom:2,ext:"ESIVO C",logoExt:"logos/esivo.png",scoreExt:2},
+        {date:"Dimanche 4 octobre 2026",heure:"15h00",dom:"LA GRAVERIE B",logoDom:"logos/la-graverie-b.png",scoreDom:0,ext:"CAMPEAUX",logoExt:"logos/campeaux.png",scoreExt:6}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -29918,7 +29925,7 @@ const resultatsJ7 = [
             <div class="sa-round">
               <div class="sa-round-heading"><small>DÉPARTEMENTAL 4 · GROUPE B</small><strong id="sc-round-title">Journée 1</strong></div>
               <label class="sa-round-select-wrap" for="sc-round-select"><span>Afficher la journée</span>
-                <select id="sc-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option></select>
+                <select id="sc-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option></select>
               </label>
             </div>
             <div class="sc-games" id="sc-games"></div>
@@ -29929,7 +29936,7 @@ const resultatsJ7 = [
         const liste = document.getElementById("sc-games");
         const select = document.getElementById("sc-round-select");
         if (!liste || !select) return;
-        const matchs = select.value === "1" ? resultatsJ1C : select.value === "2" ? resultatsJ2C : [];
+        const matchs = select.value === "1" ? resultatsJ1C : select.value === "2" ? resultatsJ2C : select.value === "3" ? resultatsJ3C : [];
         const compteur = document.getElementById("sc-round-count");
         const titre = document.getElementById("sc-round-title");
         if (titre) titre.textContent = "Journée " + select.value;
