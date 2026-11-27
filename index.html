@@ -29832,6 +29832,13 @@ const resultatsJ7 = [
         {date:"Dimanche 13 décembre 2026",heure:"14h30",dom:"J.S DU BOCAGE B",logoDom:"logos/js-du-bocage-b.png",aVenir:true,ext:"LA GRAVERIE B",logoExt:"logos/la-graverie-b.png"}
       ];
 
+      const resultatsJ8C = [
+        {date:"Samedi 30 janvier 2027",heure:"19h15",dom:"CONDÉ EN NORMANDIE B",logoDom:"logos/conde-normandie-b.png",aVenir:true,ext:"ESIVO C",logoExt:"logos/esivo.png"},
+        {date:"Dimanche 31 janvier 2027",heure:"14h30",dom:"SAINT GERMAIN B",logoDom:"logos/saint-germain-b.png",aVenir:true,ext:"CAMPEAUX",logoExt:"logos/campeaux.png"},
+        {date:"Dimanche 31 janvier 2027",heure:"14h30",dom:"LA GRAVERIE B",logoDom:"logos/la-graverie-b.png",aVenir:true,ext:"INTER ODON B",logoExt:"logos/inter-odon.png"},
+        {date:"Dimanche 31 janvier 2027",heure:"14h30",dom:"LE TOURNEUR",logoDom:"logos/le-tourneur.png",aVenir:true,ext:"J.S DU BOCAGE B",logoExt:"logos/js-du-bocage-b.png"}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -29964,11 +29971,11 @@ const resultatsJ7 = [
         const liste = document.getElementById("sc-games");
         const select = document.getElementById("sc-round-select");
         if (!liste || !select) return;
-        const matchs = select.value === "1" ? resultatsJ1C : select.value === "2" ? resultatsJ2C : select.value === "3" ? resultatsJ3C : select.value === "4" ? resultatsJ4C : select.value === "5" ? resultatsJ5C : select.value === "6" ? resultatsJ6C : select.value === "7" ? resultatsJ7C : [];
+        const matchs = select.value === "1" ? resultatsJ1C : select.value === "2" ? resultatsJ2C : select.value === "3" ? resultatsJ3C : select.value === "4" ? resultatsJ4C : select.value === "5" ? resultatsJ5C : select.value === "6" ? resultatsJ6C : select.value === "7" ? resultatsJ7C : select.value === "8" ? resultatsJ8C : [];
         const compteur = document.getElementById("sc-round-count");
         const titre = document.getElementById("sc-round-title");
         if (titre) titre.textContent = "Journée " + select.value;
-        const totalMatchs = resultatsJ1C.length + resultatsJ2C.length + resultatsJ3C.length + resultatsJ4C.length + resultatsJ5C.length + resultatsJ6C.length + resultatsJ7C.length;
+        const totalMatchs = resultatsJ1C.length + resultatsJ2C.length + resultatsJ3C.length + resultatsJ4C.length + resultatsJ5C.length + resultatsJ6C.length + resultatsJ7C.length + resultatsJ8C.length;
         if (compteur) compteur.textContent = totalMatchs + " MATCHS";
         liste.innerHTML = matchs.map(match =>
           '<article class="sc-game ' + (match.dom === "ESIVO C" || match.ext === "ESIVO C" ? "sc-esivo" : "") + '">' +
