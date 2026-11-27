@@ -14619,6 +14619,15 @@ const resultatsJ7 = [
         {date:"Dimanche 8 novembre 2026",heure:"14h30",dom:"ESIVO B",logoDom:"logos/esivo.png",scoreDom:1,ext:"CHEMIN VERT B",logoExt:"logos/chemin-vert.png",scoreExt:2}
       ];
 
+      const resultatsJ9B = [
+        {date:"Samedi 12 décembre 2026",heure:"18h30",dom:"AJS COLL. OUISTREHAM B",logoDom:"logos/ajs-ouistreham-c.png",ext:"ESIVO B",logoExt:"logos/esivo.png",aVenir:true},
+        {date:"Dimanche 13 décembre 2026",heure:"14h30",dom:"BASLY",logoDom:"logos/basly.png",ext:"TERRE ET MER B",logoExt:"logos/terre-et-mer.png",aVenir:true},
+        {date:"Dimanche 13 décembre 2026",heure:"14h30",dom:"ES PORTAISE",logoDom:"logos/es-portaise.png",ext:"TRÉVIÈRES",logoExt:"logos/trevieres.png",aVenir:true},
+        {date:"Dimanche 13 décembre 2026",heure:"14h30",dom:"CHEMIN VERT B",logoDom:"logos/chemin-vert.png",ext:"THAON BRETTEVILLE C",logoExt:"logos/thaon-bretteville-b.png",aVenir:true},
+        {date:"Dimanche 13 décembre 2026",heure:"14h30",dom:"BAIE DE L'ORNE",logoDom:"logos/baie-de-l-orne.png",ext:"BRETTEVILLE/ODON B",logoExt:"logos/bretteville-odon.png",aVenir:true},
+        {date:"Dimanche 13 décembre 2026",heure:"14h30",dom:"HASTINGS",logoDom:"logos/hastings.png",ext:"COURSEULLES B",logoExt:"logos/courseulles.png",aVenir:true}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -14720,6 +14729,7 @@ const resultatsJ7 = [
                   <option value="6">Journée 6</option>
                   <option value="7">Journée 7</option>
                   <option value="8">Journée 8</option>
+                  <option value="9">Journée 9</option>
                 </select>
               </label>
             </div>
@@ -14734,7 +14744,7 @@ const resultatsJ7 = [
         const compteur = document.getElementById("sb-round-count");
         if (!titre || !liste || !select) return;
         const journee = Number(select.value);
-        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B, 5: resultatsJ5B, 6: resultatsJ6B, 7: resultatsJ7B, 8: resultatsJ8B };
+        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B, 5: resultatsJ5B, 6: resultatsJ6B, 7: resultatsJ7B, 8: resultatsJ8B, 9: resultatsJ9B };
         const matchs = journees[journee] || resultatsJ1;
         const totalMatchs = Object.values(journees).reduce(
           (total, matchsJournee) => total + matchsJournee.length,
@@ -14747,7 +14757,7 @@ const resultatsJ7 = [
             '<div class="sa-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
             '<div class="sa-game-teams">' +
               '<div class="sa-team"><img src="' + match.logoDom + '" alt=""><strong>' + match.dom + '</strong></div>' +
-              '<div class="sa-score">' + match.scoreDom + ' – ' + match.scoreExt + '<small class="sa-finished">TERMINÉ</small>' + (match.note ? '<small class="sa-penalty">' + match.note.toUpperCase() + '</small>' : '') + '</div>' +
+              '<div class="sa-score">' + (match.aVenir ? '–' : match.scoreDom + ' – ' + match.scoreExt) + (match.aVenir ? '<small class="sa-upcoming">À VENIR</small>' : '<small class="sa-finished">TERMINÉ</small>') + (match.note ? '<small class="sa-penalty">' + match.note.toUpperCase() + '</small>' : '') + '</div>' +
               '<div class="sa-team"><img src="' + match.logoExt + '" alt=""><strong>' + match.ext + '</strong></div>' +
             '</div></article>'
         ).join("");
