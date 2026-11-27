@@ -29783,6 +29783,13 @@ const resultatsJ7 = [
       const donneesFirestore = await chargerClassementFirestore(equipe);
       const classementSeniorsC = donneesFirestore.clubs || [];
 
+      const resultatsJ1C = [
+        {date:"Samedi 5 septembre 2026",heure:"19h15",dom:"CONDÉ EN NORMANDIE B",logoDom:"logos/conde-normandie-b.png",scoreDom:2,ext:"CAMPEAUX",logoExt:"logos/campeaux.png",scoreExt:1},
+        {date:"Dimanche 6 septembre 2026",heure:"15h00",dom:"INTER ODON B",logoDom:"logos/inter-odon.png",scoreDom:2,ext:"J.S DU BOCAGE B",logoExt:"logos/js-du-bocage-b.png",scoreExt:3},
+        {date:"Dimanche 6 septembre 2026",heure:"15h00",dom:"LE TOURNEUR",logoDom:"logos/le-tourneur.png",scoreDom:3,ext:"ESIVO C",logoExt:"logos/esivo.png",scoreExt:2},
+        {date:"Dimanche 6 septembre 2026",heure:"15h00",dom:"LA GRAVERIE B",logoDom:"logos/la-graverie-b.png",scoreDom:3,ext:"SAINT GERMAIN B",logoExt:"logos/saint-germain-b.png",scoreExt:0}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -29807,6 +29814,17 @@ const resultatsJ7 = [
           .sa-club strong{color:#fff}
           .sa-rank{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:#353641;font-weight:900}
           .sa-mobile-table{display:none}
+          .sc-games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+          .sc-game{padding:13px;border:1px solid #3c3e49;border-radius:12px;background:#292a34;min-width:0}
+          .sc-game.sc-esivo{border:2px solid #b52b38;background:linear-gradient(145deg,#43232a,#2b252e)}
+          .sc-game-meta{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#aeb0bb;border-bottom:1px solid #41434d;padding-bottom:10px}
+          .sc-game-teams{display:grid;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);align-items:center;gap:6px;padding-top:12px}
+          .sc-team{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-width:0}
+          .sc-team img{width:40px;height:40px;object-fit:contain}
+          .sc-team strong{font-size:10px;color:#f1f1f4}
+          .sc-score{text-align:center;color:#fff;font-size:23px;font-weight:900;white-space:nowrap}
+          @media(max-width:700px){.sc-games{grid-template-columns:1fr;gap:8px}.sc-game{padding:11px}.sc-team img{width:36px;height:36px}.sc-team strong{font-size:9px}.sc-score{font-size:21px}}
+
           .sa-note{font-size:10px;color:#999ba6;margin:12px 0 0}
           .sa-round{display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(120deg,#2b2c36,#24252e);border:1px solid #41434e;border-radius:13px;padding:16px 18px;margin-bottom:12px}
           .sa-round-heading{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -29888,8 +29906,39 @@ const resultatsJ7 = [
             </div>
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
+          <section class="sa-panel">
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip" id="sc-round-count">4 MATCHS</span></div>
+            <div class="sa-round">
+              <div class="sa-round-heading"><small>DÉPARTEMENTAL 4 · GROUPE B</small><strong id="sc-round-title">Journée 1</strong></div>
+              <label class="sa-round-select-wrap" for="sc-round-select"><span>Afficher la journée</span>
+                <select id="sc-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option></select>
+              </label>
+            </div>
+            <div class="sc-games" id="sc-games"></div>
+          </section>
         </div>
       `;
+      const afficherJourneeC = () => {
+        const liste = document.getElementById("sc-games");
+        const select = document.getElementById("sc-round-select");
+        if (!liste || !select) return;
+        const matchs = select.value === "1" ? resultatsJ1C : [];
+        const compteur = document.getElementById("sc-round-count");
+        const titre = document.getElementById("sc-round-title");
+        if (titre) titre.textContent = "Journée " + select.value;
+        if (compteur) compteur.textContent = matchs.length + " MATCHS";
+        liste.innerHTML = matchs.map(match =>
+          '<article class="sc-game ' + (match.dom === "ESIVO C" || match.ext === "ESIVO C" ? "sc-esivo" : "") + '">' +
+            '<div class="sc-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
+            '<div class="sc-game-teams">' +
+              '<div class="sc-team"><img src="' + match.logoDom + '" alt=""><strong>' + match.dom + '</strong></div>' +
+              '<div class="sc-score">' + match.scoreDom + ' – ' + match.scoreExt + '<small style="display:block;color:#63c38d;font-size:8px;letter-spacing:1px;margin-top:5px">TERMINÉ</small></div>' +
+              '<div class="sc-team"><img src="' + match.logoExt + '" alt=""><strong>' + match.ext + '</strong></div>' +
+            '</div></article>'
+        ).join("");
+      };
+      document.getElementById("sc-round-select").addEventListener("change", afficherJourneeC);
+      afficherJourneeC();
       return;
     }
 
