@@ -32094,7 +32094,9 @@ async function chargerCalendriersFirebase() {
   .filter(doc =>
     doc.equipe === nomEquipe &&
     doc.type === "match" &&
-    doc.resultatEnregistre !== true
+    doc.resultatEnregistre !== true &&
+    doc.statutMatch !== "reporte" &&
+    doc.statutMatch !== "reporté"
   )
   .map(doc => [
     doc.date,
@@ -33181,7 +33183,7 @@ async function supprimerNotificationAdmin(id) {
 
 
 </script>
-<script src="pronostics.js?v=515313f"></script>
+<script src="pronostics.js?v=20261127-report-filter"></script>
 <script>
 /* PROFILS PUBLICS ESIVO */
 function echapperHTMLProfil(valeur) {
