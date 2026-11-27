@@ -14711,6 +14711,15 @@ const resultatsJ7 = [
         {date:"Dimanche 11 avril 2027",heure:"15h",dom:"CHEMIN VERT B",logoDom:"logos/chemin-vert.png",ext:"ESIVO B",logoExt:"logos/esivo.png",aVenir:true}
       ];
 
+      const resultatsJ19B = [
+        {date:"Samedi 17 avril 2027",heure:"18h30",dom:"COURSEULLES B",logoDom:"logos/courseulles.png",ext:"HASTINGS",logoExt:"logos/hastings.png",aVenir:true},
+        {date:"Dimanche 18 avril 2027",heure:"15h",dom:"TERRE ET MER B",logoDom:"logos/terre-et-mer.png",ext:"BASLY",logoExt:"logos/basly.png",aVenir:true},
+        {date:"Dimanche 18 avril 2027",heure:"15h",dom:"ESIVO B",logoDom:"logos/esivo.png",ext:"AJS COLL. OUISTREHAM B",logoExt:"logos/ajs-ouistreham-c.png",aVenir:true},
+        {date:"Dimanche 18 avril 2027",heure:"15h",dom:"TRÉVIÈRES",logoDom:"logos/trevieres.png",ext:"ES PORTAISE",logoExt:"logos/es-portaise.png",aVenir:true},
+        {date:"Dimanche 18 avril 2027",heure:"15h",dom:"THAON BRETTEVILLE C",logoDom:"logos/thaon-bretteville-b.png",ext:"CHEMIN VERT B",logoExt:"logos/chemin-vert.png",aVenir:true},
+        {date:"Dimanche 18 avril 2027",heure:"15h",dom:"BRETTEVILLE/ODON B",logoDom:"logos/bretteville-odon.png",ext:"BAIE DE L’ORNE",logoExt:"logos/baie-de-l-orne.png",aVenir:true}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -14798,7 +14807,7 @@ const resultatsJ7 = [
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
           <section class="sa-panel">
-            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip" id="sb-round-count">108 MATCHS</span></div>
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip" id="sb-round-count">114 MATCHS</span></div>
             <div class="sa-round">
               <div class="sa-round-heading"><small>DÉPARTEMENTAL 2 · GROUPE B</small><strong id="sb-round-title">Journée 1</strong></div>
               <label class="sa-round-select-wrap" for="sb-round-select">
@@ -24228,7 +24237,11 @@ if (estPlateau) {
       <select id="adminMatchFormatCompetition">
         <option value="championnat">Championnat / match classique</option>
         <option value="coupe">Coupe à élimination directe</option>
-      </select>
+                        <option value="16">Journée 16</option>
+                  <option value="17">Journée 17</option>
+                  <option value="18">Journée 18</option>
+                  <option value="19">Journée 19</option>
+</select>
     </div>
 
     <div class="form-group">
@@ -29527,6 +29540,15 @@ const resultatsJ7 = [
         {date:"Dimanche 11 avril 2027",heure:"15h",dom:"CHEMIN VERT B",logoDom:"logos/chemin-vert.png",ext:"ESIVO B",logoExt:"logos/esivo.png",aVenir:true}
       ];
 
+      const resultatsJ19B = [
+        {date:"Samedi 17 avril 2027",heure:"18h30",dom:"COURSEULLES B",logoDom:"logos/courseulles.png",ext:"HASTINGS",logoExt:"logos/hastings.png",aVenir:true},
+        {date:"Dimanche 18 avril 2027",heure:"15h",dom:"TERRE ET MER B",logoDom:"logos/terre-et-mer.png",ext:"BASLY",logoExt:"logos/basly.png",aVenir:true},
+        {date:"Dimanche 18 avril 2027",heure:"15h",dom:"ESIVO B",logoDom:"logos/esivo.png",ext:"AJS COLL. OUISTREHAM B",logoExt:"logos/ajs-ouistreham-c.png",aVenir:true},
+        {date:"Dimanche 18 avril 2027",heure:"15h",dom:"TRÉVIÈRES",logoDom:"logos/trevieres.png",ext:"ES PORTAISE",logoExt:"logos/es-portaise.png",aVenir:true},
+        {date:"Dimanche 18 avril 2027",heure:"15h",dom:"THAON BRETTEVILLE C",logoDom:"logos/thaon-bretteville-b.png",ext:"CHEMIN VERT B",logoExt:"logos/chemin-vert.png",aVenir:true},
+        {date:"Dimanche 18 avril 2027",heure:"15h",dom:"BRETTEVILLE/ODON B",logoDom:"logos/bretteville-odon.png",ext:"BAIE DE L’ORNE",logoExt:"logos/baie-de-l-orne.png",aVenir:true}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -29614,7 +29636,7 @@ const resultatsJ7 = [
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
           <section class="sa-panel">
-            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip" id="sb-round-count">108 MATCHS</span></div>
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip" id="sb-round-count">114 MATCHS</span></div>
             <div class="sa-round">
               <div class="sa-round-heading"><small>DÉPARTEMENTAL 2 · GROUPE B</small><strong id="sb-round-title">Journée 1</strong></div>
               <label class="sa-round-select-wrap" for="sb-round-select">
@@ -29638,7 +29660,8 @@ const resultatsJ7 = [
                   <option value="16">Journée 16</option>
                   <option value="17">Journée 17</option>
                   <option value="18">Journée 18</option>
-                </select>
+                                  <option value="19">Journée 19</option>
+</select>
               </label>
             </div>
             <div class="sa-games" id="sb-games"></div>
@@ -29652,7 +29675,7 @@ const resultatsJ7 = [
         const compteur = document.getElementById("sb-round-count");
         if (!titre || !liste || !select) return;
         const journee = Number(select.value);
-        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B, 5: resultatsJ5B, 6: resultatsJ6B, 7: resultatsJ7B, 8: resultatsJ8B, 9: resultatsJ9B, 10: resultatsJ10B, 11: resultatsJ11B, 12: resultatsJ12B, 13: resultatsJ13B, 14: resultatsJ14B, 15: resultatsJ15B, 16: resultatsJ16B, 17: resultatsJ17B, 18: resultatsJ18B };
+        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B, 5: resultatsJ5B, 6: resultatsJ6B, 7: resultatsJ7B, 8: resultatsJ8B, 9: resultatsJ9B, 10: resultatsJ10B, 11: resultatsJ11B, 12: resultatsJ12B, 13: resultatsJ13B, 14: resultatsJ14B, 15: resultatsJ15B, 16: resultatsJ16B, 17: resultatsJ17B, 18: resultatsJ18B, 19: resultatsJ19B };
         const matchs = journees[journee] || resultatsJ1;
         const totalMatchs = Object.values(journees).reduce(
           (total, matchsJournee) => total + matchsJournee.length,
