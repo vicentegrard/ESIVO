@@ -29874,6 +29874,13 @@ const resultatsJ7 = [
         {date:"Dimanche 4 avril 2027",heure:"15h00",dom:"LA GRAVERIE B",logoDom:"logos/la-graverie-b.png",aVenir:true,ext:"J.S DU BOCAGE B",logoExt:"logos/js-du-bocage-b.png"}
       ];
 
+      const resultatsJ14C = [
+        {date:"Dimanche 11 avril 2027",heure:"13h00",dom:"ESIVO C",logoDom:"logos/esivo.png",aVenir:true,ext:"LE TOURNEUR",logoExt:"logos/le-tourneur.png"},
+        {date:"Dimanche 11 avril 2027",heure:"15h00",dom:"J.S DU BOCAGE B",logoDom:"logos/js-du-bocage-b.png",aVenir:true,ext:"INTER ODON B",logoExt:"logos/inter-odon.png"},
+        {date:"Dimanche 11 avril 2027",heure:"15h00",dom:"CAMPEAUX",logoDom:"logos/campeaux.png",aVenir:true,ext:"CONDÉ EN NORMANDIE B",logoExt:"logos/conde-normandie-b.png"},
+        {date:"Dimanche 11 avril 2027",heure:"15h00",dom:"SAINT GERMAIN B",logoDom:"logos/saint-germain-b.png",aVenir:true,ext:"LA GRAVERIE B",logoExt:"logos/la-graverie-b.png"}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -29995,7 +30002,7 @@ const resultatsJ7 = [
             <div class="sa-round">
               <div class="sa-round-heading"><small>DÉPARTEMENTAL 4 · GROUPE B</small><strong id="sc-round-title">Journée 1</strong></div>
               <label class="sa-round-select-wrap" for="sc-round-select"><span>Afficher la journée</span>
-                <select id="sc-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option><option value="4">Journée 4</option><option value="5">Journée 5</option><option value="6">Journée 6</option><option value="7">Journée 7</option><option value="8">Journée 8</option><option value="9">Journée 9</option><option value="10">Journée 10</option><option value="11">Journée 11</option><option value="12">Journée 12</option><option value="13">Journée 13</option></select>
+                <select id="sc-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option><option value="4">Journée 4</option><option value="5">Journée 5</option><option value="6">Journée 6</option><option value="7">Journée 7</option><option value="8">Journée 8</option><option value="9">Journée 9</option><option value="10">Journée 10</option><option value="11">Journée 11</option><option value="12">Journée 12</option><option value="13">Journée 13</option><option value="14">Journée 14</option></select>
               </label>
             </div>
             <div class="sc-games" id="sc-games"></div>
@@ -30006,11 +30013,11 @@ const resultatsJ7 = [
         const liste = document.getElementById("sc-games");
         const select = document.getElementById("sc-round-select");
         if (!liste || !select) return;
-        const matchs = select.value === "1" ? resultatsJ1C : select.value === "2" ? resultatsJ2C : select.value === "3" ? resultatsJ3C : select.value === "4" ? resultatsJ4C : select.value === "5" ? resultatsJ5C : select.value === "6" ? resultatsJ6C : select.value === "7" ? resultatsJ7C : select.value === "8" ? resultatsJ8C : select.value === "9" ? resultatsJ9C : select.value === "10" ? resultatsJ10C : select.value === "11" ? resultatsJ11C : select.value === "12" ? resultatsJ12C : select.value === "13" ? resultatsJ13C : [];
+        const matchs = select.value === "1" ? resultatsJ1C : select.value === "2" ? resultatsJ2C : select.value === "3" ? resultatsJ3C : select.value === "4" ? resultatsJ4C : select.value === "5" ? resultatsJ5C : select.value === "6" ? resultatsJ6C : select.value === "7" ? resultatsJ7C : select.value === "8" ? resultatsJ8C : select.value === "9" ? resultatsJ9C : select.value === "10" ? resultatsJ10C : select.value === "11" ? resultatsJ11C : select.value === "12" ? resultatsJ12C : select.value === "13" ? resultatsJ13C : select.value === "14" ? resultatsJ14C : [];
         const compteur = document.getElementById("sc-round-count");
         const titre = document.getElementById("sc-round-title");
         if (titre) titre.textContent = "Journée " + select.value;
-        const totalMatchs = resultatsJ1C.length + resultatsJ2C.length + resultatsJ3C.length + resultatsJ4C.length + resultatsJ5C.length + resultatsJ6C.length + resultatsJ7C.length + resultatsJ8C.length + resultatsJ9C.length + resultatsJ10C.length + resultatsJ11C.length + resultatsJ12C.length + resultatsJ13C.length;
+        const totalMatchs = resultatsJ1C.length + resultatsJ2C.length + resultatsJ3C.length + resultatsJ4C.length + resultatsJ5C.length + resultatsJ6C.length + resultatsJ7C.length + resultatsJ8C.length + resultatsJ9C.length + resultatsJ10C.length + resultatsJ11C.length + resultatsJ12C.length + resultatsJ13C.length + resultatsJ14C.length;
         if (compteur) compteur.textContent = totalMatchs + " MATCHS";
         liste.innerHTML = matchs.map(match =>
           '<article class="sc-game ' + (match.dom === "ESIVO C" || match.ext === "ESIVO C" ? "sc-esivo" : "") + '">' +
