@@ -14628,6 +14628,15 @@ const resultatsJ7 = [
         {date:"Dimanche 13 décembre 2026",heure:"14h30",dom:"HASTINGS",logoDom:"logos/hastings.png",ext:"COURSEULLES B",logoExt:"logos/courseulles.png",aVenir:true}
       ];
 
+      const resultatsJ10B = [
+        {date:"Samedi 28 novembre 2026",heure:"18h30",dom:"COURSEULLES B",logoDom:"logos/courseulles.png",ext:"BAIE DE L'ORNE",logoExt:"logos/baie-de-l-orne.png",aVenir:true},
+        {date:"Samedi 28 novembre 2026",heure:"18h30",dom:"AJS COLL. OUISTREHAM B",logoDom:"logos/ajs-ouistreham-c.png",ext:"CHEMIN VERT B",logoExt:"logos/chemin-vert.png",aVenir:true},
+        {date:"Dimanche 29 novembre 2026",heure:"14h30",dom:"BRETTEVILLE/ODON B",logoDom:"logos/bretteville-odon.png",ext:"THAON BRETTEVILLE C",logoExt:"logos/thaon-bretteville-b.png",aVenir:true},
+        {date:"Dimanche 29 novembre 2026",heure:"14h30",dom:"TRÉVIÈRES",logoDom:"logos/trevieres.png",ext:"HASTINGS",logoExt:"logos/hastings.png",aVenir:true},
+        {date:"Dimanche 29 novembre 2026",heure:"14h30",dom:"TERRE ET MER B",logoDom:"logos/terre-et-mer.png",ext:"ES PORTAISE",logoExt:"logos/es-portaise.png",aVenir:true},
+        {date:"Dimanche 29 novembre 2026",heure:"14h30",dom:"ESIVO B",logoDom:"logos/esivo.png",ext:"BASLY",logoExt:"logos/basly.png",aVenir:true}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -14730,6 +14739,7 @@ const resultatsJ7 = [
                   <option value="7">Journée 7</option>
                   <option value="8">Journée 8</option>
                   <option value="9">Journée 9</option>
+                  <option value="10">Journée 10</option>
                 </select>
               </label>
             </div>
@@ -14744,7 +14754,7 @@ const resultatsJ7 = [
         const compteur = document.getElementById("sb-round-count");
         if (!titre || !liste || !select) return;
         const journee = Number(select.value);
-        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B, 5: resultatsJ5B, 6: resultatsJ6B, 7: resultatsJ7B, 8: resultatsJ8B, 9: resultatsJ9B };
+        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B, 5: resultatsJ5B, 6: resultatsJ6B, 7: resultatsJ7B, 8: resultatsJ8B, 9: resultatsJ9B, 10: resultatsJ10B };
         const matchs = journees[journee] || resultatsJ1;
         const totalMatchs = Object.values(journees).reduce(
           (total, matchsJournee) => total + matchsJournee.length,
