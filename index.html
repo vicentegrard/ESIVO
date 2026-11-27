@@ -14495,6 +14495,7 @@ const resultatsJ7 = [
                   <option value="9">Journée 9</option>
                   <option value="10">Journée 10</option>
                   <option value="11">Journée 11</option>
+                  <option value="11">Journée 11</option>
                   <option value="12">Journée 12</option>
                   <option value="13">Journée 13</option>
                   <option value="14">Journée 14</option>
@@ -14636,6 +14637,15 @@ const resultatsJ7 = [
         {date:"Dimanche 29 novembre 2026",heure:"14h30",dom:"TERRE ET MER B",logoDom:"logos/terre-et-mer.png",ext:"ES PORTAISE",logoExt:"logos/es-portaise.png",aVenir:true},
         {date:"Dimanche 29 novembre 2026",heure:"14h30",dom:"ESIVO B",logoDom:"logos/esivo.png",ext:"BASLY",logoExt:"logos/basly.png",aVenir:true}
       ];
+      
+      const resultatsJ11B = [
+        {date:"Dimanche 6 décembre 2026",heure:"14h30",dom:"BASLY",logoDom:"logos/basly.png",ext:"AJS COLL. OUISTREHAM B",logoExt:"logos/ajs-ouistreham-c.png",aVenir:true},
+        {date:"Dimanche 6 décembre 2026",heure:"14h30",dom:"ES PORTAISE",logoDom:"logos/es-portaise.png",ext:"ESIVO B",logoExt:"logos/esivo.png",aVenir:true},
+        {date:"Dimanche 6 décembre 2026",heure:"14h30",dom:"THAON BRETTEVILLE C",logoDom:"logos/thaon-bretteville-b.png",ext:"COURSEULLES B",logoExt:"logos/courseulles.png",aVenir:true},
+        {date:"Dimanche 6 décembre 2026",heure:"14h30",dom:"BAIE DE L'ORNE",logoDom:"logos/baie-de-l-orne.png",ext:"TRÉVIÈRES",logoExt:"logos/trevieres.png",aVenir:true},
+        {date:"Dimanche 6 décembre 2026",heure:"14h30",dom:"HASTINGS",logoDom:"logos/hastings.png",ext:"TERRE ET MER B",logoExt:"logos/terre-et-mer.png",aVenir:true},
+        {date:"Dimanche 6 décembre 2026",heure:"14h30",dom:"BRETTEVILLE/ODON B",logoDom:"logos/bretteville-odon.png",ext:"CHEMIN VERT B",logoExt:"logos/chemin-vert.png",aVenir:true}
+      ];
 
       contenu.innerHTML = `
         <style>
@@ -14754,7 +14764,7 @@ const resultatsJ7 = [
         const compteur = document.getElementById("sb-round-count");
         if (!titre || !liste || !select) return;
         const journee = Number(select.value);
-        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B, 5: resultatsJ5B, 6: resultatsJ6B, 7: resultatsJ7B, 8: resultatsJ8B, 9: resultatsJ9B, 10: resultatsJ10B };
+        const journees = { 1: resultatsJ1, 2: resultatsJ2B, 3: resultatsJ3B, 4: resultatsJ4B, 5: resultatsJ5B, 6: resultatsJ6B, 7: resultatsJ7B, 8: resultatsJ8B, 9: resultatsJ9B, 10: resultatsJ10B, 11: resultatsJ11B };
         const matchs = journees[journee] || resultatsJ1;
         const totalMatchs = Object.values(journees).reduce(
           (total, matchsJournee) => total + matchsJournee.length,
