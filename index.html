@@ -30141,6 +30141,15 @@ const resultatsJ7 = [
       const donneesFirestore = await chargerClassementFirestore(equipe);
       const classementFeminines = donneesFirestore.clubs || [];
 
+      const resultatsJ1F = [
+        {date:"Dimanche 13 septembre 2026",heure:"11h",dom:"BAIE DE L'ORNE",logoDom:"logos/baie-de-l-orne.png",scoreDom:2,ext:"ESIVO",logoExt:"logos/esivo.png",scoreExt:3},
+        {date:"Dimanche 13 septembre 2026",heure:"11h",dom:"CAHAGNES",logoDom:"logos/cahagnes.png",scoreDom:0,ext:"GIBERVILLE",logoExt:"logos/giberville.png",scoreExt:0},
+        {date:"Dimanche 13 septembre 2026",heure:"13h",dom:"AUTHIE",logoDom:"logos/authie.png",scoreDom:3,ext:"HASTINGS (Forfait)",logoExt:"logos/hastings.png",scoreExt:0,note:"Forfait"},
+        {date:"Dimanche 13 septembre 2026",heure:"13h",dom:"ST DESIR B",logoDom:"logos/st-desir-b.png",scoreDom:1,ext:"INTER ODON",logoExt:"logos/inter-odon.png",scoreExt:1},
+        {date:"Dimanche 25 octobre 2026",heure:"12h30",dom:"AJS COLL. OUISTREHAM",logoDom:"logos/ajs-ouistreham-c.png",scoreDom:4,ext:"HONFLEUR",logoExt:"logos/honfleur.png",scoreExt:0},
+        {date:"Dimanche 25 octobre 2026",heure:"13h",dom:"MEZIDON",logoDom:"logos/mezidon.png",scoreDom:8,ext:"CAEN SUD OUEST",logoExt:"logos/caen-sud-ouest.png",scoreExt:0}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
