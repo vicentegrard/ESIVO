@@ -30139,82 +30139,90 @@ const resultatsJ7 = [
     
     if (equipe === "Seniors Féminines à 8") {
       const donneesFirestore = await chargerClassementFirestore(equipe);
-const classementFeminines = donneesFirestore.clubs;
+      const classementFeminines = donneesFirestore.clubs || [];
 
       contenu.innerHTML = `
         <strong>${page} · ${equipe}</strong>
-        <div class="content-card">
-          <h3>🏆 Départemental 1 Féminin à 8</h3>
-          <p>Classement du championnat 2026–2027</p>
-
-          <div class="classement-tableau">
-            <div style="overflow-x:auto; margin-top:18px;">
-              <table style="width:100%; border-collapse:collapse; min-width:780px; font-size:12px;">
-                <thead>
-                  <tr style="color:#B8B8C2; border-bottom:1px solid #454550;">
-                    <th style="padding:12px 7px;">Pos.</th>
-                    <th style="padding:12px 7px; text-align:left;">Équipe</th>
-                    <th>Pts</th><th>J</th><th>V</th><th>N</th><th>D</th>
-                    <th>Forf.</th><th>BP</th><th>BC</th><th>Diff.</th>
-                  </tr>
-                </thead>
+        <style>
+          .sf-champ{width:100%;max-width:1100px;margin:0 auto;color:#f5f5f7}
+          .sf-hero{padding:26px;border-radius:20px;background:linear-gradient(135deg,#252832 0%,#15171d 65%,#40171c 100%);border:1px solid #ffffff14;box-shadow:0 12px 32px #0003;margin:18px 0}
+          .sf-hero-line{display:flex;align-items:center;justify-content:space-between;gap:15px}
+          .sf-hero-line+ .sf-hero-line{margin-top:15px}
+          .sf-eyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;color:#d4b65d}
+          .sf-chip{display:inline-flex;align-items:center;padding:7px 11px;border-radius:20px;background:#ffffff12;border:1px solid #ffffff20;color:#f4d77b;font-size:9px;font-weight:900;letter-spacing:.8px;white-space:nowrap}
+          .sf-hero h2{margin:5px 0;color:#fff;font-size:clamp(23px,3vw,32px);font-weight:900}
+          .sf-hero p{margin:0;color:#c1c3cc;font-size:12px}
+          .sf-hero img{width:68px;height:68px;object-fit:contain}
+          .sf-panel{padding:22px;border-radius:18px;background:linear-gradient(145deg,#22242d,#191a21);border:1px solid #ffffff12;margin:18px 0}
+          .sf-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+          .sf-panel-head h3{margin:5px 0 0;color:#fff;font-size:22px}
+          .sf-table-wrap{overflow-x:auto}
+          .sf-table{width:100%;border-collapse:collapse;min-width:760px;font-size:12px;text-align:center}
+          .sf-table th{padding:12px 8px;color:#aeb0bb;font-size:10px;letter-spacing:.5px;border-bottom:1px solid #ffffff25}
+          .sf-table td{padding:11px 8px;color:#d7d8df;border-bottom:1px solid #ffffff12}
+          .sf-table tbody tr.sf-highlight{background:linear-gradient(90deg,#49242b,#302027);font-weight:800}
+          .sf-table tbody tr.sf-highlight td{color:#fff}
+          .sf-table tbody tr td:nth-child(3){font-size:14px;font-weight:900;color:#fff}
+          .sf-rank{display:inline-flex;align-items:center;justify-content:center;min-width:27px;height:27px;padding:0 6px;border-radius:8px;background:#ffffff12;color:#f0d47a;font-weight:900}
+          .sf-club{display:flex;align-items:center;gap:9px;text-align:left;white-space:nowrap}
+          .sf-club img{width:32px;height:32px;object-fit:contain}
+          .sf-club strong{color:#fff;font-size:12px}
+          .sf-mobile-table{display:none}
+          .sf-note{margin:15px 0 0;color:#aeb0bb;font-size:10px;line-height:1.6}
+          @media(max-width:700px){
+            .sf-hero{padding:18px}.sf-hero img{width:54px;height:54px}.sf-panel{padding:14px}.sf-panel-head h3{font-size:19px}
+            .sf-table-wrap{display:none}.sf-mobile-table{display:grid;gap:8px}
+            .sf-mobile-row{padding:11px;border:1px solid #41434d;border-radius:11px;background:#2a2b35}
+            .sf-mobile-row.sf-highlight{border-color:#b33a45;background:#43242b}
+            .sf-mobile-top{display:flex;align-items:center;gap:8px}.sf-mobile-top img{width:32px;height:32px;object-fit:contain}
+            .sf-mobile-top strong{flex:1;min-width:0;color:#fff;font-size:12px}.sf-mobile-top b{color:#fff;font-size:13px;white-space:nowrap}
+            .sf-mobile-stats{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;text-align:center;margin-top:10px;padding-top:9px;border-top:1px solid #ffffff18}
+            .sf-mobile-stats span{display:flex;flex-direction:column;gap:3px}.sf-mobile-stats b{color:#eee;font-size:11px}.sf-mobile-stats small{color:#a6a8b3;font-size:8px}
+          }
+          @media(max-width:380px){.sf-mobile-stats{grid-template-columns:repeat(4,1fr);row-gap:8px}}
+        </style>
+        <div class="sf-champ">
+          <section class="sf-hero">
+            <div class="sf-hero-line">
+              <span class="sf-eyebrow">CHAMPIONNAT 2026–2027</span>
+              <span class="sf-chip">FÉMININES À 8</span>
+            </div>
+            <div class="sf-hero-line">
+              <div><h2>Départemental 1 Féminin à 8</h2><p>Seniors Féminines · District du Calvados</p></div>
+              <img src="logo-esivo-transparent.png" alt="ESIVO">
+            </div>
+          </section>
+          <section class="sf-panel">
+            <div class="sf-panel-head">
+              <div><span class="sf-eyebrow">LE CHAMPIONNAT</span><h3>Classement général</h3></div>
+              <span class="sf-chip">${classementFeminines.length} ÉQUIPES</span>
+            </div>
+            <div class="sf-table-wrap">
+              <table class="sf-table">
+                <thead><tr><th>#</th><th style="text-align:left">Club</th><th>Pts</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Forf.</th><th>BP</th><th>BC</th><th>Diff.</th></tr></thead>
                 <tbody>
                   ${classementFeminines.map(club => `
-                    <tr style="
-                      background:${club.equipe === "ESIVO" ? "rgba(170,26,36,.22)" : "transparent"};
-                      border-bottom:1px solid #393943;
-                      font-weight:${club.equipe === "ESIVO" ? "800" : "500"};
-                      color:${club.equipe === "ESIVO" ? "#FFFFFF" : "#D0D0D8"};
-                    ">
-                      <td style="padding:12px 7px; text-align:center;">${club.position}</td>
-                      <td style="padding:10px 7px; white-space:nowrap;">
-                        <div style="display:flex; align-items:center; gap:9px;">
-                          <img src="${club.logo}" alt="Logo ${club.equipe}" style="width:30px; height:30px; object-fit:contain;">
-                          <span>${club.equipe}</span>
-                        </div>
-                      </td>
-                      <td style="text-align:center; font-weight:900; color:#FFFFFF; font-size:14px;">${club.points}</td>
-                      <td style="text-align:center;">${club.joues}</td>
-                      <td style="text-align:center;">${club.victoires}</td>
-                      <td style="text-align:center;">${club.nuls}</td>
-                      <td style="text-align:center;">${club.defaites}</td>
-                      <td style="text-align:center;">${club.forfait}</td>
-                      <td style="text-align:center;">${club.butsPour}</td>
-                      <td style="text-align:center;">${club.butsContre}</td>
-                      <td style="text-align:center;">${club.difference}</td>
+                    <tr class="${club.equipe === "ESIVO" ? "sf-highlight" : ""}">
+                      <td><span class="sf-rank">${club.position}</span></td>
+                      <td><div class="sf-club"><img src="${club.logo}" alt=""><strong>${club.equipe}</strong></div></td>
+                      <td>${club.points ?? 0}</td><td>${club.joues ?? 0}</td><td>${club.victoires ?? 0}</td><td>${club.nuls ?? 0}</td><td>${club.defaites ?? 0}</td><td>${club.forfait ?? 0}</td><td>${club.butsPour ?? 0}</td><td>${club.butsContre ?? 0}</td><td>${club.difference ?? 0}</td>
                     </tr>
                   `).join("")}
                 </tbody>
               </table>
             </div>
-          </div>
-
-          <div class="classement-cartes">
-            ${classementFeminines.map(club => `
-              <div class="club-mobile ${club.equipe === "ESIVO" ? "club-esivo" : ""}">
-                <div class="club-mobile-entete">
-                  <span class="club-mobile-position">${club.position}</span>
-                  <img src="${club.logo}" alt="Logo ${club.equipe}">
-                  <strong>${club.equipe}</strong>
-                  <span class="club-mobile-points">${club.points} ${club.points === 0 || Math.abs(club.points) === 1 ? "pt" : "pts"}</span>
-                </div>
-                <div class="club-mobile-stats">
-                  <span>Joués : ${club.joues}</span>
-                  <span>V : ${club.victoires}</span>
-                  <span>N : ${club.nuls}</span>
-                  <span>D : ${club.defaites}</span>
-                  <span>Forf. : ${club.forfait}</span>
-                  <span>BP : ${club.butsPour}</span>
-                  <span>BC : ${club.butsContre}</span>
-                  <span>Diff. : ${club.difference}</span>
-                </div>
-              </div>
-            `).join("")}
-          </div>
-
-          <p style="margin-top:14px; color:#B8B8C2; font-size:11px;">
-            J : matchs joués · Forf. : forfaits · BP : buts pour · BC : buts contre · Diff. : différence de buts
-          </p>
+            <div class="sf-mobile-table">
+              ${classementFeminines.map(club => `
+                <article class="sf-mobile-row ${club.equipe === "ESIVO" ? "sf-highlight" : ""}">
+                  <div class="sf-mobile-top"><span class="sf-rank">${club.position}</span><img src="${club.logo}" alt=""><strong>${club.equipe}</strong><b>${club.points ?? 0} pts</b></div>
+                  <div class="sf-mobile-stats">
+                    ${[["joues","J"],["victoires","V"],["nuls","N"],["defaites","D"],["forfait","F"],["butsPour","BP"],["butsContre","BC"],["difference","Diff."]].map(([key,label]) => `<span><b>${club[key] ?? 0}</b><small>${label}</small></span>`).join("")}
+                  </div>
+                </article>
+              `).join("")}
+            </div>
+            <p class="sf-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · Forf. : forfaits · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
+          </section>
         </div>
       `;
       return;
