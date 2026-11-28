@@ -13380,15 +13380,6 @@ const boutonFermer = overlay.querySelector(".mc-match-close");
       .sort((a, b) => new Date(a.date) - new Date(b.date));
 
     if (matchs.length === 0) {
-      const resultatsJ6F = [
-        {date:"Dimanche 18 octobre 2026",heure:"11h",dom:"INTER ODON",logoDom:"logos/inter-odon.png",scoreDom:10,ext:"HONFLEUR",logoExt:"logos/honfleur.png",scoreExt:0},
-        {date:"Dimanche 18 octobre 2026",heure:"11h",dom:"ST DESIR B",logoDom:"logos/st-desir-b.png",scoreDom:2,ext:"CAHAGNES",logoExt:"logos/cahagnes.png",scoreExt:6},
-        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:4,ext:"CAEN SUD OUEST",logoExt:"logos/caen-sud-ouest.png",scoreExt:0},
-        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"HASTINGS",logoDom:"logos/hastings.png",scoreDom:0,ext:"GIBERVILLE",logoExt:"logos/giberville.png",scoreExt:4},
-        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"AUTHIE",logoDom:"logos/authie.png",scoreDom:0,ext:"MEZIDON",logoExt:"logos/mezidon.png",scoreExt:3},
-        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"BAIE DE L'ORNE",logoDom:"logos/baie-de-l-orne.png",scoreDom:2,ext:"AJS COLL. OUISTREHAM",logoExt:"logos/ajs-ouistreham-c.png",scoreExt:2}
-      ];
-
       contenu.innerHTML = `
         <strong>${page} · ${equipe}</strong>
         <p>Aucun match de démonstration prévu pour cette équipe.</p>
@@ -30193,6 +30184,15 @@ const resultatsJ7 = [
         {date:"Dimanche 11 octobre 2026",heure:"13h",dom:"MEZIDON",logoDom:"logos/mezidon.png",scoreDom:7,ext:"ST DESIR B",logoExt:"logos/st-desir-b.png",scoreExt:0},
         {date:"Dimanche 11 octobre 2026",heure:"13h",dom:"HONFLEUR",logoDom:"logos/honfleur.png",scoreDom:6,ext:"HASTINGS",logoExt:"logos/hastings.png",scoreExt:0},
         {date:"Dimanche 11 octobre 2026",heure:"13h",dom:"AJS COLL. OUISTREHAM",logoDom:"logos/ajs-ouistreham-c.png",scoreDom:2,ext:"CAEN SUD OUEST",logoExt:"logos/caen-sud-ouest.png",scoreExt:1}
+      ];
+
+      const resultatsJ6F = [
+        {date:"Dimanche 18 octobre 2026",heure:"11h",dom:"INTER ODON",logoDom:"logos/inter-odon.png",scoreDom:10,ext:"HONFLEUR",logoExt:"logos/honfleur.png",scoreExt:0},
+        {date:"Dimanche 18 octobre 2026",heure:"11h",dom:"ST DESIR B",logoDom:"logos/st-desir-b.png",scoreDom:2,ext:"CAHAGNES",logoExt:"logos/cahagnes.png",scoreExt:6},
+        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:4,ext:"CAEN SUD OUEST",logoExt:"logos/caen-sud-ouest.png",scoreExt:0},
+        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"HASTINGS",logoDom:"logos/hastings.png",scoreDom:0,ext:"GIBERVILLE",logoExt:"logos/giberville.png",scoreExt:4},
+        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"AUTHIE",logoDom:"logos/authie.png",scoreDom:0,ext:"MEZIDON",logoExt:"logos/mezidon.png",scoreExt:3},
+        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"BAIE DE L'ORNE",logoDom:"logos/baie-de-l-orne.png",scoreDom:2,ext:"AJS COLL. OUISTREHAM",logoExt:"logos/ajs-ouistreham-c.png",scoreExt:2}
       ];
 
       contenu.innerHTML = `
