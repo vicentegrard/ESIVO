@@ -30228,8 +30228,34 @@ const resultatsJ7 = [
               </article>`).join("")}</div>
             <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
+          <section class="sa-panel">
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip" id="sf-round-count">6 MATCHS</span></div>
+            <div class="sa-round"><div class="sa-round-heading"><small>DÉPARTEMENTAL 1 FÉMININ À 8 · GROUPE UNIQUE</small><strong id="sf-round-title">Journée 1</strong></div>
+              <label class="sa-round-select-wrap" for="sf-round-select"><span>Afficher la journée</span><select id="sf-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option></select></label>
+            </div>
+            <div class="sa-games" id="sf-games"></div>
+          </section>
         </div>
       `;
+      const afficherJourneeF = () => {
+        const liste = document.getElementById("sf-games");
+        const select = document.getElementById("sf-round-select");
+        if (!liste || !select) return;
+        const matchs = select.value === "1" ? resultatsJ1F : [];
+        const compteur = document.getElementById("sf-round-count");
+        const titre = document.getElementById("sf-round-title");
+        if (titre) titre.textContent = "Journée " + select.value;
+        if (compteur) compteur.textContent = resultatsJ1F.length + " MATCHS";
+        liste.innerHTML = matchs.map(match =>
+          '<article class="sa-game ' + (match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : "") + "'>' +
+            '<div class="sa-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
+            '<div class="sa-game-teams"><div class="sa-team"><img src="' + match.logoDom + '" alt=""><strong>' + match.dom + '</strong></div>' +
+            '<div class="sa-score">' + match.scoreDom + ' – ' + match.scoreExt + '<small class="sa-finished">TERMINÉ</small>' + (match.note ? '<small class="sa-penalty">' + match.note.toUpperCase() + '</small>' : '') + '</div>' +
+            '<div class="sa-team"><img src="' + match.logoExt + '" alt=""><strong>' + match.ext + '</strong></div></div></article>'
+        ).join("");
+      };
+      document.getElementById("sf-round-select").addEventListener("change", afficherJourneeF);
+      afficherJourneeF();
       return;
     }
 
