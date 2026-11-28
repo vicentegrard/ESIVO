@@ -13380,6 +13380,15 @@ const boutonFermer = overlay.querySelector(".mc-match-close");
       .sort((a, b) => new Date(a.date) - new Date(b.date));
 
     if (matchs.length === 0) {
+      const resultatsJ6F = [
+        {date:"Dimanche 18 octobre 2026",heure:"11h",dom:"INTER ODON",logoDom:"logos/inter-odon.png",scoreDom:10,ext:"HONFLEUR",logoExt:"logos/honfleur.png",scoreExt:0},
+        {date:"Dimanche 18 octobre 2026",heure:"11h",dom:"ST DESIR B",logoDom:"logos/st-desir-b.png",scoreDom:2,ext:"CAHAGNES",logoExt:"logos/cahagnes.png",scoreExt:6},
+        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"ESIVO",logoDom:"logos/esivo.png",scoreDom:4,ext:"CAEN SUD OUEST",logoExt:"logos/caen-sud-ouest.png",scoreExt:0},
+        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"HASTINGS",logoDom:"logos/hastings.png",scoreDom:0,ext:"GIBERVILLE",logoExt:"logos/giberville.png",scoreExt:4},
+        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"AUTHIE",logoDom:"logos/authie.png",scoreDom:0,ext:"MEZIDON",logoExt:"logos/mezidon.png",scoreExt:3},
+        {date:"Dimanche 18 octobre 2026",heure:"13h",dom:"BAIE DE L'ORNE",logoDom:"logos/baie-de-l-orne.png",scoreDom:2,ext:"AJS COLL. OUISTREHAM",logoExt:"logos/ajs-ouistreham-c.png",scoreExt:2}
+      ];
+
       contenu.innerHTML = `
         <strong>${page} · ${equipe}</strong>
         <p>Aucun match de démonstration prévu pour cette équipe.</p>
@@ -30276,7 +30285,7 @@ const resultatsJ7 = [
           <section class="sa-panel">
             <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip" id="sf-round-count">6 MATCHS</span></div>
             <div class="sa-round"><div class="sa-round-heading"><small>DÉPARTEMENTAL 1 FÉMININ À 8 · GROUPE UNIQUE</small><strong id="sf-round-title">Journée 1</strong></div>
-              <label class="sa-round-select-wrap" for="sf-round-select"><span>Afficher la journée</span><select id="sf-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option><option value="4">Journée 4</option><option value="5">Journée 5</option></select></label>
+              <label class="sa-round-select-wrap" for="sf-round-select"><span>Afficher la journée</span><select id="sf-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option><option value="4">Journée 4</option><option value="5">Journée 5</option><option value="6">Journée 6</option></select></label>
             </div>
             <div class="sa-games" id="sf-games"></div>
           </section>
@@ -30286,11 +30295,11 @@ const resultatsJ7 = [
         const liste = document.getElementById("sf-games");
         const select = document.getElementById("sf-round-select");
         if (!liste || !select) return;
-        const matchs = select.value === "1" ? resultatsJ1F : select.value === "2" ? resultatsJ2F : select.value === "3" ? resultatsJ3F : select.value === "4" ? resultatsJ4F : resultatsJ5F;
+        const matchs = select.value === "1" ? resultatsJ1F : select.value === "2" ? resultatsJ2F : select.value === "3" ? resultatsJ3F : select.value === "4" ? resultatsJ4F : select.value === "5" ? resultatsJ5F : resultatsJ6F;
         const compteur = document.getElementById("sf-round-count");
         const titre = document.getElementById("sf-round-title");
         if (titre) titre.textContent = "Journée " + select.value;
-        if (compteur) compteur.textContent = (resultatsJ1F.length + resultatsJ2F.length + resultatsJ3F.length + resultatsJ4F.length + resultatsJ5F.length) + " MATCHS";
+        if (compteur) compteur.textContent = (resultatsJ1F.length + resultatsJ2F.length + resultatsJ3F.length + resultatsJ4F.length + resultatsJ5F.length + resultatsJ6F.length) + " MATCHS";
         liste.innerHTML = matchs.map(match =>
           '<article class="sa-game ' + (match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : "") + '">' +
             '<div class="sa-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
