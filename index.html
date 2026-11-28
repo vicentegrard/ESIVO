@@ -32303,6 +32303,7 @@ let notificationsESIVO = [];
 
   const evenementsDuJour = calendrier.filter(evenement =>
     evenement.date === dateDuJour &&
+    !estMatchReporte(evenement) &&
     (
       (evenement.type === "match" && evenement.resultatEnregistre !== true) ||
       evenement.type === "plateau"
