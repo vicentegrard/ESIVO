@@ -30142,86 +30142,91 @@ const resultatsJ7 = [
       const classementFeminines = donneesFirestore.clubs || [];
 
       contenu.innerHTML = `
-        <strong>${page} · ${equipe}</strong>
         <style>
-          .sf-champ{width:100%;max-width:1100px;margin:0 auto;color:#f5f5f7}
-          .sf-hero{padding:26px;border-radius:20px;background:linear-gradient(135deg,#252832 0%,#15171d 65%,#40171c 100%);border:1px solid #ffffff14;box-shadow:0 12px 32px #0003;margin:18px 0}
-          .sf-hero-line{display:flex;align-items:center;justify-content:space-between;gap:15px}
-          .sf-hero-line+ .sf-hero-line{margin-top:15px}
-          .sf-eyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;color:#d4b65d}
-          .sf-chip{display:inline-flex;align-items:center;padding:7px 11px;border-radius:20px;background:#ffffff12;border:1px solid #ffffff20;color:#f4d77b;font-size:9px;font-weight:900;letter-spacing:.8px;white-space:nowrap}
-          .sf-hero h2{margin:5px 0;color:#fff;font-size:clamp(23px,3vw,32px);font-weight:900}
-          .sf-hero p{margin:0;color:#c1c3cc;font-size:12px}
-          .sf-hero img{width:68px;height:68px;object-fit:contain}
-          .sf-panel{padding:22px;border-radius:18px;background:linear-gradient(145deg,#22242d,#191a21);border:1px solid #ffffff12;margin:18px 0}
-          .sf-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-          .sf-panel-head h3{margin:5px 0 0;color:#fff;font-size:22px}
-          .sf-table-wrap{overflow-x:auto}
-          .sf-table{width:100%;border-collapse:collapse;min-width:760px;font-size:12px;text-align:center}
-          .sf-table th{padding:12px 8px;color:#aeb0bb;font-size:10px;letter-spacing:.5px;border-bottom:1px solid #ffffff25}
-          .sf-table td{padding:11px 8px;color:#d7d8df;border-bottom:1px solid #ffffff12}
-          .sf-table tbody tr.sf-highlight{background:linear-gradient(90deg,#49242b,#302027);font-weight:800}
-          .sf-table tbody tr.sf-highlight td{color:#fff}
-          .sf-table tbody tr td:nth-child(3){font-size:14px;font-weight:900;color:#fff}
-          .sf-rank{display:inline-flex;align-items:center;justify-content:center;min-width:27px;height:27px;padding:0 6px;border-radius:8px;background:#ffffff12;color:#f0d47a;font-weight:900}
-          .sf-club{display:flex;align-items:center;gap:9px;text-align:left;white-space:nowrap}
-          .sf-club img{width:32px;height:32px;object-fit:contain}
-          .sf-club strong{color:#fff;font-size:12px}
-          .sf-mobile-table{display:none}
-          .sf-note{margin:15px 0 0;color:#aeb0bb;font-size:10px;line-height:1.6}
+          .sa-champ{display:grid;gap:18px;margin-top:14px}
+          .sa-hero{padding:24px;border:1px solid #55343a;border-radius:18px;background:radial-gradient(circle at 88% 10%,#a91c2b55,transparent 35%),linear-gradient(125deg,#2b1b21,#171820 72%,#28212a)}
+          .sa-eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:900;color:#d9a5aa}
+          .sa-hero-line{display:flex;align-items:center;justify-content:space-between;gap:12px}
+          .sa-chip{font-size:10px;font-weight:900;color:#f4dfe1;background:#aa1a243b;border:1px solid #c84b574d;border-radius:30px;padding:7px 10px}
+          .sa-hero h2{font-size:clamp(25px,4vw,38px);margin:15px 0 5px;color:#fff}
+          .sa-hero p{color:#c7bdc2;margin:0;font-size:13px}
+          .sa-hero img{width:64px;height:64px;object-fit:contain;background:#ffffff12;border-radius:14px;padding:7px}
+          .sa-panel{padding:20px;border:1px solid #393b46;border-radius:16px;background:linear-gradient(145deg,#24252d,#1b1c23);min-width:0}
+          .sa-panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}
+          .sa-panel h3{margin:5px 0 0;color:#fff;font-size:22px}
+          .sa-table-wrap{overflow:auto;border:1px solid #3a3c47;border-radius:11px}
+          .sa-table{width:100%;min-width:760px;border-collapse:collapse;text-align:center;font-size:12px}
+          .sa-table th{background:#2c2d37;color:#b9bbc5;padding:12px 8px;font-size:10px;text-transform:uppercase}
+          .sa-table th:nth-child(2){text-align:left}
+          .sa-table td{padding:11px 8px;border-top:1px solid #383a44;color:#d9d9df}
+          .sa-table tr.sa-highlight{background:#a91c2b2b}
+          .sa-club{display:flex;align-items:center;gap:9px;white-space:nowrap;text-align:left}
+          .sa-club img{width:31px;height:31px;object-fit:contain}
+          .sa-club strong{color:#fff}
+          .sa-rank{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:#353641;font-weight:900}
+          .sa-mobile-table{display:none}
+          .sa-note{font-size:10px;color:#999ba6;margin:12px 0 0}
+          .sa-round{display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(120deg,#2b2c36,#24252e);border:1px solid #41434e;border-radius:13px;padding:16px 18px;margin-bottom:12px}
+          .sa-round-heading{display:flex;flex-direction:column;gap:6px;min-width:0}
+          .sa-round strong,.sa-round small{display:block}
+          .sa-round strong{color:#fff;font-size:19px;line-height:1.2}
+          .sa-round small{color:#aeb0bb;font-size:9px;letter-spacing:1px;font-weight:800}
+          .sa-round-select-wrap{display:flex;align-items:center;gap:12px;min-width:230px}
+          .sa-round-select-wrap span{color:#c5c6ce;font-size:11px;font-weight:700;white-space:nowrap}
+          .sa-round-select-wrap select{appearance:none;-webkit-appearance:none;width:100%;min-height:46px;padding:0 42px 0 14px;border:1px solid #555865;border-radius:10px;background-color:#191a21;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23E56B73' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;color:#fff;font:inherit;font-size:14px;font-weight:800;cursor:pointer;transition:border-color .2s ease,box-shadow .2s ease}
+          .sa-round-select-wrap select:hover{border-color:#a9434c}
+          .sa-round-select-wrap select:focus-visible{outline:none;border-color:#E56B73;box-shadow:0 0 0 3px rgba(170,26,36,.25)}
+          .sa-round-select-wrap select option{background:#191a21;color:#fff}
+          @media(max-width:560px){.sa-round{align-items:stretch;flex-direction:column;gap:13px;padding:14px}.sa-round-heading{gap:5px}.sa-round strong{font-size:17px}.sa-round-select-wrap{min-width:0;width:100%;align-items:center;justify-content:space-between}.sa-round-select-wrap select{flex:1;min-width:0}}
+          .sa-games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+          .sa-game{padding:13px;border:1px solid #3c3e49;border-radius:12px;background:#292a34;min-width:0}
+          .sa-game-esivo{border:2px solid #b52b38;background:linear-gradient(145deg,#43232a,#2b252e);box-shadow:0 0 0 1px #b52b3833,0 5px 18px #a91c2b22}
+          .sa-game-meta{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#aeb0bb;border-bottom:1px solid #41434d;padding-bottom:10px}
+          .sa-game-teams{display:grid;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);align-items:center;gap:6px;padding-top:12px}
+          .sa-team{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-width:0}
+          .sa-team img{width:40px;height:40px;object-fit:contain}
+          .sa-team strong{font-size:10px;color:#f1f1f4;overflow-wrap:normal;word-break:normal;hyphens:none}
+          .sa-score{text-align:center;color:#fff;font-size:23px;font-weight:900;white-space:nowrap}
+          .sa-score small{display:block;color:#63c38d;font-size:8px;letter-spacing:1px;margin-top:5px}
+      .sa-score small{color:#63c38d}
+      .sa-score small.sa-upcoming{color:#e56b73}
+      .sa-score small.sa-finished{color:#63c38d}
+      .sa-score small.sa-penalty{color:#e5bd37;font-size:7px;margin-top:3px}
           @media(max-width:700px){
-            .sf-hero{padding:18px}.sf-hero img{width:54px;height:54px}.sf-panel{padding:14px}.sf-panel-head h3{font-size:19px}
-            .sf-table-wrap{display:none}.sf-mobile-table{display:grid;gap:8px}
-            .sf-mobile-row{padding:11px;border:1px solid #41434d;border-radius:11px;background:#2a2b35}
-            .sf-mobile-row.sf-highlight{border-color:#b33a45;background:#43242b}
-            .sf-mobile-top{display:flex;align-items:center;gap:8px}.sf-mobile-top img{width:32px;height:32px;object-fit:contain}
-            .sf-mobile-top strong{flex:1;min-width:0;color:#fff;font-size:12px}.sf-mobile-top b{color:#fff;font-size:13px;white-space:nowrap}
-            .sf-mobile-stats{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;text-align:center;margin-top:10px;padding-top:9px;border-top:1px solid #ffffff18}
-            .sf-mobile-stats span{display:flex;flex-direction:column;gap:3px}.sf-mobile-stats b{color:#eee;font-size:11px}.sf-mobile-stats small{color:#a6a8b3;font-size:8px}
+            .sa-champ{gap:14px}.sa-hero{padding:18px}.sa-hero img{width:54px;height:54px}.sa-panel{padding:14px}.sa-panel h3{font-size:19px}
+            .sa-table-wrap{display:none}.sa-mobile-table{display:grid;gap:8px}
+            .sa-mobile-row{padding:11px;border:1px solid #41434d;border-radius:11px;background:#2a2b35}
+            .sa-mobile-row.sa-highlight{border-color:#b33a45;background:#43242b}
+            .sa-mobile-top{display:flex;align-items:center;gap:8px}.sa-mobile-top img{width:32px;height:32px;object-fit:contain}
+            .sa-mobile-top strong{flex:1;min-width:0;color:#fff;font-size:12px}.sa-mobile-top b{color:#fff;font-size:13px;white-space:nowrap}
+            .sa-mobile-stats{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;text-align:center;margin-top:10px;padding-top:9px;border-top:1px solid #ffffff18}
+            .sa-mobile-stats span{display:flex;flex-direction:column;gap:3px}.sa-mobile-stats b{color:#eee;font-size:11px}.sa-mobile-stats small{color:#a6a8b3;font-size:8px}
+            .sa-games{grid-template-columns:1fr;gap:8px}.sa-game{padding:11px}.sa-team img{width:36px;height:36px}.sa-team strong{font-size:9px}.sa-score{font-size:21px}
           }
-          @media(max-width:380px){.sf-mobile-stats{grid-template-columns:repeat(4,1fr);row-gap:8px}}
+          @media(max-width:380px){.sa-mobile-stats{grid-template-columns:repeat(4,1fr);row-gap:8px}.sa-game-teams{grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr)}}
         </style>
-        <div class="sf-champ">
-          <section class="sf-hero">
-            <div class="sf-hero-line">
-              <span class="sf-eyebrow">CHAMPIONNAT 2026–2027</span>
-              <span class="sf-chip">FÉMININES À 8</span>
-            </div>
-            <div class="sf-hero-line">
-              <div><h2>Départemental 1 Féminin à 8</h2><p>Seniors Féminines · District du Calvados</p></div>
-              <img src="logo-esivo-transparent.png" alt="ESIVO">
-            </div>
+        <div class="sa-champ">
+          <section class="sa-hero">
+            <div class="sa-hero-line"><span class="sa-eyebrow">CHAMPIONNAT 2026–2027</span><span class="sa-chip">UNIQUE</span></div>
+            <div class="sa-hero-line"><div><h2>Départemental 1 Féminin à 8</h2><p>Seniors Féminines · District du Calvados</p></div><img src="logo-esivo-transparent.png" alt="ESIVO"></div>
           </section>
-          <section class="sf-panel">
-            <div class="sf-panel-head">
-              <div><span class="sf-eyebrow">LE CHAMPIONNAT</span><h3>Classement général</h3></div>
-              <span class="sf-chip">${classementFeminines.length} ÉQUIPES</span>
-            </div>
-            <div class="sf-table-wrap">
-              <table class="sf-table">
-                <thead><tr><th>#</th><th style="text-align:left">Club</th><th>Pts</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Forf.</th><th>BP</th><th>BC</th><th>Diff.</th></tr></thead>
-                <tbody>
-                  ${classementFeminines.map(club => `
-                    <tr class="${club.equipe === "ESIVO" ? "sf-highlight" : ""}">
-                      <td><span class="sf-rank">${club.position}</span></td>
-                      <td><div class="sf-club"><img src="${club.logo}" alt=""><strong>${club.equipe}</strong></div></td>
-                      <td>${club.points ?? 0}</td><td>${club.joues ?? 0}</td><td>${club.victoires ?? 0}</td><td>${club.nuls ?? 0}</td><td>${club.defaites ?? 0}</td><td>${club.forfait ?? 0}</td><td>${club.butsPour ?? 0}</td><td>${club.butsContre ?? 0}</td><td>${club.difference ?? 0}</td>
-                    </tr>
-                  `).join("")}
-                </tbody>
-              </table>
-            </div>
-            <div class="sf-mobile-table">
-              ${classementFeminines.map(club => `
-                <article class="sf-mobile-row ${club.equipe === "ESIVO" ? "sf-highlight" : ""}">
-                  <div class="sf-mobile-top"><span class="sf-rank">${club.position}</span><img src="${club.logo}" alt=""><strong>${club.equipe}</strong><b>${club.points ?? 0} pts</b></div>
-                  <div class="sf-mobile-stats">
-                    ${[["joues","J"],["victoires","V"],["nuls","N"],["defaites","D"],["forfait","F"],["butsPour","BP"],["butsContre","BC"],["difference","Diff."]].map(([key,label]) => `<span><b>${club[key] ?? 0}</b><small>${label}</small></span>`).join("")}
-                  </div>
-                </article>
-              `).join("")}
-            </div>
-            <p class="sf-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · Forf. : forfaits · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
+          <section class="sa-panel">
+            <div class="sa-panel-head"><div><span class="sa-eyebrow">LE CHAMPIONNAT</span><h3>Classement général</h3></div><span class="sa-chip">${classementFeminines.length} ÉQUIPES</span></div>
+            <div class="sa-table-wrap"><table class="sa-table">
+              <thead><tr><th>#</th><th>Club</th><th>Pts</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Forf.</th><th>BP</th><th>BC</th><th>Diff.</th></tr></thead>
+              <tbody>${classementFeminines.map(club => `
+                <tr class="${club.equipe === "ESIVO" ? "sa-highlight" : ""}">
+                  <td><span class="sa-rank">${club.position}</span></td>
+                  <td><div class="sa-club"><img src="${club.logo}" alt=""><strong>${club.equipe}</strong></div></td>
+                  <td><strong>${club.points}</strong></td><td>${club.joues}</td><td>${club.victoires}</td><td>${club.nuls}</td><td>${club.defaites}</td><td>${club.forfait}</td><td>${club.butsPour}</td><td>${club.butsContre}</td><td>${club.difference}</td>
+                </tr>`).join("")}</tbody>
+            </table></div>
+            <div class="sa-mobile-table">${classementFeminines.map(club => `
+              <article class="sa-mobile-row ${club.equipe === "ESIVO" ? "sa-highlight" : ""}">
+                <div class="sa-mobile-top"><span class="sa-rank">${club.position}</span><img src="${club.logo}" alt=""><strong>${club.equipe}</strong><b>${club.points} pts</b></div>
+                <div class="sa-mobile-stats">${[["joues","J"],["victoires","V"],["nuls","N"],["defaites","D"],["forfait","F"],["butsPour","BP"],["butsContre","BC"],["difference","Diff."]].map(([key,label]) => `<span><b>${club[key] ?? 0}</b><small>${label}</small></span>`).join("")}</div>
+              </article>`).join("")}</div>
+            <p class="sa-note">Pts : points · J : joués · V : victoires · N : nuls · D : défaites · BP/BC : buts pour/contre · Diff. : différence de buts.</p>
           </section>
         </div>
       `;
