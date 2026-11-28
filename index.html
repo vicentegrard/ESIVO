@@ -30222,6 +30222,15 @@ const resultatsJ7 = [
         {date:"Dimanche 20 décembre 2026",heure:"13h",dom:"CAEN SUD OUEST",logoDom:"logos/caen-sud-ouest.png",scoreDom:null,ext:"ST DESIR B",logoExt:"logos/st-desir-b.png",scoreExt:null,aVenir:true}
       ];
 
+      const resultatsJ10F = [
+        {date:"Dimanche 29 novembre 2026",heure:"11h",dom:"INTER ODON",logoDom:"logos/inter-odon.png",scoreDom:null,ext:"HASTINGS",logoExt:"logos/hastings.png",scoreExt:null,aVenir:true},
+        {date:"Dimanche 29 novembre 2026",heure:"11h",dom:"CAHAGNES",logoDom:"logos/cahagnes.png",scoreDom:null,ext:"AJS COLL. OUISTREHAM",logoExt:"logos/ajs-ouistreham-c.png",scoreExt:null,aVenir:true},
+        {date:"Dimanche 29 novembre 2026",heure:"12h30",dom:"ST DESIR B",logoDom:"logos/st-desir-b.png",scoreDom:null,ext:"ESIVO",logoExt:"logos/esivo.png",scoreExt:null,aVenir:true},
+        {date:"Dimanche 29 novembre 2026",heure:"12h30",dom:"BAIE DE L'ORNE",logoDom:"logos/baie-de-l-orne.png",scoreDom:null,ext:"GIBERVILLE",logoExt:"logos/giberville.png",scoreExt:null,aVenir:true},
+        {date:"Dimanche 29 novembre 2026",heure:"12h30",dom:"MEZIDON",logoDom:"logos/mezidon.png",scoreDom:null,ext:"HONFLEUR",logoExt:"logos/honfleur.png",scoreExt:null,aVenir:true},
+        {date:"Dimanche 29 novembre 2026",heure:"13h30",dom:"AUTHIE",logoDom:"logos/authie.png",scoreDom:null,ext:"CAEN SUD OUEST",logoExt:"logos/caen-sud-ouest.png",scoreExt:null,aVenir:true}
+      ];
+
       contenu.innerHTML = `
         <style>
           .sa-champ{display:grid;gap:18px;margin-top:14px}
@@ -30312,7 +30321,7 @@ const resultatsJ7 = [
           <section class="sa-panel">
             <div class="sa-panel-head"><div><span class="sa-eyebrow">TOUTES LES RENCONTRES DU GROUPE</span><h3>Résultats du championnat</h3></div><span class="sa-chip" id="sf-round-count">6 MATCHS</span></div>
             <div class="sa-round"><div class="sa-round-heading"><small>DÉPARTEMENTAL 1 FÉMININ À 8 · GROUPE UNIQUE</small><strong id="sf-round-title">Journée 1</strong></div>
-              <label class="sa-round-select-wrap" for="sf-round-select"><span>Afficher la journée</span><select id="sf-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option><option value="4">Journée 4</option><option value="5">Journée 5</option><option value="6">Journée 6</option><option value="7">Journée 7</option><option value="8">Journée 8</option><option value="9">Journée 9</option></select></label>
+              <label class="sa-round-select-wrap" for="sf-round-select"><span>Afficher la journée</span><select id="sf-round-select" aria-label="Choisir une journée de championnat"><option value="1" selected>Journée 1</option><option value="2">Journée 2</option><option value="3">Journée 3</option><option value="4">Journée 4</option><option value="5">Journée 5</option><option value="6">Journée 6</option><option value="7">Journée 7</option><option value="8">Journée 8</option><option value="9">Journée 9</option><option value="10">Journée 10</option></select></label>
             </div>
             <div class="sa-games" id="sf-games"></div>
           </section>
@@ -30322,11 +30331,11 @@ const resultatsJ7 = [
         const liste = document.getElementById("sf-games");
         const select = document.getElementById("sf-round-select");
         if (!liste || !select) return;
-        const matchs = select.value === "1" ? resultatsJ1F : select.value === "2" ? resultatsJ2F : select.value === "3" ? resultatsJ3F : select.value === "4" ? resultatsJ4F : select.value === "5" ? resultatsJ5F : select.value === "6" ? resultatsJ6F : select.value === "7" ? resultatsJ7F : select.value === "8" ? resultatsJ8F : resultatsJ9F;
+        const matchs = select.value === "1" ? resultatsJ1F : select.value === "2" ? resultatsJ2F : select.value === "3" ? resultatsJ3F : select.value === "4" ? resultatsJ4F : select.value === "5" ? resultatsJ5F : select.value === "6" ? resultatsJ6F : select.value === "7" ? resultatsJ7F : select.value === "8" ? resultatsJ8F : select.value === "9" ? resultatsJ9F : resultatsJ10F;
         const compteur = document.getElementById("sf-round-count");
         const titre = document.getElementById("sf-round-title");
         if (titre) titre.textContent = "Journée " + select.value;
-        if (compteur) compteur.textContent = (resultatsJ1F.length + resultatsJ2F.length + resultatsJ3F.length + resultatsJ4F.length + resultatsJ5F.length + resultatsJ6F.length + resultatsJ7F.length + resultatsJ8F.length + resultatsJ9F.length) + " MATCHS";
+        if (compteur) compteur.textContent = (resultatsJ1F.length + resultatsJ2F.length + resultatsJ3F.length + resultatsJ4F.length + resultatsJ5F.length + resultatsJ6F.length + resultatsJ7F.length + resultatsJ8F.length + resultatsJ9F.length + resultatsJ10F.length) + " MATCHS";
         liste.innerHTML = matchs.map(match =>
           '<article class="sa-game ' + (match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : "") + '">' +
             '<div class="sa-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
