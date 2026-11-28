@@ -30256,11 +30256,14 @@ const resultatsJ7 = [
         if (titre) titre.textContent = "Journée " + select.value;
         if (compteur) compteur.textContent = resultatsJ1F.length + " MATCHS";
         liste.innerHTML = matchs.map(match =>
-          '<article class="sa-game ' + (match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : "") + "'>' +
+          '<article class="sa-game ' + (match.dom === "ESIVO" || match.ext === "ESIVO" ? "sa-game-esivo" : "") + '">' +
             '<div class="sa-game-meta"><span>' + match.date + '</span><span>' + match.heure + '</span></div>' +
-            '<div class="sa-game-teams"><div class="sa-team"><img src="' + match.logoDom + '" alt=""><strong>' + match.dom + '</strong></div>' +
-            '<div class="sa-score">' + match.scoreDom + ' – ' + match.scoreExt + '<small class="sa-finished">TERMINÉ</small>' + (match.note ? '<small class="sa-penalty">' + match.note.toUpperCase() + '</small>' : '') + '</div>' +
-            '<div class="sa-team"><img src="' + match.logoExt + '" alt=""><strong>' + match.ext + '</strong></div></div></article>'
+            '<div class="sa-game-teams">' +
+              '<div class="sa-team"><img src="' + match.logoDom + '" alt=""><strong>' + match.dom + '</strong></div>' +
+              '<div class="sa-score">' + match.scoreDom + ' – ' + match.scoreExt + '<small class="sa-finished">TERMINÉ</small>' + (match.note ? '<small class="sa-penalty">' + match.note.toUpperCase() + '</small>' : '') + '</div>' +
+              '<div class="sa-team"><img src="' + match.logoExt + '" alt=""><strong>' + match.ext + '</strong></div>' +
+            '</div>' +
+          '</article>'
         ).join("");
       };
       document.getElementById("sf-round-select").addEventListener("change", afficherJourneeF);
